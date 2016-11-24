@@ -1,0 +1,43 @@
+<div class="tops victories" *ngIf="leaderboardVictories">
+    <h3>Top 10 Victories:</h3>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Victories</th>
+        </tr>
+        <div *ngFor="let player of leaderboardVictories" class="player">
+            <!--<div class="avatar">
+                <img [src]="player.avatar">
+            </div>
+            <div class="name">{{player.name}}</div>
+            <div class="score">{{player.totalVictories}}</div>-->
+            <!--<div>{{player.name}} - {{player.totalVictories}}</div>-->
+            <tr>
+                <td class="name">{{player.name}}</td>
+                <td class="score">{{player.totalVictories}}</td>
+            </tr>
+        </div>
+    </table>
+</div>
+
+<div class="tops points" *ngIf="leaderboardPoints">
+    <h3>Top 10 Points:</h3>
+    <table>
+        <tr>
+            <!--<th>Place</th>--> 
+            <th>Name</th>
+            <th>Points</th>
+        </tr>
+        <div *ngFor="let player of leaderboardPoints" class="player">
+            <!--<div class="avatar">
+                <img [src]="player.avatar">
+            </div>
+            <div class="name">{{player.name}}</div>
+            <div class="score">{{player.totalPoints}}</div>-->
+            <tr>
+                <td class="name">{{player.name}}</td>
+                <td class="score">{{player.totalPoints}}</td>
+            </tr>
+        </div>
+    </table>
+</div>
