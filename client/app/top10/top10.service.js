@@ -9,23 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
 var http_1 = require('@angular/http');
-var top10_component_1 = require('./top10.component');
-var top10_service_1 = require('./top10.service');
-var Top10Module = (function () {
-    function Top10Module() {
+require('rxjs/add/operator/map');
+var Top10Service = (function () {
+    function Top10Service(http) {
+        this.http = http;
     }
-    Top10Module = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule, http_1.HttpModule],
-            declarations: [top10_component_1.Top10Component],
-            providers: [top10_service_1.Top10Service],
-            exports: [top10_component_1.Top10Component]
-        }), 
-        __metadata('design:paramtypes', [])
-    ], Top10Module);
-    return Top10Module;
+    Top10Service.prototype.getTop10Victories = function () {
+        var _this = this;
+        return this.http.get('/api/v1/top10-victories')
+            .map(function (response) { return _this.top10Players = response.json(); });
+    };
+    Top10Service.prototype.getTop10Points = function () {
+        var _this = this;
+        return this.http.get('/api/v1/top10-points')
+            .map(function (response) { return _this.top10Players = response.json(); });
+    };
+    Top10Service = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [http_1.Http])
+    ], Top10Service);
+    return Top10Service;
 }());
-exports.Top10Module = Top10Module;
-//# sourceMappingURL=top10.module.js.map
+exports.Top10Service = Top10Service;
+//# sourceMappingURL=top10.service.js.map

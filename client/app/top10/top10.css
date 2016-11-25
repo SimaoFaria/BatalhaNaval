@@ -1,0 +1,22 @@
+.tops{ 
+    float:right;
+    width:15%;
+    background-color: cyan;
+}
+
+.points {
+    background-color: deepskyblue;
+}
+
+.victories {
+    background-color: gold;
+}
+
+h1, h3, h4, span, th, td{
+    text-align: center;
+}
+
+th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}

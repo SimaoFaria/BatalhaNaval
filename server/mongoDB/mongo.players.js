@@ -1,7 +1,7 @@
 'use strict';
 
 var mongodb = require('mongodb');
-var database = require('./mongo2.database');
+var database = require('./mongo.database');
 var players = module.exports = {};
 
 function getPlayers(request, response, next){
@@ -139,8 +139,8 @@ players.init = function(server,apiBaseUri){
 	server.post(apiBaseUri+'players',createPlayer);
 	server.del(apiBaseUri+'players/:id',deletePlayer);
 
-	server.get(apiBaseUri+'top10victories',getTop10Victories);
-	server.get(apiBaseUri+'top10points',getTop10Points);
+	server.get(apiBaseUri+'top10-victories',getTop10Victories);
+	server.get(apiBaseUri+'top10-points',getTop10Points);
 
 	console.log("Players routes registered");
 }

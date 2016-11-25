@@ -18,15 +18,16 @@ import { HistoricalService } from './services/historical.service';
 
 import { GameNavalBattleModule } from './game-naval-battle/game.module';
 
-import { Top10VictoriesComponent } from './top10/top10victories.component';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { Top10Module } from './top10/top10.module';
+
+import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 
 @NgModule({
   imports:      [ BrowserModule,
                   FormsModule,
                   HttpModule,
                   GameNavalBattleModule,
-                  LeaderboardModule,
+                  Top10Module,
                   RouterModule.forRoot([
                       {
                         path: 'dashboard',
@@ -41,13 +42,12 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
                         component: HistoricalComponent
                       },
                       {
-                        path: 'top10victories',
-                        component: Top10VictoriesComponent
+                        path: 'game-lobby',
+                        component: GameLobbyComponent
                       },
                       {
                         path: '',
-                        //redirectTo: '/dashboard',
-                        redirectTo: '/top10victories',
+                        redirectTo: '/game-lobby',
                         pathMatch: 'full'
                       }
                     ])
@@ -55,7 +55,7 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
   declarations: [ AppComponent,
                   DashboardComponent,
                   HistoricalComponent,              
-                  Top10VictoriesComponent            
+                  GameLobbyComponent            
   ],
   providers: [HistoricalService],
   bootstrap:    [ AppComponent ]

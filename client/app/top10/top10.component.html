@@ -1,0 +1,39 @@
+<div class="tops" *ngIf="top10Victories && top10Points">
+    <h1>Top 10</h1>
+    <div class="victories">
+        <h4>Top 10 Victories</h4>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Victories</th>
+            </tr>
+            <div *ngFor="let player of top10Victories" class="player">
+                <tr>
+                    <td class="name">{{player.name}}</td>
+                    <td class="score">{{player.totalVictories}}</td>
+                </tr>
+            </div>
+        </table>
+    </div>
+
+    <div class="points">
+        <h4>Top 10 Points</h4>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
+            <div *ngFor="let player of top10Points" class="player">
+                <tr>
+                    <td class="name">{{player.name}}</td>
+                    <td class="score">{{player.totalPoints}}</td>
+                </tr>
+            </div>
+        </table>
+    </div>
+</div>
+
+<div class="tops" *ngIf="!top10Victories && !top10Points">
+    <h1>Top 10</h1>
+    <span>Failed to connect to server.</span>
+</div> 

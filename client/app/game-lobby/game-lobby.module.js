@@ -10,22 +10,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
-var http_1 = require('@angular/http');
-var top10_component_1 = require('./top10.component');
-var top10_service_1 = require('./top10.service');
-var Top10Module = (function () {
-    function Top10Module() {
+var game_lobby_component_1 = require('./game-lobby.component');
+var game_lobby_service_1 = require('./game-lobby.service');
+var GameLobbyModule = (function () {
+    function GameLobbyModule() {
     }
-    Top10Module = __decorate([
+    GameLobbyModule = __decorate([
         core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule, http_1.HttpModule],
-            declarations: [top10_component_1.Top10Component],
-            providers: [top10_service_1.Top10Service],
-            exports: [top10_component_1.Top10Component]
+            imports: [platform_browser_1.BrowserModule],
+            declarations: [game_lobby_component_1.GameLobbyComponent],
+            bootstrap: [game_lobby_component_1.GameLobbyComponent],
+            exports: [game_lobby_service_1.GameLobbyService]
         }), 
         __metadata('design:paramtypes', [])
-    ], Top10Module);
-    return Top10Module;
+    ], GameLobbyModule);
+    return GameLobbyModule;
 }());
-exports.Top10Module = Top10Module;
-//# sourceMappingURL=top10.module.js.map
+exports.GameLobbyModule = GameLobbyModule;
+//# sourceMappingURL=game-lobby.module.js.map

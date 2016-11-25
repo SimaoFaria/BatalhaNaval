@@ -1,0 +1,9 @@
+h1, h3, div, li, span, button {
+    text-align: center;
+}
+
+.container {
+    background-color: wheat;
+    width: 70%;
+    float: left;
+}

@@ -7,14 +7,14 @@ import { HistoricalComponent }   from './historical/historical.component';
 //import { routes } from './routes';
 import { GameNavalBattleModule } from './game-naval-battle/game.module'
 
-import { Top10VictoriesComponent } from './top10/top10victories.component';
+import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard',  component: DashboardComponent },
   { path: 'current-games',  component: GameNavalBattleModule },
   { path: 'historical',  component: HistoricalComponent },
-  { path: 'top10victories',  component: Top10VictoriesComponent }
+  { path: 'game-lobby',  component: GameLobbyComponent }
 ];
 
 @NgModule({

@@ -18,8 +18,8 @@ var dashboard_component_1 = require('./dashboard/dashboard.component');
 var historical_component_1 = require('./historical/historical.component');
 var historical_service_1 = require('./services/historical.service');
 var game_module_1 = require('./game-naval-battle/game.module');
-var top10victories_component_1 = require('./top10/top10victories.component');
-var leaderboard_module_1 = require('./leaderboard/leaderboard.module');
+var top10_module_1 = require('./top10/top10.module');
+var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -29,7 +29,7 @@ var AppModule = (function () {
                 forms_1.FormsModule,
                 http_1.HttpModule,
                 game_module_1.GameNavalBattleModule,
-                leaderboard_module_1.LeaderboardModule,
+                top10_module_1.Top10Module,
                 router_1.RouterModule.forRoot([
                     {
                         path: 'dashboard',
@@ -44,13 +44,12 @@ var AppModule = (function () {
                         component: historical_component_1.HistoricalComponent
                     },
                     {
-                        path: 'top10victories',
-                        component: top10victories_component_1.Top10VictoriesComponent
+                        path: 'game-lobby',
+                        component: game_lobby_component_1.GameLobbyComponent
                     },
                     {
                         path: '',
-                        //redirectTo: '/dashboard',
-                        redirectTo: '/top10victories',
+                        redirectTo: '/game-lobby',
                         pathMatch: 'full'
                     }
                 ])
@@ -58,7 +57,7 @@ var AppModule = (function () {
             declarations: [app_component_1.AppComponent,
                 dashboard_component_1.DashboardComponent,
                 historical_component_1.HistoricalComponent,
-                top10victories_component_1.Top10VictoriesComponent
+                game_lobby_component_1.GameLobbyComponent
             ],
             providers: [historical_service_1.HistoricalService],
             bootstrap: [app_component_1.AppComponent]

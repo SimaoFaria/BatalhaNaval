@@ -9,19 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var Top10VictoriesComponent = (function () {
-    function Top10VictoriesComponent() {
+var game_lobby_service_1 = require('./game-lobby.service');
+var GameLobbyComponent = (function () {
+    function GameLobbyComponent(pendingGamesService) {
+        var _this = this;
+        this.pendingGamesService = pendingGamesService;
+        this.pendingGamesService.getPendingGames()
+            .subscribe(function (leaderboard) { return _this.pendingGames = leaderboard; });
     }
-    Top10VictoriesComponent = __decorate([
+    GameLobbyComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
-            providers: [],
-            selector: 'top10victories',
-            templateUrl: 'top10victories.component.html'
+            selector: 'my-game-lobby',
+            templateUrl: './game-lobby.html',
+            styleUrls: ['./game-lobby.css'],
+            providers: [game_lobby_service_1.GameLobbyService]
         }), 
-        __metadata('design:paramtypes', [])
-    ], Top10VictoriesComponent);
-    return Top10VictoriesComponent;
+        __metadata('design:paramtypes', [game_lobby_service_1.GameLobbyService])
+    ], GameLobbyComponent);
+    return GameLobbyComponent;
 }());
-exports.Top10VictoriesComponent = Top10VictoriesComponent;
-//# sourceMappingURL=top10victories.component.js.map
+exports.GameLobbyComponent = GameLobbyComponent;
+//# sourceMappingURL=game-lobby.component.js.map

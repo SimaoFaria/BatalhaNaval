@@ -1,0 +1,22 @@
+<div class="container">
+    <h1>Game Lobby</h1>
+    <div>
+        <span>Create Game: </span>
+        <button>Create Game</button>
+    </div>
+
+    <h3>Pending Games:</h3>
+    <div *ngIf="pendingGames">
+        <div *ngFor="let pendingGame of pendingGames">
+            <li>
+                <span>Creator: {{ pendingGame.createdBy }} | ({{ pendingGame.players.length }}/4)</span>
+                <!--<button *ngIf="pendingGame.players.length < 4">entrar</button>-->
+                <button *ngIf="pendingGame.players.length < 4">entrar</button>
+            </li>
+        </div>
+    </div>
+
+    <div *ngIf="!pendingGames">
+        <span>Failed to connect to server.</span>
+    </div>
+</div>

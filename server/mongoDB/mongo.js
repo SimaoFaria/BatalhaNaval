@@ -2,9 +2,9 @@
 (function(){
 	var restify = require('restify');
 	var path = require('path');
-	var database = require('./mongo2.database');
+	var database = require('./mongo.database');
 
-	var url = 'mongodb://localhost:27017/local';
+	var url = 'mongodb://localhost:27017/db_mongo_proj_battle_naval';
 
 	var server = restify.createServer();
 
@@ -22,10 +22,10 @@
 	}));
 
 	// URL base Rest Api endpoints = /api/v1
-  	var players = require('./mongo2.players')
+  	var players = require('./mongo.players')
   	players.init(server, '/api/v1/');
   
-  	var games = require('./mongo2.games')
+  	var games = require('./mongo.games')
   	games.init(server, '/api/v1/');  
 
   	database.connect(url, function () {

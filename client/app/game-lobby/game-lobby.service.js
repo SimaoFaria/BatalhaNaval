@@ -9,18 +9,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var Top10PointsComponent = (function () {
-    function Top10PointsComponent() {
+var http_1 = require('@angular/http');
+require('rxjs/add/operator/map');
+var GameLobbyService = (function () {
+    function GameLobbyService(http) {
+        this.http = http;
     }
-    Top10PointsComponent = __decorate([
-        core_1.Component({
-            moduleId: module.id,
-            selector: 'top10points',
-            templateUrl: 'top10points.component.html'
-        }), 
-        __metadata('design:paramtypes', [])
-    ], Top10PointsComponent);
-    return Top10PointsComponent;
+    GameLobbyService.prototype.getPendingGames = function () {
+        var _this = this;
+        return this.http.get('/api/v1/pending-games')
+            .map(function (response) { return _this.pendingGames = response.json(); });
+    };
+    GameLobbyService = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [http_1.Http])
+    ], GameLobbyService);
+    return GameLobbyService;
 }());
-exports.Top10PointsComponent = Top10PointsComponent;
-//# sourceMappingURL=top10points.component.js.map
+exports.GameLobbyService = GameLobbyService;
+//# sourceMappingURL=game-lobby.service.js.map

@@ -1,11 +1,16 @@
 import { NgModule }      from '@angular/core';
 
-import { Top10VictoriesComponent }  from './top10victories.component';
-import { Top10PointsComponent }  from './top10points.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
+
+import { Top10Component }  from './top10.component';
+
+import { Top10Service } from './top10.service';
 
 @NgModule({
-  imports:      [ ],
-  declarations: [ Top10VictoriesComponent, Top10PointsComponent ],
-  bootstrap:    [ ]
+  imports:      [ BrowserModule, HttpModule],
+  declarations: [ Top10Component ],
+  providers:    [ Top10Service ],
+  exports:      [ Top10Component ]
 })
 export class Top10Module { }

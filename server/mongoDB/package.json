@@ -1,8 +1,8 @@
 {
-  "name": "mongo2",
+  "name": "mongo",
   "version": "1.0.0",
   "description": "",
-  "main": "mongo2.js",
+  "main": "mongo.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

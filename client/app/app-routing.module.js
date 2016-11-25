@@ -14,13 +14,13 @@ var dashboard_component_1 = require('./dashboard/dashboard.component');
 var historical_component_1 = require('./historical/historical.component');
 //import { routes } from './routes';
 var game_module_1 = require('./game-naval-battle/game.module');
-var top10victories_component_1 = require('./top10/top10victories.component');
+var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
 var routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: dashboard_component_1.DashboardComponent },
     { path: 'current-games', component: game_module_1.GameNavalBattleModule },
     { path: 'historical', component: historical_component_1.HistoricalComponent },
-    { path: 'top10victories', component: top10victories_component_1.Top10VictoriesComponent }
+    { path: 'game-lobby', component: game_lobby_component_1.GameLobbyComponent }
 ];
 var AppRoutingModule = (function () {
     function AppRoutingModule() {

@@ -9,23 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
-var http_1 = require('@angular/http');
-var top10_component_1 = require('./top10.component');
 var top10_service_1 = require('./top10.service');
-var Top10Module = (function () {
-    function Top10Module() {
+var Top10Component = (function () {
+    function Top10Component(top10Service) {
+        var _this = this;
+        this.top10Service = top10Service;
+        this.top10Service.getTop10Victories()
+            .subscribe(function (response) { return _this.top10Victories = response; });
+        this.top10Service.getTop10Points()
+            .subscribe(function (response) { return _this.top10Points = response; });
     }
-    Top10Module = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule, http_1.HttpModule],
-            declarations: [top10_component_1.Top10Component],
-            providers: [top10_service_1.Top10Service],
-            exports: [top10_component_1.Top10Component]
+    Top10Component = __decorate([
+        core_1.Component({
+            moduleId: module.id,
+            selector: 'my-top10',
+            templateUrl: 'top10.component.html',
+            styleUrls: ['./top10.css']
         }), 
-        __metadata('design:paramtypes', [])
-    ], Top10Module);
-    return Top10Module;
+        __metadata('design:paramtypes', [top10_service_1.Top10Service])
+    ], Top10Component);
+    return Top10Component;
 }());
-exports.Top10Module = Top10Module;
-//# sourceMappingURL=top10.module.js.map
+exports.Top10Component = Top10Component;
+//# sourceMappingURL=top10.component.js.map

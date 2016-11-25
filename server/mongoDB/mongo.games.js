@@ -1,7 +1,7 @@
 'use strict';
 
 var mongodb = require('mongodb');
-var database = require('./mongo2.database');
+var database = require('./mongo.database');
 var games = module.exports = {};
 
 function getGames(request, response, next){
@@ -136,6 +136,20 @@ function getHistoricalsByUsername(request, response, next){
 }
 
 
+function getPendingGames(request, response, next){
+	// return a JSON response will all pending games
+	database.db.collection("games").find({ "status": "pending", $where:'this.players.length < 4' }).toArray(function(err, games) {
+		if(err) {
+        console.log(err);
+        next();
+    } else {
+	    response.json(games);
+	    next();
+    }
+  });
+}
+
+
 // Routes for the games
 games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'games',getGames);
@@ -145,6 +159,9 @@ games.init = function(server,apiBaseUri){
 	server.del(apiBaseUri+'games/:id',deleteGame);
 	server.get(apiBaseUri+'historicals', getHistoricals);
 	server.get(apiBaseUri+'historicals/:username', getHistoricalsByUsername);
+
+	server.get(apiBaseUri+'pending-games',getPendingGames);
+
 	console.log("Games routes registered");
 }
 

@@ -9,18 +9,18 @@ import { HistoricalService } from './services/historical.service';
         <h1>{{title}}</h1>
         <nav>
             <a routerLink="/current-games">Current Games</a>
-            <a routerLink="/dashboard">Game Lobby</a>
+            <a routerLink="/dashboard">Dashboard</a>
             <a routerLink="/historical">Historical</a>
             <a routerLink="/login">Login</a>
-            <a routerLink="/top10victories">Top 10 Victories</a>
+            <a routerLink="/game-lobby">Game Lobby</a>
         </nav>
     </div>
-    <leaderboard></leaderboard>
+    <my-top10></my-top10>
     <router-outlet></router-outlet>
     `,
   styles: [`
     div {
-        width:30%;
+        width:15%;
         height:100%;
         /*background-color: #607D8B;*/
         background-color: yellowgreen;
