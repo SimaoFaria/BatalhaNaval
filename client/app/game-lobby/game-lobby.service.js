@@ -20,6 +20,14 @@ var GameLobbyService = (function () {
         return this.http.get('/api/v1/pending-games')
             .map(function (response) { return _this.pendingGames = response.json(); });
     };
+    GameLobbyService.prototype.createNewGame = function (game) {
+        return this.http.post('/api/v1/games', game)
+            .map(function (response) { return response.json(); });
+    };
+    GameLobbyService.prototype.enterGame = function (gameId, player) {
+        return this.http.put('/api/v1/games:id', gameId, player)
+            .map(function (response) { return response.json(); });
+    };
     GameLobbyService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])

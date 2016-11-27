@@ -1,0 +1,41 @@
+.container {
+  /*
+  margin-bottom: 100px;
+  width: 70%;
+  */
+  float: left;
+  background-color: dodgerblue;
+
+  width: 100%;
+  margin: 1%;
+}
+
+.dad-board{
+  width: 500px;
+  height: 500px;
+  margin: 10px auto;
+}
+
+.dad-row{
+  width: 500px;
+  height: 50px;
+  display: flex;
+}
+
+.dad-row .dad-cell {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  line-height: 50px;
+  text-align: center;
+}
+
+.dad-row .dad-cell input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  outline: none;
+  border: none;
+  display: block;
+  margin: 4px;
+}

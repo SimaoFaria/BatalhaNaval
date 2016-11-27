@@ -17,6 +17,41 @@ var GameLobbyComponent = (function () {
         this.pendingGamesService.getPendingGames()
             .subscribe(function (leaderboard) { return _this.pendingGames = leaderboard; });
     }
+    GameLobbyComponent.prototype.createGame = function () {
+        var player = {
+            "username": "Mario",
+            "score": 0,
+            "classification": ""
+        };
+        var game = {
+            "status": "pending",
+            "createdBy": player.username,
+            "aborted": false,
+            "startDate": "DATA A POR",
+            "endDate": "DATA A POR",
+            "winner": "",
+            "players": [
+                {
+                    "username": player.username,
+                    "score": player.score,
+                    "classification": player.classification
+                }
+            ]
+        };
+        //DUVIDA: onde se lida com a atualização no gameLobby com este novo jogo criado?
+        this.pendingGamesService.createNewGame(game)
+            .subscribe(function (response) { return response; });
+    };
+    GameLobbyComponent.prototype.enterGame = function () {
+        var player = {
+            "username": "Mario",
+            "score": 0,
+            "classification": ""
+        };
+        var gameId = "";
+        this.pendingGamesService.enterGame(gameId, player)
+            .subscribe(function (response) { return response; });
+    };
     GameLobbyComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

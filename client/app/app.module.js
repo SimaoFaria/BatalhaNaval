@@ -20,6 +20,7 @@ var historical_service_1 = require('./services/historical.service');
 var game_module_1 = require('./game-naval-battle/game.module');
 var top10_module_1 = require('./top10/top10.module');
 var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
+var game_component_1 = require('./game-naval-battle/game.component');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -37,7 +38,8 @@ var AppModule = (function () {
                     },
                     {
                         path: 'current-games',
-                        component: game_module_1.GameNavalBattleModule
+                        //component: GameNavalBattleModule
+                        component: game_component_1.GameComponent
                     },
                     {
                         path: 'historical',
@@ -49,7 +51,7 @@ var AppModule = (function () {
                     },
                     {
                         path: '',
-                        redirectTo: '/game-lobby',
+                        redirectTo: '/current-games',
                         pathMatch: 'full'
                     }
                 ])

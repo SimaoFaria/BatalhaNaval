@@ -9,10 +9,13 @@ import { GameNavalBattleModule } from './game-naval-battle/game.module'
 
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 
+import { GameComponent } from './game-naval-battle/game.component';
+
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard',  component: DashboardComponent },
-  { path: 'current-games',  component: GameNavalBattleModule },
+  //{ path: 'current-games',  component: GameNavalBattleModule },
+  { path: 'current-games',  component: GameComponent },
   { path: 'historical',  component: HistoricalComponent },
   { path: 'game-lobby',  component: GameLobbyComponent }
 ];

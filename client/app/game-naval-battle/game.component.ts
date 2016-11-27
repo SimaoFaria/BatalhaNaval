@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 
 @Component({
   moduleId: module.id,
-  selector: 'my-historical',
-  templateUrl: './game-naval-battle/gameBoard.html'
-
+  selector: 'my-game',
+  //templateUrl: './game-naval-battle/gameBoard.html'
+  template: `
+    <my-defend></my-defend>
+    <my-attack></my-attack>
+  `
 })
 
-export class GameComponent {
-
-
-}
+export class GameComponent { }

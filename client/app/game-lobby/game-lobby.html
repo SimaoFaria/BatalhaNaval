@@ -1,8 +1,8 @@
 <div class="container">
     <h1>Game Lobby</h1>
     <div>
-        <span>Create Game: </span>
-        <button>Create Game</button>
+        <!--<span>Create Game: </span>-->
+        <button type="button" (click)="createGame()">Create Game</button>
     </div>
 
     <h3>Pending Games:</h3>
@@ -11,7 +11,7 @@
             <li>
                 <span>Creator: {{ pendingGame.createdBy }} | ({{ pendingGame.players.length }}/4)</span>
                 <!--<button *ngIf="pendingGame.players.length < 4">entrar</button>-->
-                <button *ngIf="pendingGame.players.length < 4">entrar</button>
+                <button *ngIf="pendingGame.players.length < 4" (click)="enterGame()">entrar</button>
             </li>
         </div>
     </div>

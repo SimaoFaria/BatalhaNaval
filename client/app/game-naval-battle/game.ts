@@ -1,14 +1,15 @@
 
 import { Player } from '../models/player';
+import { GamingPlayer } from '../models/player';
 
 export class Game {
     status: string;
     createdBy: string;
-    hasFinnish: boolean;
+    aborted: boolean;
     startDate: string;
     endDate: string;
     winner: string;
-    players: Player[];
-    classification: string[];
-    points: number[];
+    players: GamingPlayer[];
+    //classification: string[];
+    //points: number[];
 }

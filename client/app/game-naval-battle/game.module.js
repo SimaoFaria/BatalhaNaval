@@ -11,14 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var common_1 = require('@angular/common');
 var platform_browser_1 = require('@angular/platform-browser');
+var game_component_1 = require('./game.component');
 var defend_component_1 = require('./defend/defend.component');
+var attack_component_1 = require('./attack/attack.component');
 var GameNavalBattleModule = (function () {
     function GameNavalBattleModule() {
     }
     GameNavalBattleModule = __decorate([
         core_1.NgModule({
             imports: [common_1.CommonModule, platform_browser_1.BrowserModule],
-            declarations: [defend_component_1.GameDefendComponent]
+            declarations: [game_component_1.GameComponent, defend_component_1.GameDefendComponent, attack_component_1.GameAttackComponent]
         }), 
         __metadata('design:paramtypes', [])
     ], GameNavalBattleModule);

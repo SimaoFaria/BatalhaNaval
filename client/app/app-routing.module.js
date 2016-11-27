@@ -12,13 +12,13 @@ var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var dashboard_component_1 = require('./dashboard/dashboard.component');
 var historical_component_1 = require('./historical/historical.component');
-//import { routes } from './routes';
-var game_module_1 = require('./game-naval-battle/game.module');
 var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
+var game_component_1 = require('./game-naval-battle/game.component');
 var routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: dashboard_component_1.DashboardComponent },
-    { path: 'current-games', component: game_module_1.GameNavalBattleModule },
+    //{ path: 'current-games',  component: GameNavalBattleModule },
+    { path: 'current-games', component: game_component_1.GameComponent },
     { path: 'historical', component: historical_component_1.HistoricalComponent },
     { path: 'game-lobby', component: game_lobby_component_1.GameLobbyComponent }
 ];

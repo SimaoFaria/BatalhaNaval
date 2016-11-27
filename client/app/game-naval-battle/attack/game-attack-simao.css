@@ -1,0 +1,76 @@
+.attack {
+  /*
+  margin-bottom: 100px;
+  */
+  width: 100%;
+  height: 100%;
+  background-color: darkred;
+  float: left;
+  margin: 1%;
+}
+
+.container {
+  float: left;
+  width: 30%;
+  height: 90%;
+  margin: 1.5%;
+}
+
+.player1 {
+  background-color: palegreen;
+}
+
+.player2 {
+  background-color: limegreen;
+}
+
+.player3 {
+  background-color: seagreen;
+}
+
+.dad-board{
+  width: 100%;
+  /*
+  height: 100%;
+  height: 500px;
+  margin: 10px auto;
+  */
+}
+
+.dad-row{
+  width: 100%;
+  height: 7.5%;
+  display: flex;
+  /*
+  height: 50px;
+  */
+}
+
+.dad-row .dad-cell {
+  width: 10%;
+  border: 1px solid black;
+
+  /*
+  height: 90%;
+  height: 10%;
+  line-height: 50px;
+  text-align: center;
+  */
+}
+
+.dad-row .dad-cell input {
+  width: 80%;
+  height: 80%;
+  margin: 10%;
+  text-align: center;
+  display: block;
+  /*
+  outline: none;
+  border: none;
+  margin: 4px;
+  */
+}
+
+h2 {
+    text-align: center;
+}

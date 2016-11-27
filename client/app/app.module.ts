@@ -22,6 +22,8 @@ import { Top10Module } from './top10/top10.module';
 
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 
+import { GameComponent } from './game-naval-battle/game.component';
+
 @NgModule({
   imports:      [ BrowserModule,
                   FormsModule,
@@ -35,7 +37,8 @@ import { GameLobbyComponent } from './game-lobby/game-lobby.component';
                       },
                       {
                         path: 'current-games',//duvia como meter um componente dentro de outra
-                        component: GameNavalBattleModule
+                        //component: GameNavalBattleModule
+                        component: GameComponent
                       },
                        {
                         path: 'historical',
@@ -47,7 +50,7 @@ import { GameLobbyComponent } from './game-lobby/game-lobby.component';
                       },
                       {
                         path: '',
-                        redirectTo: '/game-lobby',
+                        redirectTo: '/current-games',
                         pathMatch: 'full'
                       }
                     ])

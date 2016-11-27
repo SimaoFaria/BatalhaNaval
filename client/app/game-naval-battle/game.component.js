@@ -15,8 +15,9 @@ var GameComponent = (function () {
     GameComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
-            selector: 'my-historical',
-            templateUrl: './game-naval-battle/gameBoard.html'
+            selector: 'my-game',
+            //templateUrl: './game-naval-battle/gameBoard.html'
+            template: "\n    <my-defend></my-defend>\n    <my-attack></my-attack>\n  "
         }), 
         __metadata('design:paramtypes', [])
     ], GameComponent);
