@@ -1,27 +1,9 @@
-import { NgModule }             from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-
-import { DashboardComponent }   from './dashboard/dashboard.component';
-
-import { HistoricalComponent }   from './historical/historical.component';
-//import { routes } from './routes';
-import { GameNavalBattleModule } from './game-naval-battle/game.module'
-
-import { GameLobbyComponent } from './game-lobby/game-lobby.component';
-
-import { GameComponent } from './game-naval-battle/game.component';
-
-const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'dashboard',  component: DashboardComponent },
-  //{ path: 'current-games',  component: GameNavalBattleModule },
-  { path: 'current-games',  component: GameComponent },
-  { path: 'historical',  component: HistoricalComponent },
-  { path: 'game-lobby',  component: GameLobbyComponent }
-];
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ROUTES } from './routes';
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes) ],
+  imports: [ RouterModule.forRoot(ROUTES) ],
   exports: [ RouterModule ]
 })
 

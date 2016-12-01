@@ -152,6 +152,26 @@
                     "classification" : "2"
                 }
             ]
+        },
+        {
+            "status" : "INPROGRESS",
+            "createdBy" : "Cao de Agua",
+            "aborted" : true,
+            "startDate" : "21-21-2121",
+            "endDate" : "21-21-2221",
+            "winner" : "Stalone",
+            "players" : [ 
+                {
+                    "username" : "Cao de Agua",
+                    "score" : 12,
+                    "classification" : "1"
+                }, 
+                {
+                    "username" : "Manuel",
+                    "score" : 20,
+                    "classification" : "2"
+                }
+            ]
         }
     ];
 

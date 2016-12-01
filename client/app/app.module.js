@@ -11,16 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
 var forms_1 = require('@angular/forms');
-var http_1 = require('@angular/http');
+var http_1 = require('@angular/http'); //TODO Faz sentido?
 var app_component_1 = require('./app.component');
-var router_1 = require('@angular/router');
+var app_routing_module_1 = require('./app-routing.module');
+var top10_module_1 = require('./top10/top10.module');
+var game_module_1 = require('./game-naval-battle/game.module');
 var dashboard_component_1 = require('./dashboard/dashboard.component');
+var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
 var historical_component_1 = require('./historical/historical.component');
 var historical_service_1 = require('./services/historical.service');
-var game_module_1 = require('./game-naval-battle/game.module');
-var top10_module_1 = require('./top10/top10.module');
-var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
-var game_component_1 = require('./game-naval-battle/game.component');
+var game_service_1 = require('./services/game.service');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -29,39 +29,19 @@ var AppModule = (function () {
             imports: [platform_browser_1.BrowserModule,
                 forms_1.FormsModule,
                 http_1.HttpModule,
-                game_module_1.GameNavalBattleModule,
+                app_routing_module_1.AppRoutingModule,
+                //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
+                //HistoricalModule,
+                //LoginModule,
                 top10_module_1.Top10Module,
-                router_1.RouterModule.forRoot([
-                    {
-                        path: 'dashboard',
-                        component: dashboard_component_1.DashboardComponent
-                    },
-                    {
-                        path: 'current-games',
-                        //component: GameNavalBattleModule
-                        component: game_component_1.GameComponent
-                    },
-                    {
-                        path: 'historical',
-                        component: historical_component_1.HistoricalComponent
-                    },
-                    {
-                        path: 'game-lobby',
-                        component: game_lobby_component_1.GameLobbyComponent
-                    },
-                    {
-                        path: '',
-                        redirectTo: '/current-games',
-                        pathMatch: 'full'
-                    }
-                ])
+                game_module_1.GameNavalBattleModule
             ],
             declarations: [app_component_1.AppComponent,
                 dashboard_component_1.DashboardComponent,
-                historical_component_1.HistoricalComponent,
-                game_lobby_component_1.GameLobbyComponent
+                game_lobby_component_1.GameLobbyComponent,
+                historical_component_1.HistoricalComponent
             ],
-            providers: [historical_service_1.HistoricalService],
+            providers: [historical_service_1.HistoricalService, game_service_1.GameService],
             bootstrap: [app_component_1.AppComponent]
         }), 
         __metadata('design:paramtypes', [])
@@ -69,4 +49,5 @@ var AppModule = (function () {
     return AppModule;
 }());
 exports.AppModule = AppModule;
+//TODO verificiar se todos os componentes tem module.id 
 //# sourceMappingURL=app.module.js.map

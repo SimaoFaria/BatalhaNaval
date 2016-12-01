@@ -8,8 +8,8 @@ export class Player {
 
 export class GamingPlayer {
     username: string;
-    score : number;
-    classification : string;
+    score: number;
+    classification: string;
 }
 
 //referencia para o game em que teve max pontuaçoa?

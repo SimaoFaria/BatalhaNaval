@@ -8,4 +8,8 @@ import { Component } from '@angular/core';
 
 })
 
-export class GameDefendComponent { }
+export class GameDefendComponent {
+
+    value : number = 13;
+
+ }

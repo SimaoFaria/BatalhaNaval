@@ -14,13 +14,21 @@ var platform_browser_1 = require('@angular/platform-browser');
 var game_component_1 = require('./game.component');
 var defend_component_1 = require('./defend/defend.component');
 var attack_component_1 = require('./attack/attack.component');
+var config_board_ships_component_1 = require('./config-board-ships/config.board.ships.component');
 var GameNavalBattleModule = (function () {
     function GameNavalBattleModule() {
     }
     GameNavalBattleModule = __decorate([
         core_1.NgModule({
-            imports: [common_1.CommonModule, platform_browser_1.BrowserModule],
-            declarations: [game_component_1.GameComponent, defend_component_1.GameDefendComponent, attack_component_1.GameAttackComponent]
+            imports: [common_1.CommonModule,
+                platform_browser_1.BrowserModule],
+            declarations: [
+                config_board_ships_component_1.ConfigBoarShipsComponent,
+                game_component_1.GameComponent,
+                defend_component_1.GameDefendComponent,
+                attack_component_1.GameAttackComponent
+            ],
+            providers: []
         }), 
         __metadata('design:paramtypes', [])
     ], GameNavalBattleModule);

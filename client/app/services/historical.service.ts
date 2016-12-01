@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Player } from '../models/player';
 import { Login } from '../models/login';
 import { Historical } from '../historical/historical';
-import { HISTORICALS } from '../mock/mock-historical';
 
 import { Http } from '@angular/http'; 
 

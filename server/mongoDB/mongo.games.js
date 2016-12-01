@@ -124,7 +124,7 @@ function getHistoricalsByUsername(request, response, next){
 	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
 	//var username = new mongodb.ObjectID(request.params.username);
 	var username = request.params.username;
-	database.db.collection("games").find({"players.username":username}).toArray(function(err, games) {
+	database.db.collection("games").find( {$and: [{"players.username":username}, {"status":"ended"}]}).toArray(function(err, games) {
 		if(err) {
         console.log(err);
         next();
@@ -150,6 +150,50 @@ function getPendingGames(request, response, next){
 }
 
 
+
+function getCurrentGames(request, response, next){
+	// TODO: obtain one game (by ObjectID) from games collection 
+	// and return a JSON response with that game
+	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
+	//var username = new mongodb.ObjectID(request.params.username);
+	var username = request.params.username;
+	database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}).toArray(function(err, games) {
+		if(err) {
+        console.log(err);
+        next();
+    } else {
+	    response.json(games);
+	    next();
+    }
+  });
+}
+
+
+
+function getCurrentStateGames(request, response, next){
+	// TODO: obtain one game (by ObjectID) from games collection
+	// and return a JSON response with that game
+	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
+	//var username = new mongodb.ObjectID(request.params.username);
+
+	//TODO fazer bem feito par nao haver falhas de segurança
+	//var select = {players[0].tabuleiros.};
+
+	var username = request.params.username;
+	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
+	database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}).toArray(function(err, games) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+	});
+}
+
+
+
 // Routes for the games
 games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'games',getGames);
@@ -159,8 +203,9 @@ games.init = function(server,apiBaseUri){
 	server.del(apiBaseUri+'games/:id',deleteGame);
 	server.get(apiBaseUri+'historicals', getHistoricals);
 	server.get(apiBaseUri+'historicals/:username', getHistoricalsByUsername);
-
 	server.get(apiBaseUri+'pending-games',getPendingGames);
+	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
+	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 
 	console.log("Games routes registered");
 }

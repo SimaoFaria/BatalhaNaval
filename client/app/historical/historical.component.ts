@@ -49,7 +49,7 @@ export class HistoricalComponent{
 
     //TODO se a sessão estiver vazia carrega a rota de login (middleware)
 
-    this.historicalService.getMyHistorical('Cao de agua')
+    this.historicalService.getMyHistorical('Tonny')
             .subscribe((response) => this.historicals = response);
 
   }

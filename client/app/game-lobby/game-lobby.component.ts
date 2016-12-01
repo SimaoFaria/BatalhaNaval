@@ -30,7 +30,7 @@ export class GameLobbyComponent{
             "classification" : ""
         };
 
-        let game: Game = {
+        /*let game: Game = {
             "status" : "pending",
             "createdBy" : player.username,
             "aborted" : false,
@@ -44,12 +44,12 @@ export class GameLobbyComponent{
                     "classification" : player.classification
                 }
             ]
-        };
+        };*/
 
         //DUVIDA: onde se lida com a atualização no gameLobby com este novo jogo criado?
 
-        this.pendingGamesService.createNewGame(game)
-            .subscribe((response) => response);
+        /*this.pendingGamesService.createNewGame(game)
+            .subscribe((response) => response);*/
     }
 
     enterGame() {

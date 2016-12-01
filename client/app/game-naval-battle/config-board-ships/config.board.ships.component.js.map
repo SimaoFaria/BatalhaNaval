@@ -1,0 +1,1 @@
+{"version":3,"file":"config.board.ships.component.js","sourceRoot":"","sources":["config.board.ships.component.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,qBAA0B,eAAe,CAAC,CAAA;AAY1C;IAAA;IAAwC,CAAC;IAVzC;QAAC,gBAAS,CAAC;YACT,QAAQ,EAAE,MAAM,CAAC,EAAE;YACnB,QAAQ,EAAE,iBAAiB;YAC3B,WAAW,EAAE,cAAc;SAK5B,CAAC;;gCAAA;IAEsC,+BAAC;AAAD,CAAC,AAAzC,IAAyC;AAA5B,gCAAwB,2BAAI,CAAA"}

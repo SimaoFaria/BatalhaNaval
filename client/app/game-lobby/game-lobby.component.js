@@ -23,24 +23,24 @@ var GameLobbyComponent = (function () {
             "score": 0,
             "classification": ""
         };
-        var game = {
-            "status": "pending",
-            "createdBy": player.username,
-            "aborted": false,
-            "startDate": "DATA A POR",
-            "endDate": "DATA A POR",
-            "winner": "",
-            "players": [
+        /*let game: Game = {
+            "status" : "pending",
+            "createdBy" : player.username,
+            "aborted" : false,
+            "startDate" : "DATA A POR",
+            "endDate" : "DATA A POR",
+            "winner" : "",
+            "players" : [
                 {
-                    "username": player.username,
-                    "score": player.score,
-                    "classification": player.classification
+                    "username" : player.username,
+                    "score" : player.score,
+                    "classification" : player.classification
                 }
             ]
-        };
+        };*/
         //DUVIDA: onde se lida com a atualização no gameLobby com este novo jogo criado?
-        this.pendingGamesService.createNewGame(game)
-            .subscribe(function (response) { return response; });
+        /*this.pendingGamesService.createNewGame(game)
+            .subscribe((response) => response);*/
     };
     GameLobbyComponent.prototype.enterGame = function () {
         var player = {

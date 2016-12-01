@@ -11,21 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var DashboardComponent = (function () {
     function DashboardComponent() {
-        //games : Game[];
-        //constructor(private router: Router)  {}
-        //se tem login 
-        //# getGames(User)
-        //
-        //getGames(username : string){}
-        this.value = 1;
+        this.title = 'Dashboard';
     }
     DashboardComponent = __decorate([
         core_1.Component({
-            moduleId: module.id,
-            providers: [],
-            selector: 'my-dashboard',
-            templateUrl: '../game-naval-battle/gameBoard.html',
-            styleUrls: ['../game-naval-battle/css/main.css']
+            selector: 'dashboard',
+            templateUrl: './app/dashboard/dashboard.html',
+            styles: ["\n    div {\n        width:15%;\n        height:100%;\n        background-color: yellowgreen;\n        float:left;\n    }\n    "],
         }), 
         __metadata('design:paramtypes', [])
     ], DashboardComponent);

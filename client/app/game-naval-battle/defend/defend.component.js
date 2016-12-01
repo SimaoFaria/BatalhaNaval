@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var GameDefendComponent = (function () {
     function GameDefendComponent() {
+        this.value = 13;
     }
     GameDefendComponent = __decorate([
         core_1.Component({

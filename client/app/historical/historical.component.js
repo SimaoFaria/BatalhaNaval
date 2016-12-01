@@ -20,7 +20,7 @@ var HistoricalComponent = (function () {
     HistoricalComponent.prototype.getMyGames = function (event) {
         //TODO se a sessão estiver vazia carrega a rota de login (middleware)
         var _this = this;
-        this.historicalService.getMyHistorical('Cao de agua')
+        this.historicalService.getMyHistorical('Tonny')
             .subscribe(function (response) { return _this.historicals = response; });
     };
     HistoricalComponent.prototype.getAllGames = function (event) {

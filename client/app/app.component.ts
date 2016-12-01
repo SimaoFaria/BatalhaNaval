@@ -1,41 +1,14 @@
 import { Component } from '@angular/core';
 
 import { HistoricalService } from './services/historical.service';
+import { GameService } from './services/game.service';
 
 @Component({
   selector: 'my-app',
-  template: `
-    <div>
-        <h1>{{title}}</h1>
-        <nav>
-            <a routerLink="/current-games">Current Games</a>
-            <a routerLink="/dashboard">Dashboard</a>
-            <a routerLink="/historical">Historical</a>
-            <a routerLink="/login">Login</a>
-            <a routerLink="/game-lobby">Game Lobby</a>
-        </nav>
-    </div>
-    <my-top10></my-top10>
-    <router-outlet></router-outlet>
-    `,
-  styles: [`
-    div {
-        width:15%;
-        height:100%;
-        /*background-color: #607D8B;*/
-        background-color: yellowgreen;
-        float:left;
-    }
-
-    .conteiner{
-        width:70%; 
-        background-color:red;
-    }
-    `],
-  providers: [HistoricalService]
+  templateUrl: './app/app-index.html',
+  //styleUrls: [ './app/app-styles.css' ], //TODO dps para os primefaces e bootstrapes
+  providers: [HistoricalService, GameService]
   
 })
 
-export class AppComponent {
-  title = 'Dashboard';
-}
+export class AppComponent {}

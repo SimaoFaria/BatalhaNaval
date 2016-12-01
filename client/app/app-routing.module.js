@@ -10,24 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
-var dashboard_component_1 = require('./dashboard/dashboard.component');
-var historical_component_1 = require('./historical/historical.component');
-var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
-var game_component_1 = require('./game-naval-battle/game.component');
-var routes = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: dashboard_component_1.DashboardComponent },
-    //{ path: 'current-games',  component: GameNavalBattleModule },
-    { path: 'current-games', component: game_component_1.GameComponent },
-    { path: 'historical', component: historical_component_1.HistoricalComponent },
-    { path: 'game-lobby', component: game_lobby_component_1.GameLobbyComponent }
-];
+var routes_1 = require('./routes');
 var AppRoutingModule = (function () {
     function AppRoutingModule() {
     }
     AppRoutingModule = __decorate([
         core_1.NgModule({
-            imports: [router_1.RouterModule.forRoot(routes)],
+            imports: [router_1.RouterModule.forRoot(routes_1.ROUTES)],
             exports: [router_1.RouterModule]
         }), 
         __metadata('design:paramtypes', [])

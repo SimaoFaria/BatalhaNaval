@@ -1,0 +1,50 @@
+<div *ngFor="let game of playerStateGame" id="{{game.id}}" style="background-color:yellow;width:80%">
+
+    <div  *ngIf="game.status == 'pending'" style="background-color:red;">
+        <h3>Config Ships</h3>
+        Tipo de Navio: 
+        <select id=tiponavio>
+            <option value=0 selected>Porta-Aviões</option>
+            <option value=1>Couraçado</option>
+            <option value=2>Cruzador</option>
+            <option value=3>Contra-Torpedeiro</option>
+            <option value=4>Submarino</option>
+        </select>
+        Orientação
+        <select id=orientacao>
+            <option value=0 selected>Normal</option>
+            <option value=1>Roda 90º</option>
+            <option value=2>Roda 180º</option>
+            <option value=3>Roda 270º</option>
+        </select>    
+        Linha (A..J): <input type=text id=linha>
+        Coluna (1..10): <input type=text id=coluna>
+        <button id=add (click)="addNavio(game.id)">Adicionar Navio</button>
+        <button id=limpar (click)="limparTabuleiro()">Limpar Tabuleiro</button>
+        <hr>
+        <h3>Exceção: <span id=msgerro style="color:red"></span></h3>
+        <hr>
+        <!--<table id=tabela border=1>
+        </table>    -->
+        <hr>
+        <h3>Lista de navios</h3>
+        <ul id=listanavios>
+        </ul>
+    </div>
+
+    <table id=tabela border=1 style="width:80%;">
+        <tr *ngFor="let line of LINES">
+            <td>{{line}}</td>
+            <td *ngFor="let column of COLUMNS">
+                <!--<input type="text" *ngIf="game.boardDefense.getCelula(line, column) == 1" value="X"/>-->
+                <input type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="X"/>
+                <!--<input type="text" *ngIf="tabuleiro.getCelula(line, column).tipo == 0}}" value="."/>-->
+                <!--<input type="text" value=""/>-->
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td *ngFor="let column of COLUMNS">{{column}}</td>
+        </tr>
+    </table>
+</div>
