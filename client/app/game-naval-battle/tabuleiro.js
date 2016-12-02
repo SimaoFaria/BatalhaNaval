@@ -42,16 +42,16 @@ var Tabuleiro = (function () {
     /**
      *
      * **/
-    Tabuleiro.prototype.adicionaNavio = function (navio) {
-        try {
-            this.navios.push(navio);
-            return navio;
-        }
-        catch (e) {
-            // Alterar para fazer tratamento de erros
-            throw e;
-        }
-    };
+    // public adicionaNavio(navio : Navio): Navio{
+    //     try {
+    //         this.navios.push(navio);
+    //         return navio;
+    //     }
+    //     catch (e){
+    //         // Alterar para fazer tratamento de erros
+    //         throw e;
+    //     }
+    // }
     // Devolve as células na forma de matriz - usar só para testes (performance inferior à propriedade celulas)
     Tabuleiro.prototype.celulasMatrix = function () {
         var _this = this;

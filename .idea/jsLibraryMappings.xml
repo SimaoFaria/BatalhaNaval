@@ -2,5 +2,6 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$/client" libraries="{ipl.estg.ei.dad.201617.batalhanaval/client/node_modules}" />
+    <file url="file://$PROJECT_DIR$/server" libraries="{ipl.estg.ei.dad.201617.batalhanaval/server/node_modules}" />
   </component>
 </project>

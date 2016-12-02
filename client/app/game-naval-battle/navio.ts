@@ -53,15 +53,15 @@ export class Navio{
      *
      *
      * **/
-    public constructor (tipo: TipoNavio, posicoes: Posicao[]){
-        console.log("construtor navio");
-        this.tipoNavio = tipo;
-        this.orientacao = Orientacao.Roda180;
-        this.celulas = [];
-        this.posicoesOcupadas = posicoes;
-        this.preenchePosicoesVizinhas();
-        console.log("fim construtor navio");
-    }
+    // public constructor (tipo: TipoNavio, posicoes: Posicao[]){
+    //     console.log("construtor navio");
+    //     this.tipoNavio = tipo;
+    //     this.orientacao = Orientacao.Roda180;
+    //     this.celulas = [];
+    //     this.posicoesOcupadas = posicoes;
+    //     this.preenchePosicoesVizinhas();
+    //     console.log("fim construtor navio");
+    // }
     
 
     public addCelula(celula: Celula): void{
@@ -218,4 +218,38 @@ export class Navio{
         // Extrair posições repetidas do array
         this.posicoesVizinhas = Posicao.removeRepetidos(vizinhas);
    }
+
 }
+
+
+export class ShipForDB {
+
+    public position: Position;
+    public type: string;
+    public orientation: string;
+
+    constructor(position: Position, type: string, orientation: string){
+        this.position = position;
+        this.type = type;
+        this.orientation = orientation;
+    }
+
+}
+
+export class Position {
+    public line: string;
+    public column: number;
+
+    constructor(line: string, column: number){
+        this.line = line;
+        this.column = column;
+    }
+
+
+}
+
+
+
+
+
+

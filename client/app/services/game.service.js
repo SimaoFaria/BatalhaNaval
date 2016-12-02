@@ -23,6 +23,60 @@ var GameService = (function () {
         return this.http.get('/api/v1/create-game/' + idGame)
             .map((response) => this.game = response.json());
     }*/
+    GameService.prototype.putCurrentStateGames = function (playerStateGame) {
+        console.log("VEIO AQUI VER !!!!!!!!!!!!!!!");
+        var body;
+        var shipsforBD = [];
+        for (var _i = 0, _a = playerStateGame.boardDefense.navios; _i < _a.length; _i++) {
+            var navio = _a[_i];
+            //TODO fazer isto bem feitinho com uma class nova do ship para a db
+            var type = void 0;
+            var orientation_1 = void 0;
+            switch (navio.orientacao) {
+                case navio_1.Orientacao.Normal:
+                    orientation_1 = 'Normal';
+                    break;
+                case navio_1.Orientacao.Roda90:
+                    orientation_1 = 'Roda90';
+                    break;
+                case navio_1.Orientacao.Roda180:
+                    orientation_1 = 'Roda180';
+                    break;
+                case navio_1.Orientacao.Roda270:
+                    orientation_1 = 'Roda270';
+                    break;
+            }
+            switch (navio.tipoNavio) {
+                case navio_1.TipoNavio.PortaAvioes:
+                    type = 'PortaAvioes';
+                    break;
+                case navio_1.TipoNavio.Couracado:
+                    type = 'Couracado';
+                    break;
+                case navio_1.TipoNavio.Cruzador:
+                    type = 'Cruzador';
+                    break;
+                case navio_1.TipoNavio.ContraTorpedeiro:
+                    type = 'ContraTorpedeiro';
+                    break;
+                case navio_1.TipoNavio.Submarino:
+                    type = 'Submarino';
+                    break;
+            }
+            shipsforBD.push(new navio_1.ShipForDB(new navio_1.Position(navio.posicao.linha.toString(), navio.posicao.coluna), type, orientation_1));
+        }
+        console.log("********* AQUI ***********");
+        body = JSON.stringify(shipsforBD);
+        console.log(body);
+        console.log("********* END AQUI ***********");
+        return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
+            .map(function (response) {
+            //this.games = response.json();
+            console.log("PUT");
+            console.dir(response.json());
+            console.log("END PUT");
+        });
+    };
     GameService.prototype.getCurrentGames = function (username) {
         var _this = this;
         return this.http.get('/api/v1/current-games/' + username)
@@ -31,8 +85,6 @@ var GameService = (function () {
         //por o json num arrya de game para mandar para o cliente
     };
     GameService.prototype.getCurrentStateGames = function (username) {
-        /*return this.http.get('/api/v1/current-state-games/' + username)
-            .map((response) => this.playerStateGame = response.json());*/
         var _this = this;
         return this.http.get('/api/v1/current-state-games/' + username)
             .map(function (response) { return response.json(); })
@@ -41,26 +93,56 @@ var GameService = (function () {
             playerStateGames.forEach(function (playerStateGame) {
                 var boardDefense;
                 boardDefense = new board_defense_1.BoardDefense();
+                //tabuleiro 0 é o da defesa
                 playerStateGame.players[0].tabuleiros[0].boardDefense.forEach(function (ship) {
-                    // console.log("XXXXXXXXXXXXXXXXX");
-                    // console.log(ships);
-                    // console.log("XXXXXXXXXXXXXXXXX");
-                    //let type = ship.type; //TODO
-                    var type = navio_1.TipoNavio.PortaAvioes;
-                    var allPositions = [];
-                    ship.positions.forEach(function (position) {
-                        allPositions.push(new posicao_1.Posicao(position.line.toString(), position.column));
-                        console.log("position=> linha: " + "'" + position.line.toString() + "coluna: " + "'" + position.column + "'");
-                    });
-                    console.log("allPositions: ");
-                    console.dir(allPositions);
-                    console.log("passou antes....");
-                    boardDefense.adicionaNavioToDefenseBoard(type, allPositions);
-                    console.log("passou....");
+                    console.log("XXXXXXXXX  XXXXXXXX");
+                    console.log(ship.orientation);
+                    console.log(ship.position.line);
+                    console.log(ship.position.column);
+                    console.log(ship.type);
+                    console.log("XXXXXXXXX  XXXXXXXX");
+                    var orientation = ship.orientation;
+                    var line = ship.position.line;
+                    var column = ship.position.column;
+                    var type = ship.type;
+                    var ship_orientation;
+                    var ship_position;
+                    var ship_type;
+                    //TODO fazer pela foreach pela lista de enumns para ORIENTACAO e TIPOBARCO
+                    switch (orientation) {
+                        case 'Normal':
+                            ship_orientation = navio_1.Orientacao.Normal;
+                            break;
+                        case 'Roda90':
+                            ship_orientation = navio_1.Orientacao.Roda90;
+                            break;
+                        case 'Roda180':
+                            ship_orientation = navio_1.Orientacao.Roda180;
+                            break;
+                        case 'Roda270':
+                            ship_orientation = navio_1.Orientacao.Roda270;
+                            break;
+                    }
+                    ship_position = new posicao_1.Posicao(line, column);
+                    switch (type) {
+                        case 'PortaAvioes':
+                            ship_type = navio_1.TipoNavio.PortaAvioes;
+                            break;
+                        case 'Couracado':
+                            ship_type = navio_1.TipoNavio.Couracado;
+                            break;
+                        case 'Cruzador':
+                            ship_type = navio_1.TipoNavio.Cruzador;
+                            break;
+                        case 'ContraTorpedeiro':
+                            ship_type = navio_1.TipoNavio.ContraTorpedeiro;
+                            break;
+                        case 'Submarino':
+                            ship_type = navio_1.TipoNavio.Submarino;
+                            break;
+                    }
+                    boardDefense.adicionaNavio(ship_type, ship_orientation, 'A', 1);
                 });
-                // console.log("##################################");
-                // console.log(playerStateGame.players[0].tabuleiros[0]);
-                // console.log("##################################");
                 _this.playerStateGame.push(new game_1.PlayerStateGame(playerStateGame._id, playerStateGame.status, boardDefense));
             });
             console.log("-----------server side----------");
@@ -68,6 +150,70 @@ var GameService = (function () {
             console.log("-----------server side----------");
             return _this.playerStateGame;
         });
+        // getCurrentStateGames_ANTIIGO(username : string):Observable<PlayerStateGame[]>{
+        //
+        //         /*return this.http.get('/api/v1/current-state-games/' + username)
+        //          .map((response) => this.playerStateGame = response.json());*/
+        //
+        //         return this.http.get('/api/v1/current-state-games/' + username)
+        //             .map(response => <PlayerStateGame[]>response.json())
+        //             .map((playerStateGames) => {
+        //
+        //                 this.playerStateGame = [];
+        //
+        //                 playerStateGames.forEach((playerStateGame) => {
+        //
+        //                     let boardDefense : BoardDefense;
+        //                     boardDefense = new BoardDefense();
+        //
+        //                     playerStateGame.players[0].tabuleiros[0].boardDefense.forEach((ship) => {
+        //
+        //                         // console.log("XXXXXXXXXXXXXXXXX");
+        //                         // console.log(ships);
+        //                         // console.log("XXXXXXXXXXXXXXXXX");
+        //
+        //                         //let type = ship.type; //TODO
+        //                         let type = TipoNavio.PortaAvioes;
+        //
+        //
+        //                         let allPositions: Posicao[] = [];
+        //                         ship.positions.forEach((position) => {
+        //                             allPositions.push(new Posicao(position.line.toString(), position.column));
+        //                             console.log("position=> linha: "+ "'" +position.line.toString() + "coluna: "+ "'" + position.column + "'" );
+        //                         });
+        //
+        //                         console.log("allPositions: ");
+        //                         console.dir(allPositions);
+        //
+        //
+        //                         console.log("passou antes....");
+        //                         boardDefense.adicionaNavioToDefenseBoard(type, allPositions);
+        //
+        //                         console.log("passou....");
+        //
+        //                     });
+        //
+        //                     // console.log("##################################");
+        //                     // console.log(playerStateGame.players[0].tabuleiros[0]);
+        //                     // console.log("##################################");
+        //
+        //                     this.playerStateGame.push(
+        //                         new PlayerStateGame(
+        //                             playerStateGame._id,
+        //                             playerStateGame.status,
+        //                             boardDefense
+        //                         )
+        //                     )
+        //
+        //                 });
+        //
+        //                 console.log("-----------server side----------");
+        //                 console.log(playerStateGames);
+        //                 console.log("-----------server side----------");
+        //
+        //
+        //                 return this.playerStateGame;
+        //             });
         // return this.http.get('/api/v1/current-state-games/' + username)
         //     .map((response) => {
         //

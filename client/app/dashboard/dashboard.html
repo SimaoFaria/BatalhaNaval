@@ -1,3 +1,4 @@
+<!--
 <div>
     <h3>{{title}}</h3>
     <nav>
@@ -7,3 +8,18 @@
         <a routerLink="/game-lobby">Game Lobby</a><br>
     </nav>
 </div>
+-->
+
+<nav class="w3-sidenav w3-dark-grey w3-animate-left" style="display:none" id="mySidenav">
+    <a href="javascript:void(0)" onclick="w3_close()"
+       class="w3-closenav w3-large" style="color:darkred;">Close &times;</a>
+    <a routerLink="/current-games" style="color:white;">Current Games</a>
+    <a routerLink="/historical" style="color:white;">Historical</a>
+    <a routerLink="/login" style="color:white;">Login</a>
+    <a routerLink="/game-lobby" style="color:white;">Game Lobby</a>
+</nav>
+
+<header class="w3-container w3-teal">
+    <span class="w3-opennav w3-xlarge" onclick="w3_open()">&#9776;</span>
+    <h1>Battle Ship</h1>
+</header>

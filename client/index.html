@@ -11,6 +11,65 @@
     <script src="node_modules/zone.js/dist/zone.js"></script>
     <script src="node_modules/reflect-metadata/Reflect.js"></script>
     <script src="node_modules/systemjs/dist/system.src.js"></script>
+
+    <!-- INICIO MENU-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+
+    <script>
+      function w3_open() {
+        document.getElementById("mySidenav").style.display = "block";
+      }
+      function w3_close() {
+        document.getElementById("mySidenav").style.display = "none";
+      }
+    </script>
+    <!-- FIM MENU-->
+
+    <!-- INICIO BOTAO -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      function w3_open() {
+        document.getElementById("mySidenav").style.display = "block";
+      }
+      function w3_close() {
+        document.getElementById("mySidenav").style.display = "none";
+      }
+    </script>
+    <!-- FIM BOTAO -->
+
+    <!-- INICIO HISTORY -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      function filter_my_games() {
+        document.getElementById('filter_all_games').classList.remove('disabled');
+        document.getElementById('filter_all_games').classList.add('active');
+        document.getElementById("filter_all_games").disabled = false;
+
+        document.getElementById('filter_my_games').classList.remove('active');
+        document.getElementById('filter_my_games').classList.add('disabled');
+        document.getElementById("filter_my_games").disabled = true;
+      }
+      function filter_all_games() {
+        document.getElementById('filter_my_games').classList.remove('disabled');
+        document.getElementById('filter_my_games').classList.add('active');
+        document.getElementById("filter_my_games").disabled = false;
+
+        document.getElementById('filter_all_games').classList.remove('active');
+        document.getElementById('filter_all_games').classList.add('disabled');
+        document.getElementById("filter_all_games").disabled = true;
+
+      }
+    </script>
+
+    <!-- END HISTORY -->
+
+
+
     <!-- 2. Configure SystemJS -->
     <script src="systemjs.config.js"></script>
     <script>

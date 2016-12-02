@@ -17,7 +17,7 @@ export class BoardDefense extends Tabuleiro{
             console.log("adicionaNavioToDefenseBoard");
 
             //public constructor (tipo: TipoNavio, orientacao: Orientacao, linha: string, coluna: number){
-            let navio: Navio = new Navio(tipo, Orientacao.Roda180, 'F', 5);
+            let navio: Navio = new Navio(tipo, Orientacao.Roda90, 'F', 5);
             navio.posicoesOcupadas = posicoes;
             this.posicoesOcupadas = navio.calculaPosicoesOcupadas(); //TODO voltar a private
             navio.preenchePosicoesVizinhas(); //TODO voltar a provate
@@ -40,6 +40,7 @@ export class BoardDefense extends Tabuleiro{
             throw e;
         }
     }
+
 
 
     // addShip(posicoes : Posicao[]) : void {

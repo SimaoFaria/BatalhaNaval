@@ -17,7 +17,7 @@ var DashboardComponent = (function () {
         core_1.Component({
             selector: 'dashboard',
             templateUrl: './app/dashboard/dashboard.html',
-            styles: ["\n    div {\n        width:15%;\n        height:100%;\n        background-color: yellowgreen;\n        float:left;\n    }\n    "],
+            styleUrls: ['./app/dashboard/dashboard.css']
         }), 
         __metadata('design:paramtypes', [])
     ], DashboardComponent);

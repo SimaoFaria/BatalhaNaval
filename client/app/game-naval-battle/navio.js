@@ -36,6 +36,19 @@ var Navio = (function () {
         this.posicoesOcupadas = this.calculaPosicoesOcupadas();
         this.preenchePosicoesVizinhas();
     }
+    /***
+     *
+     *
+     * **/
+    // public constructor (tipo: TipoNavio, posicoes: Posicao[]){
+    //     console.log("construtor navio");
+    //     this.tipoNavio = tipo;
+    //     this.orientacao = Orientacao.Roda180;
+    //     this.celulas = [];
+    //     this.posicoesOcupadas = posicoes;
+    //     this.preenchePosicoesVizinhas();
+    //     console.log("fim construtor navio");
+    // }
     Navio.prototype.addCelula = function (celula) {
         if (!posicao_1.Posicao.existe(celula.posicao, this.posicoesOcupadas)) {
             throw new Error('Não é possível adicionar a célula ao navio.');
@@ -187,4 +200,21 @@ var Navio = (function () {
     return Navio;
 }());
 exports.Navio = Navio;
+var ShipForDB = (function () {
+    function ShipForDB(position, type, orientation) {
+        this.position = position;
+        this.type = type;
+        this.orientation = orientation;
+    }
+    return ShipForDB;
+}());
+exports.ShipForDB = ShipForDB;
+var Position = (function () {
+    function Position(line, column) {
+        this.line = line;
+        this.column = column;
+    }
+    return Position;
+}());
+exports.Position = Position;
 //# sourceMappingURL=navio.js.map

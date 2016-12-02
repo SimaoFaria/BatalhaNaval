@@ -60,16 +60,16 @@ export class Tabuleiro {
     /**
      *
      * **/
-    public adicionaNavio(navio : Navio): Navio{
-        try {
-            this.navios.push(navio);
-            return navio;
-        }
-        catch (e){
-            // Alterar para fazer tratamento de erros
-            throw e;
-        }
-    }
+    // public adicionaNavio(navio : Navio): Navio{
+    //     try {
+    //         this.navios.push(navio);
+    //         return navio;
+    //     }
+    //     catch (e){
+    //         // Alterar para fazer tratamento de erros
+    //         throw e;
+    //     }
+    // }
 
 
 

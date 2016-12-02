@@ -10,7 +10,9 @@ import { HistoricalService } from '../services/historical.service';
 @Component({
   moduleId: module.id,
   selector: 'my-historical',
-  template: ` <h1>Historico</h1>
+  templateUrl: './historical.html',
+  styleUrls: [ './historical.css' ],
+  /*template: ` <h1>Historico</h1>
               <h3>Filter by:</h3>
               <button type="button" (click)="getMyGames()">My Games</button>
               <button type="button" (click)="getAllGames()">All Games</button>
@@ -30,7 +32,7 @@ import { HistoricalService } from '../services/historical.service';
                     </li>
                    </ul>
                 </li>
-              </ul>`,
+              </ul>`,*/
   providers: [HistoricalService]
 })
 

@@ -18,7 +18,7 @@ var BoardDefense = (function (_super) {
         try {
             console.log("adicionaNavioToDefenseBoard");
             //public constructor (tipo: TipoNavio, orientacao: Orientacao, linha: string, coluna: number){
-            var navio_2 = new navio_1.Navio(tipo, navio_1.Orientacao.Roda180, 'F', 5);
+            var navio_2 = new navio_1.Navio(tipo, navio_1.Orientacao.Roda90, 'F', 5);
             navio_2.posicoesOcupadas = posicoes;
             this.posicoesOcupadas = navio_2.calculaPosicoesOcupadas(); //TODO voltar a private
             navio_2.preenchePosicoesVizinhas(); //TODO voltar a provate

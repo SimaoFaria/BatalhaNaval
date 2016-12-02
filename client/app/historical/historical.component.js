@@ -32,7 +32,29 @@ var HistoricalComponent = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'my-historical',
-            template: " <h1>Historico</h1>\n              <h3>Filter by:</h3>\n              <button type=\"button\" (click)=\"getMyGames()\">My Games</button>\n              <button type=\"button\" (click)=\"getAllGames()\">All Games</button>\n              <h3>Results:</h3>\n              <ul>\n                <li *ngFor=\"let historical of historicals\">\n                  <span>Create By: {{historical.createdBy}}</span>\n                  <span>Aborted: {{historical.aborted}}</span>\n                  <span>Start Date: {{historical.startDate}}</span>\n                  <span>End Date: {{historical.endDate}}</span>\n                  <span>Winner: {{historical.winner}}</span>\n                  <ul>\n                    <li *ngFor=\"let player of historical.players\">\n                      <span>\n                        {{player.username}}\n                      </span>\n                    </li>\n                   </ul>\n                </li>\n              </ul>",
+            templateUrl: './historical.html',
+            styleUrls: ['./historical.css'],
+            /*template: ` <h1>Historico</h1>
+                        <h3>Filter by:</h3>
+                        <button type="button" (click)="getMyGames()">My Games</button>
+                        <button type="button" (click)="getAllGames()">All Games</button>
+                        <h3>Results:</h3>
+                        <ul>
+                          <li *ngFor="let historical of historicals">
+                            <span>Create By: {{historical.createdBy}}</span>
+                            <span>Aborted: {{historical.aborted}}</span>
+                            <span>Start Date: {{historical.startDate}}</span>
+                            <span>End Date: {{historical.endDate}}</span>
+                            <span>Winner: {{historical.winner}}</span>
+                            <ul>
+                              <li *ngFor="let player of historical.players">
+                                <span>
+                                  {{player.username}}
+                                </span>
+                              </li>
+                             </ul>
+                          </li>
+                        </ul>`,*/
             providers: [historical_service_1.HistoricalService]
         }), 
         __metadata('design:paramtypes', [historical_service_1.HistoricalService])

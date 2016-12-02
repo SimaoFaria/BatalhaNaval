@@ -176,7 +176,7 @@ function getCurrentStateGames(request, response, next){
 	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
 	//var username = new mongodb.ObjectID(request.params.username);
 
-	//TODO fazer bem feito par nao haver falhas de segurança
+	//TODO fazer bem feito par nao haver falhas de segurança (so passar o tabuleiro do utilizar e o estado e o id e blablabla)
 	//var select = {players[0].tabuleiros.};
 
 	var username = request.params.username;
@@ -190,6 +190,46 @@ function getCurrentStateGames(request, response, next){
 			next();
 		}
 	});
+}
+
+function putCurrentStateGames(request, response, next) {
+
+	console.log("BANANAS");
+
+	var id = new mongodb.ObjectID(request.params.id);
+	var boardDefense = request.body; //PlayerStateGame
+	//game._id = id;
+
+	console.log("BANANAS2");
+
+	var username = "Cao de Agua";
+
+
+
+	database.db.collection("games").update(
+		{ _id: id, "players[0].username": username},
+		{
+			$set: {
+				"players[0].tabuleiros[0].boardDefense": boardDefense
+			}
+		},
+		function(err, result) {
+			if(err) {
+				console.log(err);
+				next();
+			} else {
+				database.db.collection("games").findOne({_id:id},function(err, game) {
+					if(err) {
+						console.log(err);
+						next();
+					} else {
+						response.json(game);
+						next();
+					}
+				});
+			}
+		}
+	);
 }
 
 
@@ -206,6 +246,7 @@ games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'pending-games',getPendingGames);
 	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
+	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);
 
 	console.log("Games routes registered");
 }

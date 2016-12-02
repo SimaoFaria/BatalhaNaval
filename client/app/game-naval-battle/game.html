@@ -1,6 +1,7 @@
-<div *ngFor="let game of playerStateGame" id="{{game.id}}" style="background-color:yellow;width:80%">
+<div class="container">
+<div *ngFor="let game of playerStateGame" id="{{game.idGame}}" style="background-color:lightgrey;width:80%">
 
-    <div  *ngIf="game.status == 'pending'" style="background-color:red;">
+    <div  *ngIf="game.status == 'pending'" style="background-color:darkgrey;">
         <h3>Config Ships</h3>
         Tipo de Navio: 
         <select id=tiponavio>
@@ -19,8 +20,9 @@
         </select>    
         Linha (A..J): <input type=text id=linha>
         Coluna (1..10): <input type=text id=coluna>
-        <button id=add (click)="addNavio(game.id)">Adicionar Navio</button>
-        <button id=limpar (click)="limparTabuleiro()">Limpar Tabuleiro</button>
+        <button id=add (click)="addNavioToBoardDefense(game.idGame)">Add Ship</button>
+        <button id=limpar (click)="limparTabuleiro(game.idGame)">Clear Board</button>
+        <button id=ready (click)="ready(game.idGame)">Ready</button>
         <hr>
         <h3>Exceção: <span id=msgerro style="color:red"></span></h3>
         <hr>
@@ -36,10 +38,7 @@
         <tr *ngFor="let line of LINES">
             <td>{{line}}</td>
             <td *ngFor="let column of COLUMNS">
-                <!--<input type="text" *ngIf="game.boardDefense.getCelula(line, column) == 1" value="X"/>-->
                 <input type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="X"/>
-                <!--<input type="text" *ngIf="tabuleiro.getCelula(line, column).tipo == 0}}" value="."/>-->
-                <!--<input type="text" value=""/>-->
             </td>
         </tr>
         <tr>
@@ -47,4 +46,10 @@
             <td *ngFor="let column of COLUMNS">{{column}}</td>
         </tr>
     </table>
+
+
+
+
+
+</div>
 </div>

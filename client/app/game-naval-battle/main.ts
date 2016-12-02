@@ -52,6 +52,7 @@ function addNavio(): void{
         }
         // Força cast para numero
         let col : number = +coluna;
+
         tabuleiro.adicionaNavio(tipoNavio, orientacao, linha, col);
         desenhaTabuleiro();
     } catch (e) {
