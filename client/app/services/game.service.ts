@@ -3,76 +3,54 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import {Game, PlayerStateGame} from './../game-naval-battle/game';
+import {Game, PlayerStateGame, CellAttack} from './../game-naval-battle/game';
 import {BoardDefense} from "../game-naval-battle/models/board-defense";
 import {Posicao} from "../game-naval-battle/posicao";
 import {TipoNavio, Orientacao, Navio, ShipForDB, Position} from "../game-naval-battle/navio";
 import {isUndefined} from "util";
+import {BoardAttack} from "../game-naval-battle/models/board-attack";
 
 
 @Injectable()
 export class GameService {
 
+    public static _G_BOARDDEFENSE : number = 0;
+
+    private _username : string;
+
     private games: Game[];
     private playerStateGame: PlayerStateGame[];
 
     constructor(private http: Http){
-
         this.playerStateGame = [];
     }
 
-    /*starGame(idGame : number):Observable<Game>{
-        return this.http.get('/api/v1/create-game/' + idGame)
-            .map((response) => this.game = response.json());
-    }*/
+    //TODO [DUVIDA] não da para passar no contrutor no gamecomponent o utilizador??
+    setUsername(username : string) {
+        this._username = username;
+    }
 
-    putCurrentStateGames(playerStateGame : PlayerStateGame) :Observable<PlayerStateGame>{
+    getCurrentGames(username : string):Observable<Game[]>{
 
-        console.log("VEIO AQUI VER !!!!!!!!!!!!!!!");
+        return this.http.get('/api/v1/current-games/' + username)
+            .map((response) => this.games = response.json());
 
-        let body: string;
+        //TODO
+        //por o json num arrya de game para mandar para o cliente
+    }
+
+
+    /**
+     *
+     * */
+    putCurrentStateGames(playerStateGame : PlayerStateGame, updateStatus : boolean) :Observable<PlayerStateGame>{
 
         let shipsforBD: ShipForDB[] = [];
 
         for (let navio of playerStateGame.boardDefense.navios) {
 
-            //TODO fazer isto bem feitinho com uma class nova do ship para a db
-            let type : string;
-            let orientation: string;
-
-            switch (navio.orientacao) {
-                case Orientacao.Normal:
-                    orientation = 'Normal';
-                    break;
-                case Orientacao.Roda90:
-                    orientation= 'Roda90';
-                    break;
-                case Orientacao.Roda180:
-                    orientation = 'Roda180';
-                    break;
-                case Orientacao.Roda270:
-                    orientation= 'Roda270';
-                    break;
-            }
-
-            switch (navio.tipoNavio) {
-                case TipoNavio.PortaAvioes:
-                    type = 'PortaAvioes';
-                    break;
-                case TipoNavio.Couracado:
-                    type = 'Couracado';
-                    break;
-                case TipoNavio.Cruzador:
-                    type = 'Cruzador';
-                    break;
-                case TipoNavio.ContraTorpedeiro:
-                    type = 'ContraTorpedeiro';
-                    break;
-                case TipoNavio.Submarino:
-                    type = 'Submarino';
-                    break;
-            }
-
+            let orientation : string = Navio.orientation_toString(navio.orientacao);
+            let type: string = Navio.type_toString(navio.tipoNavio);
 
             shipsforBD.push(
                     new ShipForDB(
@@ -84,34 +62,57 @@ export class GameService {
                         orientation
                     )
             )
+
         }
 
+        // let dataShips : string = '[';
+        // let lastIdx : number = shipsforBD.length-1;
+        // let i : number = 0;
+        // for (let ship of shipsforBD) {
+        //     dataShips += '{"position": {"line": "'+ship.position.line+'","column": '+ship.position.column+'},"type": "'+ship.type+'","orientation": "'+ship.orientation+'"}';
+        //     if(i < lastIdx){
+        //         dataShips += ',';
+        //     }
+        //     i++;
+        // }
+        // dataShips += ']';
 
-        console.log("********* AQUI ***********");
-        body =  JSON.stringify(shipsforBD);
-        console.log(body);
-        console.log("********* END AQUI ***********");
+        // console.log("desespero");
+        // console.log(dataShips);
+        // console.log("fim desespero");
+
+        //TODO [DUVIDA]
+        let bodyJSON = {
+            "username" : this._username,
+            "status" : playerStateGame.status,
+            "updateStatus": updateStatus,
+            "boardDefense" : shipsforBD
+        };
+
+
+        let body = bodyJSON; //TODO [DUVIDA] acho que este stringify não era necessaário do outro lado tive de converter para object json para guardar bem na collection
 
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map((response) => {
-                //this.games = response.json();
 
-                console.log("PUT");
-                console.dir(response.json());
-                console.log("END PUT");
+                //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
+                for (let game of this.playerStateGame) {
+
+                    if(game.idGame === response.json().idGame){
+                        game.boardDefense = null;
+                        game.boardDefense = new BoardDefense();
+
+                        let naviosJSON = response.json().boardDefense;
+                        for (let navio of naviosJSON) {
+                            game.boardDefense.adicionaNavio(
+                                Navio.convertTypeToEnumTipoNavio(navio.type),
+                                Navio.convertOrientationToEnumOrientacao(navio.orientation),
+                                navio.position.line,
+                                navio.position.column);
+                        }
+                    }
+                }
             });
-
-    }
-
-
-    
-    getCurrentGames(username : string):Observable<Game[]>{
-
-        return this.http.get('/api/v1/current-games/' + username)
-            .map((response) => this.games = response.json());
-
-            //TODO
-            //por o json num arrya de game para mandar para o cliente
     }
 
 
@@ -121,6 +122,7 @@ export class GameService {
             .map(response => <PlayerStateGame[]>response.json())
             .map((playerStateGames) => {
 
+                this.playerStateGame = null;
                 this.playerStateGame = [];
 
 
@@ -130,15 +132,9 @@ export class GameService {
                     boardDefense = new BoardDefense();
 
 
-                    //tabuleiro 0 é o da defesa
-                    playerStateGame.players[0].tabuleiros[0].boardDefense.forEach((ship) => {
 
-                        console.log("XXXXXXXXX  XXXXXXXX");
-                        console.log(ship.orientation);
-                        console.log(ship.position.line);
-                        console.log(ship.position.column);
-                        console.log(ship.type);
-                        console.log("XXXXXXXXX  XXXXXXXX");
+                    //tabuleiro 0 é o da defesa
+                    playerStateGame.boardDefense.forEach((ship) => {
 
                         let orientation = ship.orientation;
                         let line = ship.position.line;
@@ -187,23 +183,88 @@ export class GameService {
                         }
 
 
-                        boardDefense.adicionaNavio(ship_type, ship_orientation, 'A', 1);
+                        boardDefense.adicionaNavio(ship_type, ship_orientation, ship_position.linha, ship_position.coluna);
 
                     });
 
+
+                    let boardsAttack : BoardAttack[] = [];
+                    if(!(playerStateGame.boardsAttack === undefined)){
+                        console.log("####################################################################################################################");
+                        console.dir(playerStateGame.boardsAttack);
+
+
+                        for (let attackBoard of playerStateGame.boardsAttack) {
+
+                            console.dir(attackBoard);
+
+                            let username : string = attackBoard.username;
+                            console.log("username :" + username);
+
+                            // let board : CellAttack[] = attackBoard.board;
+                            // console.log("board :");
+                            // console.dir(board);
+
+                            let boardAttack : CellAttack[] = [];
+                            for (let cell of attackBoard.board) {
+
+                                // console.log("line: "+cell.line);
+                                // console.log("column: "+cell.column);
+                                // console.log("value: "+cell.value);
+
+                                boardAttack.push(new CellAttack(cell.line, cell.column, cell.value));
+                            }
+
+                            console.dir(boardAttack);
+
+                            let bo : BoardAttack = new BoardAttack(username, boardAttack);
+                            console.log("bo");
+                            console.dir(bo);
+
+
+
+
+                            boardsAttack.push(bo);
+                            console.dir(boardsAttack);
+
+
+                            //TODO navios??
+
+                            // let boardAttack : BoardAttack = null;
+                            // boardsAttack = new BoardAttack();
+
+
+
+
+                            //playerStateGame.boardsAttack.forEach((attackBoard) => {
+                            // attackBoard.forEach((attackBoard) => {
+                            //     console.log("zzz");
+                            //     console.dir(attackBoard);
+                            // });
+                            //});
+                        }
+                        console.log("####################################################################################################################");
+                        console.dir(boardsAttack);
+                    }
+
+
+
+
+
                     this.playerStateGame.push(
                         new PlayerStateGame(
-                            playerStateGame._id,
+                            playerStateGame.idGame,
                             playerStateGame.status,
-                            boardDefense
+                            boardDefense,
+                            boardsAttack
                         )
                     )
 
                 });
 
-                console.log("-----------server side----------");
-                console.log(playerStateGames);
-                console.log("-----------server side----------");
+                // console.log("-----------server side----------");
+                // console.log(playerStateGames);
+                // console.log("-----------server side----------");
 
 
                 return this.playerStateGame;

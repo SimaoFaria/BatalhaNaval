@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var game_service_1 = require('./../services/game.service');
+var game_1 = require('./game');
 var tabuleiro_1 = require("./tabuleiro");
 var navio_1 = require("./navio");
 var board_defense_1 = require("./models/board-defense");
@@ -20,27 +21,27 @@ var GameComponent = (function () {
         this.gameService = gameService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.LINES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        this._username = 'Cao de Agua'; //TODO passar para o login
+        this.gameService.setUsername(this._username);
         this.playerStateGame = [];
         this.tabuleiro = new tabuleiro_1.Tabuleiro();
         //TODO so para testar
         var value = 12;
-        var username;
-        username = 'Cao de Agua';
+        // let username : string;
+        // username = 'Cao de Agua';
         /*this.gameService.getCurrentGames(username)
                 .subscribe((response) => this.games = response);*/
-        this.gameService.getCurrentStateGames(username)
+        this.gameService.getCurrentStateGames(this._username)
             .subscribe(function (response) {
             _this.playerStateGame = response;
-            console.log("esperaça!!!");
-            console.log(_this.playerStateGame);
-            console.log("fim da esperaça!!!");
-            console.dir(_this.playerStateGame[0].boardDefense.navios);
             //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+            console.log("------ No CLIENTE -------");
+            console.dir(_this.playerStateGame);
+            console.log("------ FIM No CLIENTE -------");
         });
         //desenhaTabuleiro();
     }
     GameComponent.prototype.addNavioToBoardDefense = function (idGame) {
-        console.log("add navio");
         document.getElementById('msgerro').innerText = '';
         try {
             var tipo = document.getElementById('tiponavio').value;
@@ -141,25 +142,53 @@ var GameComponent = (function () {
         for (var _i = 0, _a = this.playerStateGame; _i < _a.length; _i++) {
             var game = _a[_i];
             if (game.idGame == idGame) {
-                //enivas as cenas para a bd
-                this.gameService.putCurrentStateGames(game)
-                    .subscribe(function (response) {
-                    // this.playerStateGame = response;
-                    //
-                    // console.log("esperaça!!!");
-                    // console.log(this.playerStateGame);
-                    // console.log("fim da esperaça!!!");
-                    //
-                    // console.dir(this.playerStateGame[0].boardDefense.navios);
-                    //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
-                });
+                if (game.boardDefense.isConfigDone() === false) {
+                    alert("Ainda não tem as peças todas");
+                }
+                else {
+                    alert("Começar jogo");
+                    game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.INPROGRESS);
+                    this.gameService.putCurrentStateGames(game, true)
+                        .subscribe(function (response) {
+                        // this.playerStateGame = response; //TODO
+                        //
+                        // console.log("esperaça!!!");
+                        // console.log(this.playerStateGame);
+                        // console.log("fim da esperaça!!!");
+                        //
+                        // console.dir(this.playerStateGame[0].boardDefense.navios);
+                        //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+                    });
+                }
             }
         }
+        // for (let game of this.playerStateGame) {
+        //     if(game.idGame == idGame) {
+        //
+        //         //enivas as cenas para a bd
+        //         this.gameService.putCurrentStateGames(game)
+        //             .subscribe((response) => {
+        //
+        //                 // this.playerStateGame = response;
+        //                 //
+        //                 // console.log("esperaça!!!");
+        //                 // console.log(this.playerStateGame);
+        //                 // console.log("fim da esperaça!!!");
+        //                 //
+        //                 // console.dir(this.playerStateGame[0].boardDefense.navios);
+        //
+        //                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+        //
+        //
+        //         });
+        //
+        //         //break; //TODO avriguar a situation
+        //     }
+        // }
         //se tudo ok
         //mete a cena dos ships invisivel
     };
     GameComponent.prototype.limparTabuleiro = function (idGame) {
-        console.log("limpar tabuleiro");
         document.getElementById('msgerro').innerText = '';
         for (var _i = 0, _a = this.playerStateGame; _i < _a.length; _i++) {
             var game = _a[_i];
@@ -211,7 +240,15 @@ var GameComponent = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'my-game',
-            templateUrl: './game.html'
+            templateUrl: './game.html',
+            // styles: [`.selected {
+            //   background-color: #CFD8DC !important;
+            //   color: white;
+            // }`]
+            styleUrls: [
+                './game-attack-simao.css',
+                './game-defend-simao.css'
+            ]
         }), 
         __metadata('design:paramtypes', [game_service_1.GameService])
     ], GameComponent);

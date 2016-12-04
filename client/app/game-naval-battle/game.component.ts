@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { GameService } from './../services/game.service';
 
-import {Game, PlayerStateGame} from './game';
+import {Game, PlayerStateGame, GameStatus} from './game';
 
 import {Tabuleiro} from "./tabuleiro";
 import {TipoNavio, Orientacao} from "./navio";
@@ -13,19 +13,25 @@ import {BoardDefense} from "./models/board-defense";
 @Component({
   moduleId: module.id,
   selector: 'my-game',
-  templateUrl: './game.html'
-  /*styleUrls: [
+  templateUrl: './game.html',
+    // styles: [`.selected {
+    //   background-color: #CFD8DC !important;
+    //   color: white;
+    // }`]
+  styleUrls: [
     './game-attack-simao.css',
     './game-defend-simao.css'
-  ]*/
+  ]
 })
 
 //TODO: watting, pedding, ongoing, ended
 
 export class GameComponent {
 
-  COLUMNS : number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  LINES : string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    private _username : string;
+
+    COLUMNS : number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    LINES : string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
     private playerStateGame: PlayerStateGame[];
 
@@ -36,35 +42,37 @@ export class GameComponent {
 
     constructor(private gameService: GameService) {
 
+
+        this._username = 'Cao de Agua'; //TODO passar para o login
+        this.gameService.setUsername(this._username);
+
         this.playerStateGame = [];
 
         this.tabuleiro = new Tabuleiro();        
 
         //TODO so para testar
         let value : number = 12;
-        let username : string;
-        username = 'Cao de Agua';
+        // let username : string;
+        // username = 'Cao de Agua';
 
         /*this.gameService.getCurrentGames(username)
                 .subscribe((response) => this.games = response);*/
 
 
 
-        this.gameService.getCurrentStateGames(username)
+        this.gameService.getCurrentStateGames(this._username)
             .subscribe((response) => {
 
 
 
                 this.playerStateGame = response;
 
-                console.log("esperaça!!!");
-                console.log(this.playerStateGame);
-                console.log("fim da esperaça!!!");
-
-                console.dir(this.playerStateGame[0].boardDefense.navios);
 
                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
 
+                console.log("------ No CLIENTE -------");
+                console.dir(this.playerStateGame );
+                console.log("------ FIM No CLIENTE -------");
 
             });
 
@@ -76,7 +84,6 @@ export class GameComponent {
 
     addNavioToBoardDefense(idGame : string) : void {
 
-        console.log("add navio");
 
         document.getElementById('msgerro').innerText='';
         try {
@@ -180,29 +187,61 @@ export class GameComponent {
 
     ready(idGame: string) : void {
 
-        for (let game of this.playerStateGame) {
+        for(let game of this.playerStateGame) {
+
             if(game.idGame == idGame) {
 
-                //enivas as cenas para a bd
-                this.gameService.putCurrentStateGames(game)
-                    .subscribe((response) => {
+                if(game.boardDefense.isConfigDone() === false){
+                    alert("Ainda não tem as peças todas");
+                }else {
 
-                        // this.playerStateGame = response;
-                        //
-                        // console.log("esperaça!!!");
-                        // console.log(this.playerStateGame);
-                        // console.log("fim da esperaça!!!");
-                        //
-                        // console.dir(this.playerStateGame[0].boardDefense.navios);
+                    alert("Começar jogo");
 
-                        //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+                    game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
 
+                    this.gameService.putCurrentStateGames(game, true)
+                        .subscribe((response) => {
 
-                });
+                            // this.playerStateGame = response; //TODO
+                            //
+                            // console.log("esperaça!!!");
+                            // console.log(this.playerStateGame);
+                            // console.log("fim da esperaça!!!");
+                            //
+                            // console.dir(this.playerStateGame[0].boardDefense.navios);
 
-                //break; //TODO avriguar a situation
+                            //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+                        });
+                }
             }
         }
+
+
+
+
+        // for (let game of this.playerStateGame) {
+        //     if(game.idGame == idGame) {
+        //
+        //         //enivas as cenas para a bd
+        //         this.gameService.putCurrentStateGames(game)
+        //             .subscribe((response) => {
+        //
+        //                 // this.playerStateGame = response;
+        //                 //
+        //                 // console.log("esperaça!!!");
+        //                 // console.log(this.playerStateGame);
+        //                 // console.log("fim da esperaça!!!");
+        //                 //
+        //                 // console.dir(this.playerStateGame[0].boardDefense.navios);
+        //
+        //                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+        //
+        //
+        //         });
+        //
+        //         //break; //TODO avriguar a situation
+        //     }
+        // }
 
 
 
@@ -214,7 +253,7 @@ export class GameComponent {
 
 
     limparTabuleiro(idGame : string) : void {
-      console.log("limpar tabuleiro");
+
       document.getElementById('msgerro').innerText='';
 
         for (let game of this.playerStateGame) {

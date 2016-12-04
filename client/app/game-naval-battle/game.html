@@ -1,15 +1,15 @@
 <div class="container">
 <div *ngFor="let game of playerStateGame" id="{{game.idGame}}" style="background-color:lightgrey;width:80%">
 
-    <div  *ngIf="game.status == 'pending'" style="background-color:darkgrey;">
+    <div  *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
         <h3>Config Ships</h3>
         Tipo de Navio: 
         <select id=tiponavio>
-            <option value=0 selected>Porta-Aviões</option>
-            <option value=1>Couraçado</option>
-            <option value=2>Cruzador</option>
-            <option value=3>Contra-Torpedeiro</option>
-            <option value=4>Submarino</option>
+            <option value=0 selected>Porta-Aviões ({{game.boardDefense.currentValues['PortaAvioes']}}/1)</option>
+            <option value=1>Couraçado ({{game.boardDefense.currentValues['Couracado']}}/1)</option>
+            <option value=2>Cruzador ({{game.boardDefense.currentValues['Cruzador']}}/2)</option>
+            <option value=3>Contra-Torpedeiro ({{game.boardDefense.currentValues['ContraTorpedeiro']}}/3)</option>
+            <option value=4>Submarino ({{game.boardDefense.currentValues['Submarino']}}/4)</option>
         </select>
         Orientação
         <select id=orientacao>
@@ -35,20 +35,35 @@
     </div>
 
     <table id=tabela border=1 style="width:80%;">
-        <tr *ngFor="let line of LINES">
-            <td>{{line}}</td>
-            <td *ngFor="let column of COLUMNS">
-                <input type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="X"/>
+        <tr *ngFor="let line of LINES" class="dad-row">
+            <td class="dad-cell">{{line}}</td>
+            <td *ngFor="let column of COLUMNS" class="dad-cell">
+                <input type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="N"/>
             </td>
         </tr>
-        <tr>
-            <td></td>
-            <td *ngFor="let column of COLUMNS">{{column}}</td>
+        <tr class="dad-row">
+            <td class="dad-cell"></td>
+            <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
         </tr>
     </table>
 
 
 
+
+    <div *ngFor="let boardAttack of game.boardsAttack">
+        <table border=1 style="width:80%;">
+            <tr *ngFor="let line of LINES" class="dad-row">
+                <td class="dad-cell">{{line}}</td>
+                <td *ngFor="let column of COLUMNS" class="dad-cell">
+                    <input type="text" value="{{boardAttack.getValue(line, column)}}"/>
+                </td>
+            </tr>
+            <tr class="dad-row">
+                <td class="dad-cell"></td>
+                <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
+            </tr>
+        </table>
+    </div>
 
 
 </div>

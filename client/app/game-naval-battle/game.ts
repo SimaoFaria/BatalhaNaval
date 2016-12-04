@@ -5,6 +5,19 @@ import { GamingPlayer } from '../models/player';
 import { BoardDefense } from './models/board-defense';
 import {BoardAttack} from "./models/board-attack";
 
+
+
+
+
+export enum GameStatus {
+    INWATINGROOM,
+    PENDING,
+    INPROGRESS,
+    ENDED
+}
+
+
+
 export class Game {
     status: string;
     createdBy: string;
@@ -25,32 +38,76 @@ export class Game {
 
 }
 
+/**
+ * Description: Class that save a state of the game
+ * */
 export class PlayerStateGame {
 
-
-    //TODO GAME HEADER
-    public idGame: string;
+    private _username: string;
+    public idGame: string; //TODO GAME HEADER
     public status: string;
-
     public boardDefense: BoardDefense;
+    public boardsAttack: BoardAttack[];
     //boardAttack: BoardAttack[];
 
-
-    constructor(idGame : string, status: string, boardDefense: BoardDefense){
+    constructor(idGame : string, status: string, boardDefense: BoardDefense, boardsAttack : BoardAttack[]){
 
         this.idGame = idGame;
         this.status = status;
         this.boardDefense = boardDefense;
+        this.boardsAttack  = boardsAttack;
 
     }
 
-     /*constructor(idGame : string, status: string){
+    get username(): string {
+        return this._username;
+    }
 
-        this.idGame = idGame;
-        this.status = status;
-    }*/
+    set username(value: string) {
+        this._username = value;
+    }
+
+    public static gameStatus_toString(gameStatus: GameStatus): string {
+
+        let gameStatusString : string = null;
+
+        switch (gameStatus) {
+            case GameStatus.INWATINGROOM:
+                gameStatusString = 'INWATINGROOM';
+                break;
+            case GameStatus.PENDING:
+                gameStatusString =  'PENDING';
+                break;
+            case GameStatus.INPROGRESS:
+                gameStatusString = 'INPROGRESS';
+                break;
+            case GameStatus.ENDED:
+                gameStatusString = 'ENDED';
+                break;
+        }
+
+        return gameStatusString;
+    }
 
 }
+
+
+
+export class CellAttack {
+
+    public line : string;
+    public column : number;
+    public value : string;
+
+    constructor(line : string ,column : number, value : string) {
+        this.line = line;
+        this.column = column;
+        this.value = value;
+    }
+
+}
+
+
 
 
 

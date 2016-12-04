@@ -10,6 +10,23 @@ export class Tabuleiro {
     // ------------------------------------------------------------------------------------------------
 
 
+    //TODO so ativar o ready quanto dtodos os barcos postos (3/4)   (4/4)???
+
+    private static _G_MAXPORTAAVIOES : number = 1;
+    private static _G_MAXCOURACADO : number = 1;
+    private static _G_MAXCRUZADORES : number = 2;
+    private static _G_MAXCONTRATORPEDEIRO : number = 3;
+    private static _G_MAXSUBMARINOS : number = 4;
+
+    private nrPortaAvioes : number;
+    private couracado : number;
+    private cruzadores: number;
+    private contratorpedeiros : number;
+    private submarinos : number;
+
+    private currentValues= {};
+
+
     //Propriedade com todos as navios do tabuleiro
     public navios: Navio[];
 
@@ -20,9 +37,23 @@ export class Tabuleiro {
     public posicoesOcupadas: Posicao[];
 
     constructor (){
+
+        this.nrPortaAvioes = 0;
+        this.couracado  = 0;
+        this.cruzadores = 0;
+        this.contratorpedeiros = 0;
+        this.submarinos  = 0;
+
+        this.currentValues["PortaAvioes"] = 0;
+        this.currentValues["Couracado"] = 0;
+        this.currentValues["Cruzador"] = 0;
+        this.currentValues["ContraTorpedeiro"] = 0;
+        this.currentValues["Submarino"] = 0;
+
         this.celulas = [];
         this.posicoesOcupadas = [];
         this.navios= [];
+
         Tabuleiro.todasLinhas().forEach(letra=> {
             Tabuleiro.todasColunas().forEach(coluna =>{
                 let c: Celula = new Celula(letra, coluna);
@@ -37,8 +68,41 @@ export class Tabuleiro {
         return this.celulas[posicao.linhaIndex() * 10 + posicao.colunaIndex()];
     }
 
+    private getMaxShipsPerTypeByType(type : TipoNavio) : number {
+
+        let max : number = null;
+
+        switch (type) {
+            case TipoNavio.PortaAvioes:
+                max =  Tabuleiro._G_MAXPORTAAVIOES;
+                break;
+            case TipoNavio.Couracado:
+                max =  Tabuleiro._G_MAXCOURACADO;
+                break;
+            case TipoNavio.Cruzador:
+                max =  Tabuleiro._G_MAXCRUZADORES;
+                break;
+            case TipoNavio.ContraTorpedeiro:
+                max =  Tabuleiro._G_MAXCONTRATORPEDEIRO;
+                break;
+            case TipoNavio.Submarino:
+                max = Tabuleiro._G_MAXSUBMARINOS;
+                break;
+        }
+
+        return max;
+    }
+
     public adicionaNavio(tipo: TipoNavio, orientacao: Orientacao, linha: string, coluna: number): Navio{
         try {
+
+            if(this.currentValues[Navio.type_toString(tipo)]+1 > this.getMaxShipsPerTypeByType(tipo)) {
+                throw new Error('Numero maximo de barcos dos tipo '+ Navio.type_toString(tipo) + " é " + this.getMaxShipsPerTypeByType(tipo));
+            }
+            this.currentValues[Navio.type_toString(tipo)]++;
+            console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
+
+
             let navio: Navio = new Navio(tipo, orientacao, linha, coluna);
             if (Posicao.conflito(navio.posicoesOcupadas, this.posicoesOcupadas)){
                 throw new Error('O navio "' + tipo + '" na posição (' + linha + coluna + ') e orientação "' + orientacao + '" está em sobreposição ou encostado a um navio já existente')
@@ -97,5 +161,26 @@ export class Tabuleiro {
 
     public static todasColunas(): number[]{
         return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    }      
+    }
+
+
+
+
+
+    public isConfigDone() : boolean{
+
+        if(
+            this.currentValues['PortaAvioes'] == Tabuleiro._G_MAXPORTAAVIOES &&
+            this.currentValues['Couracado'] == Tabuleiro._G_MAXCOURACADO &&
+            this.currentValues['Cruzador'] == Tabuleiro._G_MAXCRUZADORES &&
+            this.currentValues['ContraTorpedeiro'] == Tabuleiro._G_MAXCONTRATORPEDEIRO &&
+            this.currentValues['Submarino'] == Tabuleiro._G_MAXSUBMARINOS
+
+        ) {
+
+            return true;
+        }
+
+        return false;
+    }
 }

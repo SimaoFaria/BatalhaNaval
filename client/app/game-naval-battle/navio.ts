@@ -219,6 +219,101 @@ export class Navio{
         this.posicoesVizinhas = Posicao.removeRepetidos(vizinhas);
    }
 
+
+   public static orientation_toString(orientation: Orientacao): string {
+
+       switch (orientation) {
+           case Orientacao.Normal:
+               return 'Normal';
+               break;
+           case Orientacao.Roda90:
+               return 'Roda90';
+               break;
+           case Orientacao.Roda180:
+               return 'Roda180';
+               break;
+           case Orientacao.Roda270:
+               return 'Roda270';
+               break;
+       }
+
+       return null;
+   }
+
+   public static type_toString(type: TipoNavio): string {
+
+       switch (type) {
+           case TipoNavio.PortaAvioes:
+               return 'PortaAvioes';
+               break;
+           case TipoNavio.Couracado:
+               return'Couracado';
+               break;
+           case TipoNavio.Cruzador:
+               return 'Cruzador';
+               break;
+           case TipoNavio.ContraTorpedeiro:
+               return 'ContraTorpedeiro';
+               break;
+           case TipoNavio.Submarino:
+               return 'Submarino';
+               break;
+       }
+
+       return null;
+   }
+
+   public static convertTypeToEnumTipoNavio(type : string) : TipoNavio {
+
+       let tipoNavio : TipoNavio = null;
+
+       switch (type) {
+           case "PortaAvioes":
+               tipoNavio = TipoNavio.PortaAvioes;
+               break;
+           case "Couracado":
+               tipoNavio = TipoNavio.Couracado;
+               break;
+           case "Cruzador":
+               tipoNavio = TipoNavio.Cruzador;
+               break;
+           case "ContraTorpedeiro":
+               tipoNavio = TipoNavio.ContraTorpedeiro;
+               break;
+           case "Submarino":
+               tipoNavio = TipoNavio.Submarino;
+               break;
+           default:
+               break;
+       }
+
+       return tipoNavio;
+   }
+
+
+    public static convertOrientationToEnumOrientacao(orientation : string) : Orientacao {
+
+        let orientacao : Orientacao = null;
+
+        switch (orientation) {
+            case "Normal":
+                orientacao = Orientacao.Normal;
+                break;
+            case "Roda90":
+                orientacao = Orientacao.Roda90;
+                break;
+            case "Roda180":
+                orientacao = Orientacao.Roda180;
+                break;
+            case "Roda270":
+                orientacao = Orientacao.Roda270;
+                break;
+            default:
+                break;
+        }
+
+        return orientacao;
+    }
 }
 
 
