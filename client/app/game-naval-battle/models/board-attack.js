@@ -44,7 +44,7 @@ var BoardAttack = (function (_super) {
         }
     };
     BoardAttack.prototype.getCellsAtackObject = function () {
-        return { "username": this.username, "cellsAttack": this.board };
+        return { "username": this.username, "board": this.board };
     };
     return BoardAttack;
 }(tabuleiro_1.Tabuleiro));

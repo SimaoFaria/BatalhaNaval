@@ -43,6 +43,7 @@ export class Game {
  * */
 export class PlayerStateGame {
 
+    public _nrShots : number;
     private _username: string;
     public idGame: string; //TODO GAME HEADER
     public status: string;

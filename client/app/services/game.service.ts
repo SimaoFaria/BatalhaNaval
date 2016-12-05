@@ -88,31 +88,37 @@ export class GameService {
 
         }
 
-        // let boardsAttack = [];
-        // for (let boardAttack of playerStateGame.boardsAttack) {
-        //
-        //     boardsAttack.push()
-        //     // for (let cellsAttack of boardAttack) {
-        //     //
-        //     //     boardsAttack.push(
-        //     //         {
-        //     //             "username" : boardAttack.username,
-        //     //             "boardsAttack" :
-        //     //                 cellsAttack.linha,
-        //     //                 cellsAttack.column,
-        //     //                 cellsAttack.value
-        //     //             )
-        //     //         }
-        //     //     )
-        //     // }
-        // }
+
+
+
+
+        let boardsAttack = [];
+        for (let boardAttack of playerStateGame.boardsAttack) {
+
+            let board = [];
+            for (let cellsAttack of boardAttack.board) {
+                console.log("********* ---X-- *********");
+                console.dir(cellsAttack);
+                console.log("********* ---X-- *********");
+                //boardsAttack.push(board);
+                board.push(cellsAttack)
+            }
+            boardsAttack.push({"username" : boardAttack.username, "board": board});
+        }
+
+
+
+
+        console.log("********* ------ *********");
+        console.log(boardsAttack);
+        console.log("********* ------ *********");
 
         let bodyJSON = {
             "username" : this._username,
             "status" : playerStateGame.status,
             "updateStatus": updateStatus,
-            "boardDefense" : shipsforBD
-            //"boardsAttack" : boardsAttack
+            "boardDefense" : shipsforBD,
+            "boardsAttack" : boardsAttack
         };
 
 

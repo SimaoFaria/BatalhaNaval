@@ -55,7 +55,7 @@ export class BoardAttack extends Tabuleiro{
     }
 
     public getCellsAtackObject() : Object{
-        return { "username" : this.username, "cellsAttack" : this.board};
+        return { "username" : this.username, "board" : this.board};
     }
 
 

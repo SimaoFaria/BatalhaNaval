@@ -243,7 +243,13 @@ function putCurrentStateGames(request, response, next) {
 	console.log("status" + status);
 	console.log("updateStatus" + updateStatus);
 	console.log("boardDefense: " + boardDefense);
-	console.log("boardsAttack: " + boardsAttack);
+	console.log("boardsAttack");
+	for (var boardAttack in boardsAttack) {
+		console.log();
+		console.log(boardsAttack[boardAttack]);
+	}
+
+
 	console.log("-----------------------------------------");
 
 	database.db.collection("games-details").updateOne(
@@ -251,8 +257,8 @@ function putCurrentStateGames(request, response, next) {
 		{
 			$set: {
 				status: status,
-				boardDefense: boardDefense
-				//boardsAttack: boardsAttack
+				boardDefense: boardDefense,
+				boardsAttack: boardsAttack
 			}
 		},
 		function(err, result) {

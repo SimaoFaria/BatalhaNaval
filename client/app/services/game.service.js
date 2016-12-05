@@ -58,29 +58,29 @@ var GameService = (function () {
             var type = navio_1.Navio.type_toString(navio.tipoNavio);
             shipsforBD.push(new navio_1.ShipForDB(new navio_1.Position(navio.posicao.linha.toString(), navio.posicao.coluna), type, orientation_1));
         }
-        // let boardsAttack = [];
-        // for (let boardAttack of playerStateGame.boardsAttack) {
-        //
-        //     boardsAttack.push()
-        //     // for (let cellsAttack of boardAttack) {
-        //     //
-        //     //     boardsAttack.push(
-        //     //         {
-        //     //             "username" : boardAttack.username,
-        //     //             "boardsAttack" :
-        //     //                 cellsAttack.linha,
-        //     //                 cellsAttack.column,
-        //     //                 cellsAttack.value
-        //     //             )
-        //     //         }
-        //     //     )
-        //     // }
-        // }
+        var boardsAttack = [];
+        for (var _b = 0, _c = playerStateGame.boardsAttack; _b < _c.length; _b++) {
+            var boardAttack = _c[_b];
+            var board = [];
+            for (var _d = 0, _e = boardAttack.board; _d < _e.length; _d++) {
+                var cellsAttack = _e[_d];
+                console.log("********* ---X-- *********");
+                console.dir(cellsAttack);
+                console.log("********* ---X-- *********");
+                //boardsAttack.push(board);
+                board.push(cellsAttack);
+            }
+            boardsAttack.push({ "username": boardAttack.username, "board": board });
+        }
+        console.log("********* ------ *********");
+        console.log(boardsAttack);
+        console.log("********* ------ *********");
         var bodyJSON = {
             "username": this._username,
             "status": playerStateGame.status,
             "updateStatus": updateStatus,
-            "boardDefense": shipsforBD
+            "boardDefense": shipsforBD,
+            "boardsAttack": boardsAttack
         };
         var body = bodyJSON;
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
