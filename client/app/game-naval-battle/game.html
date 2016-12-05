@@ -50,12 +50,12 @@
 
 
 
-    <div *ngFor="let boardAttack of game.boardsAttack">
-        <table border=1 style="width:80%;">
+    <div *ngFor="let boardAttack of game.boardsAttack" >
+        <table border=1>
             <tr *ngFor="let line of LINES" class="dad-row">
                 <td class="dad-cell">{{line}}</td>
                 <td *ngFor="let column of COLUMNS" class="dad-cell">
-                    <input type="text" value="{{boardAttack.getValue(line, column)}}"/>
+                    <input type="text" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column)"/>
                 </td>
             </tr>
             <tr class="dad-row">

@@ -31,6 +31,21 @@ var GameService = (function () {
         //TODO
         //por o json num arrya de game para mandar para o cliente
     };
+    GameService.prototype.putHasShotCurrentStateGamePerUsernameByPosition = function (idGame, opponentUsername, line, column) {
+        console.log("idGame:" + idGame);
+        console.log("opponentUsername:" + opponentUsername);
+        console.log("line:" + line);
+        console.log("column" + column);
+        var bodyJSONObj = {
+            "opponentUsername": opponentUsername,
+            "line": line,
+            "column": column,
+        };
+        console.log(bodyJSONObj);
+        console.dir(bodyJSONObj);
+        return this.http.post('/api/v1/current-state-games-shot/' + idGame, bodyJSONObj)
+            .map(function (response) { return response.json(); });
+    };
     /**
      *
      * */
@@ -43,28 +58,31 @@ var GameService = (function () {
             var type = navio_1.Navio.type_toString(navio.tipoNavio);
             shipsforBD.push(new navio_1.ShipForDB(new navio_1.Position(navio.posicao.linha.toString(), navio.posicao.coluna), type, orientation_1));
         }
-        // let dataShips : string = '[';
-        // let lastIdx : number = shipsforBD.length-1;
-        // let i : number = 0;
-        // for (let ship of shipsforBD) {
-        //     dataShips += '{"position": {"line": "'+ship.position.line+'","column": '+ship.position.column+'},"type": "'+ship.type+'","orientation": "'+ship.orientation+'"}';
-        //     if(i < lastIdx){
-        //         dataShips += ',';
-        //     }
-        //     i++;
+        // let boardsAttack = [];
+        // for (let boardAttack of playerStateGame.boardsAttack) {
+        //
+        //     boardsAttack.push()
+        //     // for (let cellsAttack of boardAttack) {
+        //     //
+        //     //     boardsAttack.push(
+        //     //         {
+        //     //             "username" : boardAttack.username,
+        //     //             "boardsAttack" :
+        //     //                 cellsAttack.linha,
+        //     //                 cellsAttack.column,
+        //     //                 cellsAttack.value
+        //     //             )
+        //     //         }
+        //     //     )
+        //     // }
         // }
-        // dataShips += ']';
-        // console.log("desespero");
-        // console.log(dataShips);
-        // console.log("fim desespero");
-        //TODO [DUVIDA]
         var bodyJSON = {
             "username": this._username,
             "status": playerStateGame.status,
             "updateStatus": updateStatus,
             "boardDefense": shipsforBD
         };
-        var body = bodyJSON; //TODO [DUVIDA] acho que este stringify não era necessaário do outro lado tive de converter para object json para guardar bem na collection
+        var body = bodyJSON;
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map(function (response) {
             //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
@@ -147,7 +165,7 @@ var GameService = (function () {
                         console.log("username :" + username_1);
                         // let board : CellAttack[] = attackBoard.board;
                         // console.log("board :");
-                        // console.dir(board);
+                        console.dir(attackBoard);
                         var boardAttack = [];
                         for (var _b = 0, _c = attackBoard.board; _b < _c.length; _b++) {
                             var cell = _c[_b];

@@ -40,6 +40,29 @@ export class GameService {
     }
 
 
+
+    putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column) : Observable<string> {
+
+
+        console.log("idGame:"+idGame);
+        console.log("opponentUsername:"+opponentUsername);
+        console.log("line:"+line);
+        console.log("column"+column);
+
+        let bodyJSONObj = {
+            "opponentUsername" : opponentUsername,
+            "line" : line,
+            "column": column,
+        };
+
+        console.log(bodyJSONObj);
+        console.dir(bodyJSONObj);
+
+        return this.http.post('/api/v1/current-state-games-shot/' + idGame, bodyJSONObj)
+            .map((response) => response.json());
+    }
+
+
     /**
      *
      * */
@@ -65,32 +88,35 @@ export class GameService {
 
         }
 
-        // let dataShips : string = '[';
-        // let lastIdx : number = shipsforBD.length-1;
-        // let i : number = 0;
-        // for (let ship of shipsforBD) {
-        //     dataShips += '{"position": {"line": "'+ship.position.line+'","column": '+ship.position.column+'},"type": "'+ship.type+'","orientation": "'+ship.orientation+'"}';
-        //     if(i < lastIdx){
-        //         dataShips += ',';
-        //     }
-        //     i++;
+        // let boardsAttack = [];
+        // for (let boardAttack of playerStateGame.boardsAttack) {
+        //
+        //     boardsAttack.push()
+        //     // for (let cellsAttack of boardAttack) {
+        //     //
+        //     //     boardsAttack.push(
+        //     //         {
+        //     //             "username" : boardAttack.username,
+        //     //             "boardsAttack" :
+        //     //                 cellsAttack.linha,
+        //     //                 cellsAttack.column,
+        //     //                 cellsAttack.value
+        //     //             )
+        //     //         }
+        //     //     )
+        //     // }
         // }
-        // dataShips += ']';
 
-        // console.log("desespero");
-        // console.log(dataShips);
-        // console.log("fim desespero");
-
-        //TODO [DUVIDA]
         let bodyJSON = {
             "username" : this._username,
             "status" : playerStateGame.status,
             "updateStatus": updateStatus,
             "boardDefense" : shipsforBD
+            //"boardsAttack" : boardsAttack
         };
 
 
-        let body = bodyJSON; //TODO [DUVIDA] acho que este stringify não era necessaário do outro lado tive de converter para object json para guardar bem na collection
+        let body = bodyJSON;
 
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map((response) => {
@@ -203,7 +229,7 @@ export class GameService {
 
                             // let board : CellAttack[] = attackBoard.board;
                             // console.log("board :");
-                            // console.dir(board);
+                            console.dir(attackBoard);
 
                             let boardAttack : CellAttack[] = [];
                             for (let cell of attackBoard.board) {

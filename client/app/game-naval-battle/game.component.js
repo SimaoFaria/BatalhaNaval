@@ -17,6 +17,7 @@ var board_defense_1 = require("./models/board-defense");
 var GameComponent = (function () {
     //private celulas : number[][];
     function GameComponent(gameService) {
+        //document.getElementById('container').innerText='';
         var _this = this;
         this.gameService = gameService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -187,6 +188,40 @@ var GameComponent = (function () {
         // }
         //se tudo ok
         //mete a cena dos ships invisivel
+    };
+    GameComponent.prototype.shot = function (idGame, opponentUsername, line, column) {
+        //alert("Game " + idGame + " Shot on : " + opponentUsername + " line: " + line + " column" + column);
+        var _this = this;
+        var _loop_1 = function(game) {
+            if (game.idGame == idGame) {
+                //ver se foi tiro ?
+                var resp_1;
+                this_1.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
+                    .subscribe(function (response) {
+                    console.log("=======> TIRO ");
+                    console.dir(response);
+                    alert("TIRO: " + response);
+                    resp_1 = response;
+                    // this.playerStateGame = response; //TODO ?
+                    for (var _i = 0, _a = game.boardsAttack; _i < _a.length; _i++) {
+                        var attackBoard = _a[_i];
+                        if (attackBoard.getUsername() == opponentUsername) {
+                            attackBoard.setValue(line, column, (resp_1 != '' ? 'X' : '0'));
+                            //TODO fazer post para a bd
+                            _this.gameService.putCurrentStateGames(game, false)
+                                .subscribe(function (response) {
+                                // this.playerStateGame = response; //TODO
+                            });
+                        }
+                    }
+                });
+            }
+        };
+        var this_1 = this;
+        for (var _i = 0, _a = this.playerStateGame; _i < _a.length; _i++) {
+            var game = _a[_i];
+            _loop_1(game);
+        }
     };
     GameComponent.prototype.limparTabuleiro = function (idGame) {
         document.getElementById('msgerro').innerText = '';

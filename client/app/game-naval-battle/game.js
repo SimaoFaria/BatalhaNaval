@@ -1,6 +1,6 @@
 "use strict";
 (function (GameStatus) {
-    GameStatus[GameStatus["INWATINGROOM"] = 0] = "INWATINGROOM";
+    GameStatus[GameStatus["INWAITINGROOM"] = 0] = "INWAITINGROOM";
     GameStatus[GameStatus["PENDING"] = 1] = "PENDING";
     GameStatus[GameStatus["INPROGRESS"] = 2] = "INPROGRESS";
     GameStatus[GameStatus["ENDED"] = 3] = "ENDED";
@@ -39,8 +39,8 @@ var PlayerStateGame = (function () {
     PlayerStateGame.gameStatus_toString = function (gameStatus) {
         var gameStatusString = null;
         switch (gameStatus) {
-            case GameStatus.INWATINGROOM:
-                gameStatusString = 'INWATINGROOM';
+            case GameStatus.INWAITINGROOM:
+                gameStatusString = 'INWAITINGROOM';
                 break;
             case GameStatus.PENDING:
                 gameStatusString = 'PENDING';

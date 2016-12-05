@@ -221,35 +221,30 @@ function getCurrentStateGames(request, response, next){
  */
 function putCurrentStateGames(request, response, next) {
 
+	//PARAMS
 	var idGame = request.params.id;
-    console.log("id: " + idGame);
 
+	//BODY
 	var body = request.body;
-    console.log("body: " + request.body);
-
 	var username = body.username;
-    console.log("username: " + username);
-
-	var boardDefense = body.boardDefense;
-    console.log("boardDefense: " + boardDefense);
-
 	var status = body.status;
-	console.log("status" + status);
-
 	var updateStatus = body.updateStatus;
+	var boardDefense = body.boardDefense;
+	var boardsAttack = body.boardsAttack;
+
+
+	/**
+	 * DEBUG
+	 * */
+	console.log("--------- putCurrentStateGames ---------");
+	console.log("id: " + idGame);
+	console.log("body: " + request.body);
+	console.log("username: " + username);
+	console.log("status" + status);
 	console.log("updateStatus" + updateStatus);
-
-    // if(typeof boardDefense === 'string'){
-    //     console.log("entrou no if");
-    //     boardDefense = '{"boardDefense" :' + boardDefense +'}';
-    //     console.log(boardDefense);
-    // }
-
-    // console.log("Objecto");
-    // var obj = '{"username" : "Cao de Agua","boardDefense" : [{"position": { "line": "B", "column": 5},"type": "PortaAvioes","orientation": "Normal"}]}';
-    // console.log(JSON.stringify(obj));
-    // //e utiliza JSON.parse(obj)
-
+	console.log("boardDefense: " + boardDefense);
+	console.log("boardsAttack: " + boardsAttack);
+	console.log("-----------------------------------------");
 
 	database.db.collection("games-details").updateOne(
 		{ idGame: idGame, username: username},
@@ -257,6 +252,7 @@ function putCurrentStateGames(request, response, next) {
 			$set: {
 				status: status,
 				boardDefense: boardDefense
+				//boardsAttack: boardsAttack
 			}
 		},
 		function(err, result) {
@@ -270,28 +266,6 @@ function putCurrentStateGames(request, response, next) {
 						next();
 					} else {
 
-						/*********************************************/
-						//TODO atualizar tbm na coleção games se updateStatus === true
-						// var id = new mongodb.ObjectID(request.params.id);
-						// var player = request.body;
-						// player._id = id;
-                        //
-						// database.db.collection("games").save(player,function(err, result) {
-						// 	if(err) {
-						// 		console.log(err);
-						// 		next();
-						// 	} else {
-						// 		database.db.collection("games").findOne({_id:id},function(err, game) {
-						// 			if(err) {
-						// 				console.log(err);
-						// 				next();
-						// 			} else {
-						// 				response.json(game);
-						// 				next();
-						// 			}
-						// 		});
-						// 	}
-						// });
 
 						var id = new mongodb.ObjectID(idGame);
 
@@ -315,14 +289,6 @@ function putCurrentStateGames(request, response, next) {
 							}
 						);
 
-
-
-						/*********************************************/
-
-
-
-
-
 						// response.json(game);
 						// next();
 					}
@@ -330,6 +296,66 @@ function putCurrentStateGames(request, response, next) {
 			}
 		}
 	);
+}
+
+function getHasShot(request, response, next){
+
+	//PARAMS
+	var idGame = request.params.id;
+
+	//BODY
+	var body = request.body;
+	var opponentUsername = body.opponentUsername;
+	var line = body.line;
+	var column = body.column;
+
+	/**
+	 * DEBUG
+	 * */
+	// console.log("idGame: " + idGame);
+	// console.log("opponentUsername: " + opponentUsername);
+	// console.log("line: " + line);
+	// console.log("column: " + column);
+
+
+	database.db.collection("games-details").findOne(
+		{ idGame: idGame, username: opponentUsername},
+		function(err, game) {
+			if(err) {
+				console.log(err);
+				next();
+			} else {
+
+				var result = '';
+				//var draw = '0';
+				//var message = null;
+
+				for (var idx in game.boardDefense) {
+
+					//SHOT
+					if(game.boardDefense[idx].position.line == line
+						&& game.boardDefense[idx].position.column == column) {
+						//draw = 'X';
+						result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+
+						//Todo inserir na BD o X
+
+					}
+
+				}
+
+				//TODO se nao estava na a posição inseriri o 0 (flag)
+
+
+				// result = {
+				// 	'draw': draw,
+				// 	'message': message
+				// }
+
+				response.json(result);
+				next();
+			}
+	});
 }
 
 
@@ -347,6 +373,7 @@ games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);
+	server.post(apiBaseUri+'current-state-games-shot/:id', getHasShot);
 
 	console.log("Games routes registered");
 }

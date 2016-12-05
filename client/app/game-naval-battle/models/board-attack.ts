@@ -3,14 +3,14 @@ import {CellAttack} from "../game";
 
 export class BoardAttack extends Tabuleiro{
 
-    private usename: string;
-    private cellAtack : CellAttack[] = [];
+    public username: string;
+    public board : CellAttack[] = [];
 
     constructor(username : string, cellsAttack : CellAttack[]) {
         super();
-        this.usename = username;
-        this.cellAtack = [];
-        this.cellAtack = cellsAttack;
+        this.username = username;
+        this.board = [];
+        this.board = cellsAttack;
 
 
     }
@@ -19,7 +19,7 @@ export class BoardAttack extends Tabuleiro{
 
         let value : string = '';
 
-        for (let cellAttack of this.cellAtack) {
+        for (let cellAttack of this.board) {
 
             if(cellAttack.line == line
                 && cellAttack.column == column){
@@ -30,6 +30,33 @@ export class BoardAttack extends Tabuleiro{
         return value;
     }
 
+    public getUsername() : string {
+        return this.username;
+    }
+
+    public setValue(line : string, column : number, newValue : string) : void{
+
+        let exist : boolean = false;
+
+        for (let cellAttack of this.board) {
+
+            if(cellAttack.line == line
+                && cellAttack.column == column){
+                cellAttack.value = newValue;
+                exist = true;
+            }
+        }
+
+        if(!exist){
+            this.board.push(new CellAttack(line, column, newValue));
+        }
+
+
+    }
+
+    public getCellsAtackObject() : Object{
+        return { "username" : this.username, "cellsAttack" : this.board};
+    }
 
 
 }

@@ -10,7 +10,7 @@ import {BoardAttack} from "./models/board-attack";
 
 
 export enum GameStatus {
-    INWATINGROOM,
+    INWAITINGROOM,
     PENDING,
     INPROGRESS,
     ENDED
@@ -72,8 +72,8 @@ export class PlayerStateGame {
         let gameStatusString : string = null;
 
         switch (gameStatus) {
-            case GameStatus.INWATINGROOM:
-                gameStatusString = 'INWATINGROOM';
+            case GameStatus.INWAITINGROOM:
+                gameStatusString = 'INWAITINGROOM';
                 break;
             case GameStatus.PENDING:
                 gameStatusString =  'PENDING';
@@ -106,8 +106,6 @@ export class CellAttack {
     }
 
 }
-
-
 
 
 

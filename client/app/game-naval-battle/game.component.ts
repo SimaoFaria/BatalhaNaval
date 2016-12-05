@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { GameService } from './../services/game.service';
 
-import {Game, PlayerStateGame, GameStatus} from './game';
+import {Game, PlayerStateGame, GameStatus, CellAttack} from './game';
 
 import {Tabuleiro} from "./tabuleiro";
 import {TipoNavio, Orientacao} from "./navio";
@@ -41,6 +41,8 @@ export class GameComponent {
   //private celulas : number[][];
 
     constructor(private gameService: GameService) {
+
+        //document.getElementById('container').innerText='';
 
 
         this._username = 'Cao de Agua'; //TODO passar para o login
@@ -219,6 +221,8 @@ export class GameComponent {
 
 
 
+
+
         // for (let game of this.playerStateGame) {
         //     if(game.idGame == idGame) {
         //
@@ -247,6 +251,63 @@ export class GameComponent {
 
         //se tudo ok
             //mete a cena dos ships invisivel
+
+
+    }
+
+    shot(idGame : string, opponentUsername : string, line : string, column : number) : void{
+
+        //alert("Game " + idGame + " Shot on : " + opponentUsername + " line: " + line + " column" + column);
+
+        for(let game of this.playerStateGame) {
+
+            if(game.idGame == idGame) {
+
+                    //ver se foi tiro ?
+                let resp : string;
+                this.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
+                    .subscribe((response) => {
+
+                        console.log("=======> TIRO ");
+                        console.dir(response);
+                        alert("TIRO: "+ response);
+                        resp = response;
+
+                        // this.playerStateGame = response; //TODO ?
+
+                        for (let attackBoard of game.boardsAttack) {
+
+                            if(attackBoard.getUsername() == opponentUsername) {
+
+                                attackBoard.setValue(line, column, (resp != '' ? 'X' : '0' ));
+
+                                //TODO fazer post para a bd
+                                this.gameService.putCurrentStateGames(game, false)
+                                    .subscribe((response) => {
+
+                                        // this.playerStateGame = response; //TODO
+
+                                    });
+                            }
+                        }
+                });
+
+                    //receber mensagem se foi tiro
+
+                    //desbloqear a celula para edicao se o utilizador quiser pode marcar como tiro ou agua A ou T
+
+                    // this.gameService.putCurrentStateGames(game, true)
+                    //     .subscribe((response) => {
+                    //
+                    //         // this.playerStateGame = response; //TODO ?
+                    //
+                    // });
+
+            }
+
+
+                //break??? TODO
+        }
 
 
     }
