@@ -7,8 +7,6 @@ import {BoardAttack} from "./models/board-attack";
 
 
 
-
-
 export enum GameStatus {
     INWAITINGROOM,
     PENDING,
@@ -16,9 +14,8 @@ export enum GameStatus {
     ENDED
 }
 
-
-
 export class Game {
+    _id: string;
     status: string;
     createdBy: string;
     aborted: boolean;
@@ -27,14 +24,49 @@ export class Game {
     winner: string;
     players: GamingPlayer[];
 
-    
+    constructor(game: Game) {
+        this._id = game._id;
+        this.aborted = game.aborted;
+        this.createdBy = game.createdBy;
+        this.startDate = game.startDate;
+        this.endDate = game.endDate;
+        this.status = game.status;
+        this.winner = game.winner;
+
+        //deep clone para não atualizar na vista diretamente
+        this.players = JSON.parse(JSON.stringify(game.players));
+    }
+}
+
+//TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
+export class GameWithoutId {
+    status: string;
+    createdBy: string;
+    aborted: boolean;
+    startDate: string;
+    endDate: string;
+    winner: string;
+    players: GamingPlayer[];
+
+    constructor(game: Game) {
+        this.aborted = game.aborted;
+        this.createdBy = game.createdBy;
+        this.startDate = game.startDate;
+        this.endDate = game.endDate;
+        this.status = game.status;
+        this.winner = game.winner;
+
+        //deep clone para não atualizar na vista diretamente
+        this.players = JSON.parse(JSON.stringify(game.players));
+    }
 
 
     //constructor() {  }
 
-    startGame() {
+    // startGame() {
         
-    }
+    // }
+
 
 }
 

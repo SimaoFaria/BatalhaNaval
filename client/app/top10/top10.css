@@ -20,3 +20,11 @@ th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
+
+.name {
+    background-color: turquoise;
+}
+
+.score {
+    background-color: bisque;
+}

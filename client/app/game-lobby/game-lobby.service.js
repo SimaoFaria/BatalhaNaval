@@ -15,17 +15,27 @@ var GameLobbyService = (function () {
     function GameLobbyService(http) {
         this.http = http;
     }
-    GameLobbyService.prototype.getPendingGames = function () {
+    GameLobbyService.prototype.getGamesInRoom = function () {
         var _this = this;
-        return this.http.get('/api/v1/pending-games')
-            .map(function (response) { return _this.pendingGames = response.json(); });
+        return this.http.get('/api/v1/waiting-room-games')
+            .map(function (response) { return _this.gamesInRoom = response.json(); });
     };
     GameLobbyService.prototype.createNewGame = function (game) {
         return this.http.post('/api/v1/games', game)
             .map(function (response) { return response.json(); });
     };
-    GameLobbyService.prototype.enterGame = function (gameId, player) {
-        return this.http.put('/api/v1/games:id', gameId, player)
+    GameLobbyService.prototype.updateGame = function (gameId, game) {
+        // updateGame(game: Game):Observable<Game>{
+        return this.http.put('/api/v1/games/' + gameId, game)
+            .map(function (response) { return response.json(); });
+    };
+    GameLobbyService.prototype.deleteGame = function (gameId) {
+        return this.http.delete('/api/v1/games/' + gameId)
+            .map(function (response) { return response.json(); });
+    };
+    GameLobbyService.prototype.startGame = function (gameId, game) {
+        // updateGame(game: Game):Observable<Game>{
+        return this.http.put('/api/v1/start-game/' + gameId, game)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService = __decorate([

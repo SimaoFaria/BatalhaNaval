@@ -11,14 +11,18 @@ import { HistoricalModule } from './historical/historical.module';
 
 import { Top10Module } from './top10/top10.module';
 import { GameNavalBattleModule } from './game-naval-battle/game.module';
+import { SocketsModule } from './sockets/sockets.module';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
 import { HistoricalComponent } from './historical/historical.component';
+// import { SocketsComponent} from './sockets/sockets.component';
 
 import { HistoricalService } from './services/historical.service';
 import { GameService } from './services/game.service';
 
+import { AuthService } from './sockets/auth.service';
+import { WebSocketService } from './sockets/notifications/websocket.service';
 
 @NgModule({
   imports:      [   BrowserModule,
@@ -29,15 +33,16 @@ import { GameService } from './services/game.service';
                     //HistoricalModule,
                     //LoginModule,
                     Top10Module,
-                    GameNavalBattleModule
-                    
+                    GameNavalBattleModule,
+                    SocketsModule
   ],
   declarations: [   AppComponent,
                     DashboardComponent,
                     GameLobbyComponent,
-                    HistoricalComponent
+                    HistoricalComponent,
+                    // SocketsComponent
   ],
-  providers: [HistoricalService, GameService],
+  providers: [HistoricalService, GameService, AuthService, WebSocketService],
   bootstrap:    [ AppComponent ]
 })
 

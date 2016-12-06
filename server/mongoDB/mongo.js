@@ -8,6 +8,9 @@
 
 	var server = restify.createServer();
 
+	const passport = require('passport');
+	const websocket = require('./app.websockets');
+
 	restify.CORS.ALLOW_HEADERS.push("content-type");
 
 	server.use( restify.bodyParser() );
@@ -21,16 +24,26 @@
 		"maxAge":-1
 	}));
 
+	const security = require('./app.security');
+	security.initMiddleware(server);
+
+	const options = {websocket, security, prefix: '/api/v1/'};
+
 	// URL base Rest Api endpoints = /api/v1
   	var players = require('./mongo.players')
   	players.init(server, '/api/v1/');
   
   	var games = require('./mongo.games')
   	games.init(server, '/api/v1/');  
+  
+  	var auth = require('./app.authentication')
+  	auth.init(server, options);
 
   	database.connect(url, function () {
 		server.listen(8080, function () {
-			console.log('MongoDB App listening on port 8080!')
+			console.log('MongoDB App listening on port 8080!');
+
+			websocket.init(server.server);
 		});
 	});
 }());

@@ -7,14 +7,35 @@
 })(exports.GameStatus || (exports.GameStatus = {}));
 var GameStatus = exports.GameStatus;
 var Game = (function () {
-    function Game() {
+    function Game(game) {
+        this._id = game._id;
+        this.aborted = game.aborted;
+        this.createdBy = game.createdBy;
+        this.startDate = game.startDate;
+        this.endDate = game.endDate;
+        this.status = game.status;
+        this.winner = game.winner;
+        //deep clone para não atualizar na vista diretamente
+        this.players = JSON.parse(JSON.stringify(game.players));
     }
-    //constructor() {  }
-    Game.prototype.startGame = function () {
-    };
     return Game;
 }());
 exports.Game = Game;
+//TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
+var GameWithoutId = (function () {
+    function GameWithoutId(game) {
+        this.aborted = game.aborted;
+        this.createdBy = game.createdBy;
+        this.startDate = game.startDate;
+        this.endDate = game.endDate;
+        this.status = game.status;
+        this.winner = game.winner;
+        //deep clone para não atualizar na vista diretamente
+        this.players = JSON.parse(JSON.stringify(game.players));
+    }
+    return GameWithoutId;
+}());
+exports.GameWithoutId = GameWithoutId;
 /**
  * Description: Class that save a state of the game
  * */

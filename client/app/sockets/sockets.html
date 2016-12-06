@@ -1,0 +1,14 @@
+<div class="container">
+<h1>DAD - Websockets</h1>
+<div>
+    <label>Username:</label><input type="text" [(ngModel)]="username">
+    <label>Password:</label><input type="text" [(ngModel)]="password">
+    <button (click)="loginClick()">Login</button>
+ </div>
+
+<h1>Players</h1>
+<div *ngFor="let player of players">{{player.name}}</div>
+
+<chat-control></chat-control>
+<hr>
+<notification-panel></notification-panel>

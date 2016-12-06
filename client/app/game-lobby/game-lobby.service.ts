@@ -1,23 +1,24 @@
 import { Injectable } from '@angular/core';
 
-import { Http } from '@angular/http'; 
+import { Http, Response } from '@angular/http'; 
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { Game } from '../game-naval-battle/game';
+import { GameWithoutId } from '../game-naval-battle/game';
 import { GamingPlayer } from '../models/player';
 
 @Injectable()
 export class GameLobbyService {
 
-    private pendingGames: Game[]
+    private gamesInRoom: Game[]
 
     constructor(private http: Http){}
 
-    getPendingGames():Observable<Game[]>{
-        return this.http.get('/api/v1/pending-games')
-            .map((response) => this.pendingGames = response.json());
+    getGamesInRoom():Observable<Game[]>{
+        return this.http.get('/api/v1/waiting-room-games')
+            .map((response) => this.gamesInRoom = response.json());
     }
 
     createNewGame(game: Game):Observable<Game>{
@@ -25,8 +26,21 @@ export class GameLobbyService {
             .map((response) => response.json());
     }
 
-    enterGame(gameId: string, player: GamingPlayer):Observable<Game>{
-        return this.http.put('/api/v1/games:id', gameId, player)
+    updateGame(gameId: string, game: GameWithoutId):Observable<Game>{
+    // updateGame(game: Game):Observable<Game>{
+        return this.http.put('/api/v1/games/' + gameId, game)
+            .map((response) => response.json());
+    }
+
+    deleteGame(gameId: string):Observable<Response>{
+        return this.http.delete('/api/v1/games/' + gameId)
+            .map((response) => response.json());
+    }
+
+    
+    startGame(gameId: string, game: GameWithoutId):Observable<Game>{
+    // updateGame(game: Game):Observable<Game>{
+        return this.http.put('/api/v1/start-game/' + gameId, game)
             .map((response) => response.json());
     }
 }

@@ -7,3 +7,16 @@ h1, h3, div, li, span, button {
     width: 70%;
     float: left;
 }
+
+.owner {
+    background-color: aquamarine;
+}
+
+.joined {
+    background-color: cornflowerblue;
+}
+
+.not-joined {
+    background-color: darkgray;
+}
+

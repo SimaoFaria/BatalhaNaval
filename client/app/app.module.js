@@ -16,11 +16,15 @@ var app_component_1 = require('./app.component');
 var app_routing_module_1 = require('./app-routing.module');
 var top10_module_1 = require('./top10/top10.module');
 var game_module_1 = require('./game-naval-battle/game.module');
+var sockets_module_1 = require('./sockets/sockets.module');
 var dashboard_component_1 = require('./dashboard/dashboard.component');
 var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
 var historical_component_1 = require('./historical/historical.component');
+// import { SocketsComponent} from './sockets/sockets.component';
 var historical_service_1 = require('./services/historical.service');
 var game_service_1 = require('./services/game.service');
+var auth_service_1 = require('./sockets/auth.service');
+var websocket_service_1 = require('./sockets/notifications/websocket.service');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -34,14 +38,15 @@ var AppModule = (function () {
                 //HistoricalModule,
                 //LoginModule,
                 top10_module_1.Top10Module,
-                game_module_1.GameNavalBattleModule
+                game_module_1.GameNavalBattleModule,
+                sockets_module_1.SocketsModule
             ],
             declarations: [app_component_1.AppComponent,
                 dashboard_component_1.DashboardComponent,
                 game_lobby_component_1.GameLobbyComponent,
-                historical_component_1.HistoricalComponent
+                historical_component_1.HistoricalComponent,
             ],
-            providers: [historical_service_1.HistoricalService, game_service_1.GameService],
+            providers: [historical_service_1.HistoricalService, game_service_1.GameService, auth_service_1.AuthService, websocket_service_1.WebSocketService],
             bootstrap: [app_component_1.AppComponent]
         }), 
         __metadata('design:paramtypes', [])
