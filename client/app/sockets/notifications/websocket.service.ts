@@ -35,4 +35,18 @@ export class WebSocketService {
             return () => this.socket.disconnect();
         });
     }
+
+
+    // sendMessageToGameRoom(message: any, room: any) {
+    //     this.socket.emit(room, message);
+    // }
+
+    // getGameRoomMessages(room: any): Observable<any> {
+    //     return new Observable((observer:any) => {
+    //         this.socket.on(room, (data:any) => {
+    //             observer.next(data);
+    //         });
+    //         return () => this.socket.disconnect();
+    //     });
+    // }
 }

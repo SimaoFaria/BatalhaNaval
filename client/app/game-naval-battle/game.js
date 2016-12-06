@@ -40,7 +40,6 @@ exports.GameWithoutId = GameWithoutId;
  * Description: Class that save a state of the game
  * */
 var PlayerStateGame = (function () {
-    //boardAttack: BoardAttack[];
     function PlayerStateGame(idGame, status, boardDefense, boardsAttack) {
         this.idGame = idGame;
         this.status = status;

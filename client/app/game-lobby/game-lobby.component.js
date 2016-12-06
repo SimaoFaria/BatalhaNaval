@@ -37,7 +37,7 @@ var GameLobbyComponent = (function () {
         var _this = this;
         var newGame = {
             "_id": undefined,
-            "status": "INWAITINGROOM",
+            "status": game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.INWAITINGROOM),
             "createdBy": this.player.username,
             "aborted": false,
             "startDate": new Date(Date.now()).toLocaleString(),
@@ -122,7 +122,7 @@ var GameLobbyComponent = (function () {
     };
     GameLobbyComponent.prototype.startGame = function (game) {
         var gameToStart = new game_1.Game(game);
-        gameToStart.status = "PENDING";
+        gameToStart.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.PENDING);
         this.gameInRoomService.startGame(game._id, gameToStart)
             .subscribe(function (game) { });
     };

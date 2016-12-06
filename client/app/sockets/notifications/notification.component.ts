@@ -27,6 +27,10 @@ export class NotificationComponent implements OnInit {
                 this.chatChannel.push(text)
             }
              );
+
+        /*this.websocketService.getGameRoomMessages()
+            .subscribe( message => 
+            this.playersChannel.push(message) );*/
     }
 
 }

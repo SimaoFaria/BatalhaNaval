@@ -7,16 +7,37 @@ import { GameDefendComponent } from './defend/defend.component';
 import { GameAttackComponent } from './attack/attack.component';
 import { ConfigBoarShipsComponent } from './config-board-ships/config.board.ships.component';
 
+
+
+
+
+
+import { ChatComponent } from '../sockets/chat.component';
+
+import { NotificationModule } from '../sockets/notifications/notifications.module';
+
+import { WebSocketService } from '../sockets/notifications/websocket.service';
+import { AuthService } from '../sockets/auth.service';
+
+import { FormsModule }   from '@angular/forms';
+import { HttpModule } from '@angular/http';
+
+
 @NgModule({
   imports:      [ CommonModule,
-                  BrowserModule ],
+                  BrowserModule,
+                  HttpModule,
+                  FormsModule,
+                  NotificationModule
+                   ],
   declarations: [
                   ConfigBoarShipsComponent,
                   GameComponent,
                   GameDefendComponent,
-                  GameAttackComponent
+                  GameAttackComponent,
+                  ChatComponent
                  ],
-  providers: []
+  providers: [ WebSocketService, AuthService ]
 })
 
 export class GameNavalBattleModule { }

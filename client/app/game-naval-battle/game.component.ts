@@ -45,7 +45,7 @@ export class GameComponent {
         //document.getElementById('container').innerText='';
 
 
-        this._username = 'Cao de Agua'; //TODO passar para o login
+        this._username = 'Cao de Agua';// = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
         this.gameService.setUsername(this._username);
 
         this.playerStateGame = [];

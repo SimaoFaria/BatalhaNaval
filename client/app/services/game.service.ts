@@ -281,15 +281,28 @@ export class GameService {
 
 
 
-
-
-                    this.playerStateGame.push(
-                        new PlayerStateGame(
+                    let playerStateGameDs = new PlayerStateGame(
                             playerStateGame.idGame,
                             playerStateGame.status,
                             boardDefense,
                             boardsAttack
-                        )
+                        );
+
+                        playerStateGameDs.user = playerStateGame.username;
+
+                         //playerStateGameDs._username = playerStateGame.username;
+
+                        console.log("ramr");    
+                         console.dir(playerStateGameDs);
+
+                    this.playerStateGame.push(
+                        // new PlayerStateGame(
+                        //     playerStateGame.idGame,
+                        //     playerStateGame.status,
+                        //     boardDefense,
+                        //     boardsAttack
+                        // )
+                        playerStateGameDs
                     )
 
                 });

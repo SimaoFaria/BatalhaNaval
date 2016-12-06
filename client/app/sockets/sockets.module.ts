@@ -2,30 +2,34 @@ import { NgModule }      from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms';
+import { HttpModule } from '@angular/http';
 
-import { NotificationModule } from './notifications/notifications.module';
+// import { NotificationModule } from './notifications/notifications.module';
 
-import { ChatComponent } from './chat.component';
-import { SocketsComponent } from './sockets.component';
+// import { ChatComponent } from './chat.component';
+// import { SocketsComponent } from './sockets.component';
 
-import { WebSocketService } from './notifications/websocket.service';
-import { AuthService } from './auth.service';
+// import { WebSocketService } from './notifications/websocket.service';
+// import { AuthService } from './auth.service';
 
 @NgModule({
   imports:      [ CommonModule,
                   BrowserModule,
                   FormsModule,
-                  NotificationModule ],
+                  HttpModule,
+                  // NotificationModule 
+                  ],
   declarations: [ 
-                  ChatComponent,
-                  SocketsComponent ],
+                  // ChatComponent,
+                  // SocketsComponent
+                   ],
   providers: [ 
-                WebSocketService,
-                AuthService 
+                // WebSocketService,
+                // AuthService 
                ],
   exports: [
-    ChatComponent, 
-    SocketsComponent
+    // ChatComponent, 
+    // SocketsComponent
   ]
 })
 

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
     
-import { Game } from '../game-naval-battle/game';
+import { Game, PlayerStateGame, GameStatus } from '../game-naval-battle/game';
 import { GameWithoutId } from '../game-naval-battle/game';
 import { GameLobbyService } from './game-lobby.service';
 import { GamingPlayer } from '../models/player';
@@ -45,7 +45,7 @@ export class GameLobbyComponent{
 
         let newGame: Game = {
             "_id" : undefined,
-            "status" : "INWAITINGROOM", //TODO alterar para passar o enumerado em vez de string?
+            "status" : PlayerStateGame.gameStatus_toString(GameStatus.INWAITINGROOM),
             "createdBy" : this.player.username,
             "aborted" : false,
             "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
@@ -162,7 +162,7 @@ export class GameLobbyComponent{
     
         let gameToStart : Game = new Game(game);
 
-        gameToStart.status = "PENDING";
+        gameToStart.status = PlayerStateGame.gameStatus_toString(GameStatus.PENDING);
 
         this.gameInRoomService.startGame(game._id, gameToStart)
             .subscribe((game) => { });

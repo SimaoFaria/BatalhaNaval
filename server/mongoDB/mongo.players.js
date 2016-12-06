@@ -93,26 +93,39 @@ function createPlayer(request, response, next){
 	// New player data is obtained from the object sent on the request body. 
 	// Return a JSON response with that player  
 
-	var player = request.body;
-
-	database.db.collection("players").insertOne(player,function(err, result) {
-		if(err) {
-        console.log(err);
-        next();
-    } else {
-    	console.log (result);
-    	var id = result.insertedId;
-	    database.db.collection("players").findOne({_id:id},function(err, player) {
-	  		if(err) {
-		        console.log(err);
-		        next();
-		    } else {
-			    response.json(player);
-			    next();
-		    }
-		  });
+	const player = request.body;
+    player.passwordHash = sha1(player.password);
+    delete player.password;
+    if (player === undefined) {
+        response.send(400, 'No player data');
+        return next();
     }
-  });
+
+    database.db.collection('players')
+        .insertOne(player)
+        .then(result => returnPlayer(result.insertedId, response, next))
+        .catch(err => handleError(err, response, next));
+
+
+
+	// database.db.collection("players").insertOne(player,function(err, result) {
+	// 	if(err) {
+  //       console.log(err);
+  //       next();
+  //   } else {
+  //   	console.log (result);
+  //   	var id = result.insertedId;
+	//     database.db.collection("players").findOne({_id:id},function(err, player) {
+	//   		if(err) {
+	// 	        console.log(err);
+	// 	        next();
+	// 	    } else {
+	// 		    response.json(player);
+	// 		    next();
+	// 	    }
+	// 	  });
+  //   }
+  // });
 }
 
 function deletePlayer(request, response, next){
@@ -131,8 +144,47 @@ function deletePlayer(request, response, next){
   });
 }
 
+function getUser(request, response, next) {
+    const username = request.params.id;
+    console.log("testejhg");
+    database.db.collection('players')
+    .findOne({
+        username: username
+    })
+    .then((player) => {
+        if (player === null) {
+            response.send(404, 'Player not found');
+        } else {
+            response.json(player);
+        }
+        next();
+    })
+    .catch(err => handleError(err, response, next));
+}
+
+function handleError(err, response, next) {
+	response.send(500, err);
+	next();
+}
+
+function returnPlayer(id, response, next) {
+    database.db.collection('players')
+        .findOne({
+            _id: id
+        })
+        .then((player) => {
+            if (player === null) {
+                response.send(404, 'Player not found');
+            } else {
+                response.json(player);
+            }
+            next();
+        })
+        .catch(err => handleError(err, response, next));
+}
+
 // Routes for the players
-players.init = function(server,apiBaseUri){
+players.init = function(server,apiBaseUri, settings){
 	server.get(apiBaseUri+'players',getPlayers);
 	server.get(apiBaseUri+'players/:id',getPlayer);
 	server.put(apiBaseUri+'players/:id',updatePlayer);
@@ -141,6 +193,9 @@ players.init = function(server,apiBaseUri){
 
 	server.get(apiBaseUri+'top10-victories',getTop10Victories);
 	server.get(apiBaseUri+'top10-points',getTop10Points);
+
+	// server.get(settings.prefix + 'getUser/:id', getUser);
+	server.get(apiBaseUri + 'getUser/:id', getUser);
 
 	console.log("Players routes registered");
 }

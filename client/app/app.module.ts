@@ -1,7 +1,7 @@
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms';
-import { HttpModule }    from '@angular/http'; //TODO Faz sentido?
+import { HttpModule, BaseRequestOptions }    from '@angular/http'; //TODO Faz sentido?
 
 import { AppComponent }   from './app.component';
 
@@ -24,6 +24,17 @@ import { GameService } from './services/game.service';
 import { AuthService } from './sockets/auth.service';
 import { WebSocketService } from './sockets/notifications/websocket.service';
 
+import { AuthGuard } from './login-register/_guards/auth.guard';
+
+// import { routing }        from './app.routing';
+
+import { AuthenticationService } from './login-register/_services/authentication.service';
+import { LoginComponent } from './login-register/login/login.component';
+import { GameComponent } from './login-register/game/game.component';
+import { RegisterComponent } from './login-register/register/register.component';
+
+// import { ChatComponent } from './sockets/chat.component';
+
 @NgModule({
   imports:      [   BrowserModule,
                     FormsModule,
@@ -34,15 +45,25 @@ import { WebSocketService } from './sockets/notifications/websocket.service';
                     //LoginModule,
                     Top10Module,
                     GameNavalBattleModule,
-                    SocketsModule
+                    //SocketsModule
   ],
   declarations: [   AppComponent,
                     DashboardComponent,
                     GameLobbyComponent,
                     HistoricalComponent,
                     // SocketsComponent
+                    LoginComponent,
+                    RegisterComponent,
+                    // ChatComponent
+                    
   ],
-  providers: [HistoricalService, GameService, AuthService, WebSocketService],
+  providers: [      HistoricalService,
+                    GameService,
+                    AuthService,
+                    WebSocketService,
+                    AuthenticationService,
+                    AuthGuard,
+                    BaseRequestOptions ],
   bootstrap:    [ AppComponent ]
 })
 

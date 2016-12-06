@@ -262,7 +262,7 @@ function startGame(request, response, next){
 
 					var gameDetails = {
 						//"_id" : new mongodb.ObjectID(),
-						"idGame" : game._id,
+						"idGame" : game._id.toString(),
 						"status" : game.status,
 						// "username" : "",
 						"username" : player.username,
@@ -333,18 +333,27 @@ function getCurrentStateGames(request, response, next){
 
 	var username = request.params.username;
 	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
-	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}, {"players.username":username}]}).toArray(function(err, games) {
+	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
+		console.log("----------------------------------------------");
+		console.log(games);
+		console.log("----------------------------------------------");
+		
 		if(err) {
 			console.log(err);
 			next();
 		} else {
 
             var gamesIds = [];
-            for(var idx in games){
-                gamesIds.push(games[idx]._id.toString());
-            }
 
-            database.db.collection("games-details").find({idGame : {$in:gamesIds}}).toArray(function(err, gamesStates) {
+			games.forEach((game) => {
+				game.players.forEach((player) => {
+					if (player.username == username) {
+						gamesIds.push(game._id.toString());
+					}
+				});
+			});
+
+            database.db.collection("games-details").find({idGame : {$in:gamesIds}, username: username}).toArray(function(err, gamesStates) {
                 if(err) {
                     console.log(err);
                     next();
@@ -355,7 +364,7 @@ function getCurrentStateGames(request, response, next){
                 }
             });
 
-			// response.json(games);
+			// TODO depois considerar este next em vez de dentro do pedido
 			// next();
 		}
 	});

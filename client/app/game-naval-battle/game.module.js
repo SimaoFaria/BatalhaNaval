@@ -15,20 +15,31 @@ var game_component_1 = require('./game.component');
 var defend_component_1 = require('./defend/defend.component');
 var attack_component_1 = require('./attack/attack.component');
 var config_board_ships_component_1 = require('./config-board-ships/config.board.ships.component');
+var chat_component_1 = require('../sockets/chat.component');
+var notifications_module_1 = require('../sockets/notifications/notifications.module');
+var websocket_service_1 = require('../sockets/notifications/websocket.service');
+var auth_service_1 = require('../sockets/auth.service');
+var forms_1 = require('@angular/forms');
+var http_1 = require('@angular/http');
 var GameNavalBattleModule = (function () {
     function GameNavalBattleModule() {
     }
     GameNavalBattleModule = __decorate([
         core_1.NgModule({
             imports: [common_1.CommonModule,
-                platform_browser_1.BrowserModule],
+                platform_browser_1.BrowserModule,
+                http_1.HttpModule,
+                forms_1.FormsModule,
+                notifications_module_1.NotificationModule
+            ],
             declarations: [
                 config_board_ships_component_1.ConfigBoarShipsComponent,
                 game_component_1.GameComponent,
                 defend_component_1.GameDefendComponent,
-                attack_component_1.GameAttackComponent
+                attack_component_1.GameAttackComponent,
+                chat_component_1.ChatComponent
             ],
-            providers: []
+            providers: [websocket_service_1.WebSocketService, auth_service_1.AuthService]
         }), 
         __metadata('design:paramtypes', [])
     ], GameNavalBattleModule);

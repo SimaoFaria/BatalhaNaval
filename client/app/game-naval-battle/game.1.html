@@ -1,6 +1,7 @@
-<div class="container" class="panel panel-default">
-<div *ngFor="let game of playerStateGame" id="{{game.idGame}}" class="panel-body">
+<div class="container">
+<div *ngFor="let game of playerStateGame" id="{{game.idGame}}" style="background-color:lightgrey;width:80%">
 
+    <!--<input [(ngModel)]="game.idGame" placeholder="mario">-->
 
     <div  *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
         <h3>Config Ships</h3>
@@ -35,8 +36,7 @@
         </ul>
     </div>
 
-    <div class="panel-heading"><h3><span style="font-weight: bold">ID:</span>{{game.idGame}}</h3></div>
-    <table id=tabela style="background-color:#337ab7;float:left;">
+    <table id=tabela border=1 style="width:80%;">
         <tr *ngFor="let line of LINES" class="dad-row">
             <td class="dad-cell">{{line}}</td>
             <td *ngFor="let column of COLUMNS" class="dad-cell">
@@ -47,32 +47,28 @@
             <td class="dad-cell"></td>
             <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
         </tr>
-        <tr colspan="10">{{game.user}}</tr>
     </table>
 
+    <chat-control></chat-control>
+    <hr/>
+    <notification-panel></notification-panel>
 
-        <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">
+
+    <div *ngFor="let boardAttack of game.boardsAttack" >
+        <table border=1>
             <tr *ngFor="let line of LINES" class="dad-row">
                 <td class="dad-cell">{{line}}</td>
                 <td *ngFor="let column of COLUMNS" class="dad-cell">
                     <input type="text" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column)"/>
                 </td>
-                <!--<p style="visibility: hidden">{{game.userOnTable == boardAttack.username}}</p>-->
-
             </tr>
             <tr class="dad-row">
                 <td class="dad-cell"></td>
                 <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
             </tr>
-            <tr colspan="10">{{boardAttack.username}}</tr>
-            <!--<th colspan="2">Hugo</th>-->
         </table>
+    </div>
 
-        <div class="list-group">
-            <chat-control></chat-control>
-            <hr/>
-            <notification-panel></notification-panel>
-        </div>
 
 </div>
 </div>

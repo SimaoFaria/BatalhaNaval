@@ -22,7 +22,7 @@ var GameComponent = (function () {
         this.gameService = gameService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.LINES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-        this._username = 'Cao de Agua'; //TODO passar para o login
+        this._username = 'Cao de Agua'; // = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
         this.gameService.setUsername(this._username);
         this.playerStateGame = [];
         this.tabuleiro = new tabuleiro_1.Tabuleiro();

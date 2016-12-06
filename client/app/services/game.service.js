@@ -184,7 +184,19 @@ var GameService = (function () {
                     console.log("####################################################################################################################");
                     console.dir(boardsAttack);
                 }
-                _this.playerStateGame.push(new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack));
+                var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack);
+                playerStateGameDs.user = playerStateGame.username;
+                //playerStateGameDs._username = playerStateGame.username;
+                console.log("ramr");
+                console.dir(playerStateGameDs);
+                _this.playerStateGame.push(
+                // new PlayerStateGame(
+                //     playerStateGame.idGame,
+                //     playerStateGame.status,
+                //     boardDefense,
+                //     boardsAttack
+                // )
+                playerStateGameDs);
             });
             // console.log("-----------server side----------");
             // console.log(playerStateGames);

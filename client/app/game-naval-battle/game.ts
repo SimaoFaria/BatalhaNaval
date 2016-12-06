@@ -76,15 +76,17 @@ export class GameWithoutId {
 export class PlayerStateGame {
 
     public _nrShots : number;
-    private _username: string;
+    // private _username: string;
+    public _username: string;
     public idGame: string; //TODO GAME HEADER
     public status: string;
     public boardDefense: BoardDefense;
     public boardsAttack: BoardAttack[];
     //boardAttack: BoardAttack[];
+    public user;
 
     constructor(idGame : string, status: string, boardDefense: BoardDefense, boardsAttack : BoardAttack[]){
-
+        
         this.idGame = idGame;
         this.status = status;
         this.boardDefense = boardDefense;

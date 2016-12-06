@@ -31,7 +31,7 @@
 
 	// URL base Rest Api endpoints = /api/v1
   	var players = require('./mongo.players')
-  	players.init(server, '/api/v1/');
+  	players.init(server, '/api/v1/', options);
   
   	var games = require('./mongo.games')
   	games.init(server, '/api/v1/');  
