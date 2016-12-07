@@ -289,6 +289,8 @@ export class GameService {
                         );
 
                         playerStateGameDs.user = playerStateGame.username;
+                        playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
+                        playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
 
                          //playerStateGameDs._username = playerStateGame.username;
 

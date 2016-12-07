@@ -75,7 +75,8 @@ export class GameWithoutId {
  * */
 export class PlayerStateGame {
 
-    public _nrShots : number;
+    public currentPlayer : string;
+    public nrShotsRemaining : number;
     // private _username: string;
     public _username: string;
     public idGame: string; //TODO GAME HEADER

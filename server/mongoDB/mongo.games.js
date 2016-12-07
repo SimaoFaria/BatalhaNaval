@@ -116,7 +116,7 @@ function createGame(request, response, next){
         console.log(err);
         next();
     } else {
-    	console.log (result);
+    	//console.log (result);
     	var id = result.insertedId;
 	    database.db.collection("games").findOne({_id:id},function(err, game) {
 	  		if(err) {
@@ -334,9 +334,9 @@ function getCurrentStateGames(request, response, next){
 	var username = request.params.username;
 	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
 	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
-		console.log("----------------------------------------------");
-		console.log(games);
-		console.log("----------------------------------------------");
+		// console.log("----------------------------------------------");
+		// console.log(games);
+		// console.log("----------------------------------------------");
 		
 		if(err) {
 			console.log(err);
@@ -358,7 +358,7 @@ function getCurrentStateGames(request, response, next){
                     console.log(err);
                     next();
                 } else {
-                	console.log(gamesStates);
+                	//console.log(gamesStates);
                     response.json(gamesStates);
                     next();
                 }
@@ -395,21 +395,21 @@ function putCurrentStateGames(request, response, next) {
 	/**
 	 * DEBUG
 	 * */
-	console.log("--------- putCurrentStateGames ---------");
-	console.log("id: " + idGame);
-	console.log("body: " + request.body);
-	console.log("username: " + username);
-	console.log("status" + status);
-	console.log("updateStatus" + updateStatus);
-	console.log("boardDefense: " + boardDefense);
-	console.log("boardsAttack");
-	for (var boardAttack in boardsAttack) {
-		console.log();
-		console.log(boardsAttack[boardAttack]);
-	}
-
-
-	console.log("-----------------------------------------");
+	// console.log("--------- putCurrentStateGames ---------");
+	// console.log("id: " + idGame);
+	// console.log("body: " + request.body);
+	// console.log("username: " + username);
+	// console.log("status" + status);
+	// console.log("updateStatus" + updateStatus);
+	// console.log("boardDefense: " + boardDefense);
+	// console.log("boardsAttack");
+	// for (var boardAttack in boardsAttack) {
+	// 	console.log();
+	// 	console.log(boardsAttack[boardAttack]);
+	// }
+    //
+    //
+	// console.log("-----------------------------------------");
 
 	database.db.collection("games-details").updateOne(
 		{ idGame: idGame, username: username},
@@ -463,6 +463,61 @@ function putCurrentStateGames(request, response, next) {
 	);
 }
 
+
+function swatpTurn(idGame, currentPlayer) {
+
+	console.log("swatpTurn(" + idGame + "," +  currentPlayer +")");
+
+	//procurar o game que tem o vetor de jogadores
+
+	var id = new mongodb.ObjectID(idGame);
+	database.db.collection("games").findOne({ _id: id },function(err, game) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+
+			var nextPlayerName = null;
+
+			for(var idx in game.players) {
+
+				console.log("PLAYER=>" +game.players[idx].username);
+
+				//ver qual o indice do jogador currente
+				if(currentPlayer == game.players[idx].username) {
+
+					console.log("PLAYER CURRENT=>" +game.players[idx].username + "index" + idx);
+
+					//se igual ao tamanho do vetor
+
+					var nrPlayers = game.players.length - 1;
+					console.log("#players: " + nrPlayers);
+
+					if(idx == nrPlayers){
+						//passa o primeiro jogador a jogar
+						nextPlayerName = game.players[0].username;
+						console.log("New Player 0:" + nextPlayerName);
+						//return nextPlayerName;
+					}else {
+						//se nao passa ao proximo
+						var nextIndex = parseInt(idx) + 1;
+						console.log("Nexte index" + nextIndex);
+						nextPlayerName = game.players[nextIndex].username;
+						console.log("New Player next:" + nextPlayerName);
+						//return nextPlayerName;
+					}
+
+				}
+
+			}
+
+			return nextPlayerName;
+			//next(); //TODO DUVIDA
+		}
+	});
+}
+
+
 function getHasShot(request, response, next){
 
 	//PARAMS
@@ -483,6 +538,7 @@ function getHasShot(request, response, next){
 	// console.log("column: " + column);
 
 
+
 	database.db.collection("games-details").findOne(
 		{ idGame: idGame, username: opponentUsername},
 		function(err, game) {
@@ -491,36 +547,203 @@ function getHasShot(request, response, next){
 				next();
 			} else {
 
+				//Tirar um tiro ao layer
+				console.log("Number of current shots: " +  game.nrShotsRemaining);
+				var nrShotsRemaining = game.nrShotsRemaining;
+				nrShotsRemaining = nrShotsRemaining -1;
+				console.log("Number of current shots ater: " + nrShotsRemaining);
+
+				//caso 0
+				var currentPlayer = game.currentPlayer;
+				if(nrShotsRemaining == 0) {
+					//RECARRGAR 3 TIROS DO PLAYER
+					nrShotsRemaining = 3;
+
+					//mudar de player
+					var idGameSwap = game.idGame;
+					var currentPlayerSwap = game.currentPlayer;
+					currentPlayer = swatpTurn(idGameSwap, currentPlayerSwap);
+
+
+				// 	/****************************** PROXIMO JOGAFOR ******************************************/
+                //
+                //
+				// 	console.log("swatpTurn(" + idGame + "," +  currentPlayer +")");
+                //
+				// 	//procurar o game que tem o vetor de jogadores
+                //
+                //
+				// 	var id = new mongodb.ObjectID(idGame);
+				// 	database.db.collection("games").findOne({ _id: id },function(err, game) {
+				// 		if(err) {
+				// 			console.log(err);
+				// 			next();
+				// 		} else {
+                //
+				// 			var nextPlayerName = null;
+                //
+				// 			for(var idx in game.players) {
+                //
+				// 				console.log("PLAYER=>" +game.players[idx].username);
+                //
+				// 				//ver qual o indice do jogador currente
+				// 				if(currentPlayer == game.players[idx].username) {
+                //
+				// 					console.log("PLAYER CURRENT=>" +game.players[idx].username + "index" + idx);
+                //
+				// 					//se igual ao tamanho do vetor
+                //
+				// 					var nrPlayers = game.players.length - 1;
+				// 					console.log("#players: " + nrPlayers);
+                //
+				// 					if(idx == nrPlayers){
+				// 						//passa o primeiro jogador a jogar
+				// 						nextPlayerName = game.players[0].username;
+				// 						console.log("New Player 0:" + nextPlayerName);
+				// 						//return nextPlayerName;
+				// 					}else {
+				// 						//se nao passa ao proximo
+				// 						var nextIndex = parseInt(idx) + 1;
+				// 						console.log("Nexte index" + nextIndex);
+				// 						nextPlayerName = game.players[nextIndex].username;
+				// 						console.log("New Player next:" + nextPlayerName);
+				// 						//return nextPlayerName;
+                //
+				// 					}
+                //
+				// 				}
+                //
+				// 			}
+                //
+				// 			//return nextPlayerName;
+				// 			//next(); //TODO DUVIDA
+                //
+				// 			currentPlayer = nextPlayerName;
+				// 			console.log("=>>>>>>>>>>>>>> New player : " + currentPlayer);
+                //
+                //
+				// 			/******************************  BROADCAST GERIR TURNOS ******************************************/
+                //
+				// 			//RETIRA UM TIRO AO JOGADOR
+				// 			database.db.collection("games-details").updateMany(
+				// 				{ idGame: idGame },
+				// 				{
+				// 					$set: {
+				// 						nrShotsRemaining : nrShotsRemaining,
+				// 						currentPlayer : currentPlayer
+				// 					}
+				// 				},
+				// 				function(err, result) {
+				// 					if(err) {
+				// 						console.log(err);
+				// 						next();
+				// 					} else {
+				// 						//response.json(result);
+				// 						//next();
+                //
+				// 						/******************************  ENVIAR RESULTADO DO TIRO ******************************************/
+                //
+                //
+				// 						var result = '';
+                //
+				// 						for (var idx in game.boardDefense) {
+                //
+				// 							console.log("=>>AQUI");
+				// 							//SHOT
+				// 							if(game.boardDefense[idx].position.line == line
+				// 								&& game.boardDefense[idx].position.column == column) {
+                //
+				// 								console.log("=>>>>>>>>>>>>>entrou");
+				// 								result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+                //
+                //
+                //
+				//
+                //
+				// 							}
+				// 						}
+                //
+				// 						response.json(result);
+				// 						next();
+                //
+                //
+				// 						/******************************  FIM ENVIAR RESULTADO DO TIRO ******************************************/
+                //
+                //
+				// 					}
+				// 				}
+				// 			);
+                //
+				//
+                //
+                //
+                //
+                //
+				// 			/******************************  FIM BROADCAST GERIR TURNOS ******************************************/
+                //
+                //
+                //
+				// 		}
+				// 	});
+                //
+                //
+                //
+                //
+				// 	/******************************  FIM PROXIMO JOGAFOR ******************************************/
+				 }
+
+
+
+
+				database.db.collection("games-details").updateMany(
+								{ idGame: idGame },
+								{
+									$set: {
+										nrShotsRemaining : nrShotsRemaining,
+										currentPlayer : currentPlayer //TODO SO PODE SER EXECUTADO AQUI QUANDO JA TIVERMOS O NOVO PLAYER (ESPERAR PELA RESPOSTA DO MONGO . CALLBACK ?)
+									}
+								},
+								function(err, result) {
+									if (err) {
+										console.log(err);
+										next();
+									} else {
+										//response.json(result);
+										//next();
+									}
+								}
+				);
+
+
+				//TODO SO PODEMOS DEVOLVER A RESPOSTA DEPOIS DO UPDATEMANY
 				var result = '';
-				//var draw = '0';
-				//var message = null;
 
 				for (var idx in game.boardDefense) {
 
+					console.log("=>>AQUI");
 					//SHOT
 					if(game.boardDefense[idx].position.line == line
 						&& game.boardDefense[idx].position.column == column) {
-						//draw = 'X';
+
+						console.log("=>>>>>>>>>>>>>entrou");
 						result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
 
-						//Todo inserir na BD o X
+
+
+
 
 					}
-
 				}
-
-				//TODO se nao estava na a posição inseriri o 0 (flag)
-
-
-				// result = {
-				// 	'draw': draw,
-				// 	'message': message
-				// }
 
 				response.json(result);
 				next();
+
+
 			}
 	});
+
+
+
 }
 
 

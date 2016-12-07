@@ -36,6 +36,8 @@
     </div>
 
     <div class="panel-heading"><h3><span style="font-weight: bold">ID:</span>{{game.idGame}}</h3></div>
+    <h5><span style="font-weight: bold">Player:</span> {{game.currentPlayer}}</h5>
+    <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
     <table id=tabela style="background-color:#337ab7;float:left;">
         <tr *ngFor="let line of LINES" class="dad-row">
             <td class="dad-cell">{{line}}</td>

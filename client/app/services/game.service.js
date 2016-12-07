@@ -186,6 +186,8 @@ var GameService = (function () {
                 }
                 var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack);
                 playerStateGameDs.user = playerStateGame.username;
+                playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
+                playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
                 //playerStateGameDs._username = playerStateGame.username;
                 console.log("ramr");
                 console.dir(playerStateGameDs);
