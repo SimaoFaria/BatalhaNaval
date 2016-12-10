@@ -10,6 +10,7 @@ import {BoardAttack} from "./models/board-attack";
 export enum GameStatus {
     INWAITINGROOM,
     PENDING,
+    READY,
     INPROGRESS,
     ENDED
 }
@@ -33,12 +34,14 @@ export class Game {
         this.status = game.status;
         this.winner = game.winner;
 
+        //TODO confirmar se ainda é preciso
         //deep clone para não atualizar na vista diretamente
         this.players = JSON.parse(JSON.stringify(game.players));
     }
 }
 
 //TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
+//TODO apagar
 export class GameWithoutId {
     status: string;
     createdBy: string;
@@ -119,6 +122,9 @@ export class PlayerStateGame {
                 break;
             case GameStatus.ENDED:
                 gameStatusString = 'ENDED';
+                break;
+            case GameStatus.READY:
+                gameStatusString = 'READY';
                 break;
         }
 

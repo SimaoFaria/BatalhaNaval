@@ -11,6 +11,7 @@ import { AuthGuard } from './login-register/_guards/auth.guard';
 import {RegisterComponent} from "./login-register/register/register.component";
 
 export const ROUTES: Routes = [
+  // { path: '', redirectTo: '/current-games', pathMatch: 'full' },
   { path: '', redirectTo: '/game-lobby', pathMatch: 'full' },
   // { path: '', redirectTo: '/sockets', pathMatch: 'full' },
   // { path: '', component: LoginComponent, canActivate: [AuthGuard] },

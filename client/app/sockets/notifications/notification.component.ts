@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import {WebSocketService } from './websocket.service';
 
@@ -8,29 +8,58 @@ import {WebSocketService } from './websocket.service';
     templateUrl: 'notification.component.html'
 })
 export class NotificationComponent implements OnInit {
-    playersChannel: string[] = [];
+    notificationsChannel: string[] = [];
     chatChannel: string[] = [];
 
-    constructor(private websocketService: WebSocketService){
-    }
+    @Input() roomId: string;
+
+    constructor(private websocketService: WebSocketService){ }
 
     ngOnInit() {
-        // TODO: subscribe each type of event on websocketService
-        // Every time a message is served just push it to the proper channel
-        this.websocketService.getPlayersMessages()
-            .subscribe( message => 
-            this.playersChannel.push(message) );
 
-        this.websocketService.getChatMessages()
+        this.websocketService.getGameMessages(this.roomId + ' notifications')
             .subscribe( message => {
-                let text = message.user.username+'---'+message.message
-                this.chatChannel.push(text)
-            }
-             );
+                // let text = '('+this.chatRoom+') -> '+message.user.username+'---'+message.message;
+                // this.notificationsChannel.push(text);
+                this.notificationsChannel.push(message);
+            } );
 
-        /*this.websocketService.getGameRoomMessages()
-            .subscribe( message => 
-            this.playersChannel.push(message) );*/
+        this.websocketService.getGameMessages(this.roomId + ' chat')
+            .subscribe( message => {
+                // let text = '('+this.roomId+') -> '+message.user.username+'---'+message.message;
+                let date = new Date(message.time);
+                let d = {
+                    Y: date.getFullYear(),
+                    M: date.getUTCMonth(),
+                    D: date.getUTCDay(),
+                    H: date.getHours(),
+                    m: date.getMinutes(),
+                    s: date.getSeconds()
+                };
+
+                //o mes e o dia não estão certo
+                // let day = [d.Y, d.M, d.D].join('/');
+                let hours = [d.H,
+                            d.m,
+                            // d.s
+                            ].join(':');
+                // let time = [day, hours].join(' ');
+
+                let text = hours + ' ' + message.user.username+' -> '+message.message;
+                this.chatChannel.push(text);
+            } );
+
+        // this.websocketService.getGameMessages('notifications')
+        //     .subscribe( message => {
+        //         this.notificationsChannel.push(message);
+        //     } );
+
+        // this.websocketService.getGameMessages('chat')
+        //     .subscribe( message => {
+        //         let text = '('+this.roomId+') -> '+message.user.username+'---'+message.message;
+        //         this.chatChannel.push(text);
+        //     } );
+
     }
 
 }

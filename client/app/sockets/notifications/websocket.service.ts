@@ -14,39 +14,51 @@ export class WebSocketService {
         }
     }
 
-    sendChatMessage(message: any) {
-        this.socket.emit('chat', message);
-    }
-
-    getPlayersMessages(): Observable<any> {
-        return new Observable((observer:any) => {
-            this.socket.on('players', (data:any) => {
-                observer.next(data);
-            });
-            return () => this.socket.disconnect();
-        });
-    }
-
-    getChatMessages(): Observable<any> {
-        return new Observable((observer:any) => {
-            this.socket.on('chat', (data:any) => {
-                observer.next(data);
-            });
-            return () => this.socket.disconnect();
-        });
-    }
-
-
-    // sendMessageToGameRoom(message: any, room: any) {
-    //     this.socket.emit(room, message);
+    // sendChatMessage(message: any) {
+    //     this.socket.emit('chat', message);
     // }
 
-    // getGameRoomMessages(room: any): Observable<any> {
+    // getPlayersMessages(): Observable<any> {
     //     return new Observable((observer:any) => {
-    //         this.socket.on(room, (data:any) => {
+    //         this.socket.on('players', (data:any) => {
     //             observer.next(data);
     //         });
     //         return () => this.socket.disconnect();
     //     });
     // }
+
+    // getChatMessages(): Observable<any> {
+    //     return new Observable((observer:any) => {
+    //         this.socket.on('chat', (data:any) => {
+    //             observer.next(data);
+    //         });
+    //         return () => this.socket.disconnect();
+    //     });
+    // }
+
+
+    // sendMessageToGameRoom(room: any, message: any) {
+    //     this.socket.emit(room, message);    
+    // }
+
+    getGameMessages(any: any): Observable<any> {
+        return new Observable((observer:any) => {
+            this.socket.on(any, (data:any) => {
+                observer.next(data);
+            });
+            return () => this.socket.disconnect();
+        });
+    }
+
+    joinGameChannel(json: any) {
+        this.socket.emit('join game channel', json);
+    }
+
+    useChat(room: any, message: any) {
+        this.socket.emit('use chat', room, message);
+    }
+
+    useNotifications(room: any, json: any) {
+        this.socket.emit('use notifications', room, json);
+    }
 }

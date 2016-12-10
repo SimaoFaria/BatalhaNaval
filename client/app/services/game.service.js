@@ -105,6 +105,9 @@ var GameService = (function () {
         return this.http.get('/api/v1/current-state-games/' + username)
             .map(function (response) { return response.json(); })
             .map(function (playerStateGames) {
+            console.log("I - GAME.SERVICE");
+            console.log(playerStateGames);
+            console.log("F - GAME.SERVICE");
             _this.playerStateGame = null;
             _this.playerStateGame = [];
             playerStateGames.forEach(function (playerStateGame) {
@@ -200,9 +203,9 @@ var GameService = (function () {
                 // )
                 playerStateGameDs);
             });
-            // console.log("-----------server side----------");
-            // console.log(playerStateGames);
-            // console.log("-----------server side----------");
+            console.log("-----------server side----------");
+            console.log(playerStateGames);
+            console.log("-----------server side----------");
             return _this.playerStateGame;
         });
         // getCurrentStateGames_ANTIIGO(username : string):Observable<PlayerStateGame[]>{

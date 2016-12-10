@@ -33,7 +33,7 @@ export class GameService {
     getCurrentGames(username : string):Observable<Game[]>{
 
         return this.http.get('/api/v1/current-games/' + username)
-            .map((response) => this.games = response.json());
+            .map((response: any) => this.games = response.json());
 
         //TODO
         //por o json num arrya de game para mandar para o cliente
@@ -88,10 +88,6 @@ export class GameService {
 
         }
 
-
-
-
-
         let boardsAttack = [];
         for (let boardAttack of playerStateGame.boardsAttack) {
 
@@ -105,9 +101,6 @@ export class GameService {
             }
             boardsAttack.push({"username" : boardAttack.username, "board": board});
         }
-
-
-
 
         console.log("********* ------ *********");
         console.log(boardsAttack);
@@ -125,7 +118,8 @@ export class GameService {
         let body = bodyJSON;
 
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
-            .map((response) => {
+            .map((response) => 
+            {
 
                 //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
                 for (let game of this.playerStateGame) {
@@ -144,21 +138,40 @@ export class GameService {
                         }
                     }
                 }
-            });
+            }
+            // this.playerStateGame = response.json()
+            );
     }
 
 
     getCurrentStateGames(username : string):Observable<PlayerStateGame[]>{
 
         return this.http.get('/api/v1/current-state-games/' + username)
-            .map(response => <PlayerStateGame[]>response.json())
-            .map((playerStateGames) => {
+            // verso simao para testes 
+            // .map((response: any) => 
+            // this.playerStateGame = response.json()
+            // {
+            //     console.log("I - GAME.SERVICE");
+            //     console.log(response);
+            //     console.log("F - GAME.SERVICE");
+            //     return this.playerStateGame = response.json();
+            // }
+            // );
+            
+            
+            // versao hugo
+            .map((response: any) => <PlayerStateGame[]>response.json())
+            .map((playerStateGames: any) => {
+
+                console.log("I - GAME.SERVICE");
+                console.log(playerStateGames);
+                console.log("F - GAME.SERVICE");
 
                 this.playerStateGame = null;
                 this.playerStateGame = [];
 
 
-                playerStateGames.forEach((playerStateGame) => {
+                playerStateGames.forEach((playerStateGame: PlayerStateGame) => {
 
                     let boardDefense : BoardDefense;
                     boardDefense = new BoardDefense();
@@ -166,7 +179,7 @@ export class GameService {
 
 
                     //tabuleiro 0 é o da defesa
-                    playerStateGame.boardDefense.forEach((ship) => {
+                    playerStateGame.boardDefense.forEach((ship: any) => {
 
                         let orientation = ship.orientation;
                         let line = ship.position.line;
@@ -309,9 +322,9 @@ export class GameService {
 
                 });
 
-                // console.log("-----------server side----------");
-                // console.log(playerStateGames);
-                // console.log("-----------server side----------");
+                console.log("-----------server side----------");
+                console.log(playerStateGames);
+                console.log("-----------server side----------");
 
 
                 return this.playerStateGame;

@@ -21,7 +21,7 @@ export class GameLobbyComponent{
     //totalPlayers: Number[] = []; NOT WORKING
 
     player: GamingPlayer = {
-        "username" : "mario",
+        "username" : JSON.parse(localStorage.getItem('currentUser')).username,
         "score" : 0,
         "classification" : ""
     };
@@ -173,7 +173,7 @@ export class GameLobbyComponent{
         let exists: boolean = false;
 
         for(let player of game.players) {
-            if(player.username === this.player.username) {
+            if(player.username == this.player.username) {
                 exists = true;
                 break;
             }

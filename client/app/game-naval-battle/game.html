@@ -1,8 +1,11 @@
 <div class="container" class="panel panel-default">
 <div *ngFor="let game of playerStateGame" id="{{game.idGame}}" class="panel-body">
 
+    <div *ngIf="game.status == 'READY'" style="background-color:darkgrey;">
+        <h3>There are still people positioning their ships.</h3>
+    </div>
 
-    <div  *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
+    <div *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
         <h3>Config Ships</h3>
         Tipo de Navio: 
         <select id=tiponavio>
@@ -36,7 +39,7 @@
     </div>
 
     <div class="panel-heading"><h3><span style="font-weight: bold">ID:</span>{{game.idGame}}</h3></div>
-    <h5><span style="font-weight: bold">Player:</span> {{game.currentPlayer}}</h5>
+    <h5><span style="font-weight: bold">Current Player:</span> {{game.currentPlayer}}</h5>
     <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
     <table id=tabela style="background-color:#337ab7;float:left;">
         <tr *ngFor="let line of LINES" class="dad-row">
@@ -52,7 +55,7 @@
         <tr colspan="10">{{game.user}}</tr>
     </table>
 
-
+    <div *ngIf="game.status == 'INPROGRESS'">
         <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">
             <tr *ngFor="let line of LINES" class="dad-row">
                 <td class="dad-cell">{{line}}</td>
@@ -69,12 +72,13 @@
             <tr colspan="10">{{boardAttack.username}}</tr>
             <!--<th colspan="2">Hugo</th>-->
         </table>
+    </div>
 
-        <div class="list-group">
-            <chat-control></chat-control>
-            <hr/>
-            <notification-panel></notification-panel>
-        </div>
+    <div class="list-group">
+        <notification-panel [roomId]="game.idGame"></notification-panel>
+        <hr/>
+        <chat-control [roomId]="game.idGame"></chat-control>
+    </div>
 
 </div>
 </div>

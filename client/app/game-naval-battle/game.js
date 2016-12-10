@@ -2,8 +2,9 @@
 (function (GameStatus) {
     GameStatus[GameStatus["INWAITINGROOM"] = 0] = "INWAITINGROOM";
     GameStatus[GameStatus["PENDING"] = 1] = "PENDING";
-    GameStatus[GameStatus["INPROGRESS"] = 2] = "INPROGRESS";
-    GameStatus[GameStatus["ENDED"] = 3] = "ENDED";
+    GameStatus[GameStatus["READY"] = 2] = "READY";
+    GameStatus[GameStatus["INPROGRESS"] = 3] = "INPROGRESS";
+    GameStatus[GameStatus["ENDED"] = 4] = "ENDED";
 })(exports.GameStatus || (exports.GameStatus = {}));
 var GameStatus = exports.GameStatus;
 var Game = (function () {
@@ -15,6 +16,7 @@ var Game = (function () {
         this.endDate = game.endDate;
         this.status = game.status;
         this.winner = game.winner;
+        //TODO confirmar se ainda é preciso
         //deep clone para não atualizar na vista diretamente
         this.players = JSON.parse(JSON.stringify(game.players));
     }
@@ -22,6 +24,7 @@ var Game = (function () {
 }());
 exports.Game = Game;
 //TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
+//TODO apagar
 var GameWithoutId = (function () {
     function GameWithoutId(game) {
         this.aborted = game.aborted;
@@ -70,6 +73,9 @@ var PlayerStateGame = (function () {
                 break;
             case GameStatus.ENDED:
                 gameStatusString = 'ENDED';
+                break;
+            case GameStatus.READY:
+                gameStatusString = 'READY';
                 break;
         }
         return gameStatusString;

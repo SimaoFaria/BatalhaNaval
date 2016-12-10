@@ -5,6 +5,7 @@ var game_component_1 = require('./game-naval-battle/game.component');
 var login_component_1 = require('./login-register/login/login.component');
 var register_component_1 = require("./login-register/register/register.component");
 exports.ROUTES = [
+    // { path: '', redirectTo: '/current-games', pathMatch: 'full' },
     { path: '', redirectTo: '/game-lobby', pathMatch: 'full' },
     // { path: '', redirectTo: '/sockets', pathMatch: 'full' },
     // { path: '', component: LoginComponent, canActivate: [AuthGuard] },

@@ -57,9 +57,10 @@ var HistoricalComponent = (function () {
                         </ul>`,*/
             providers: [historical_service_1.HistoricalService]
         }), 
-        __metadata('design:paramtypes', [historical_service_1.HistoricalService])
+        __metadata('design:paramtypes', [(typeof (_a = typeof historical_service_1.HistoricalService !== 'undefined' && historical_service_1.HistoricalService) === 'function' && _a) || Object])
     ], HistoricalComponent);
     return HistoricalComponent;
+    var _a;
 }());
 exports.HistoricalComponent = HistoricalComponent;
 //# sourceMappingURL=historical.component.js.map

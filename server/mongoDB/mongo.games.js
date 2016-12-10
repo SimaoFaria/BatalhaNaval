@@ -257,8 +257,21 @@ function startGame(request, response, next){
 		        next();
 		    } else {
 
-
 				game.players.forEach((player) => {
+
+					var otherPlayers = [];
+					game.players.forEach((pl) => {
+						
+						if(pl.username != player.username) {
+
+							var p = {
+								"username" : pl.username,
+								"board" : []
+							}
+							otherPlayers.push(p);
+						}
+					});
+
 
 					var gameDetails = {
 						//"_id" : new mongodb.ObjectID(),
@@ -267,7 +280,7 @@ function startGame(request, response, next){
 						// "username" : "",
 						"username" : player.username,
 						"boardDefense" : [],
-						"boardsAttack" : []
+						"boardsAttack" : otherPlayers
 					}
 					// gameDetails._id = new mongodb.ObjectID(gameDetails.idGame, gameDetails.username);
 					// gameDetails.username = player.username;
@@ -321,7 +334,7 @@ function getCurrentGames(request, response, next){
 }
 
 
-
+// versao hugo
 function getCurrentStateGames(request, response, next){
 	// TODO: obtain one game (by ObjectID) from games collection
 	// and return a JSON response with that game
@@ -369,6 +382,58 @@ function getCurrentStateGames(request, response, next){
 		}
 	});
 }
+
+// versao simao
+// function getCurrentStateGames(request, response, next){
+// 	// TODO: obtain one game (by ObjectID) from games collection
+// 	// and return a JSON response with that game
+// 	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
+// 	//var username = new mongodb.ObjectID(request.params.username);
+
+// 	//TODO fazer bem feito par nao haver falhas de segurança (so passar o tabuleiro do utilizar e o estado e o id e blablabla)
+// 	//var select = {players[0].tabuleiros.};
+
+// 	var username = request.params.username;
+// 	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
+// 	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
+// 		// console.log("----------------------------------------------");
+// 		// console.log(games);
+// 		// console.log("----------------------------------------------");
+		
+// 		if(err) {
+// 			console.log(err);
+// 			next();
+// 		} else {
+
+//             // var gamesIds = [];
+
+// 			// games.forEach((game) => {
+// 			// 	game.players.forEach((player) => {
+// 			// 		if (player.username == username) {
+// 			// 			gamesIds.push(game._id.toString());
+// 			// 		}
+// 			// 	});
+// 			// });
+
+//             // database.db.collection("games-details").find({idGame : {$in:gamesIds}, username: username}).toArray(function(err, gamesStates) {
+//             //     if(err) {
+//             //         console.log(err);
+//             //         next();
+//             //     } else {
+//             //     	//console.log(gamesStates);
+//             //         response.json(gamesStates);
+//             //         next();
+//             //     }
+//             // });
+
+// 			// // TODO depois considerar este next em vez de dentro do pedido
+// 			// // next();
+
+// 			response.json(games);
+// 			next();
+// 		}
+// 	});
+// }
 
 
 //TODO http://www.fusioncharts.com/blog/2013/12/jsdoc-vs-yuidoc-vs-doxx-vs-docco-choosing-a-javascript-documentation-generator/
@@ -432,30 +497,33 @@ function putCurrentStateGames(request, response, next) {
 					} else {
 
 
-						var id = new mongodb.ObjectID(idGame);
+						//SIMAO só faz sentido se for o ultimo a pôr ready ou o owner?
+						// var id = new mongodb.ObjectID(idGame);
 
-						database.db.collection("games").updateOne(
-							{ _id: id},
-							{
-								$set: {
-									status: status
-								}
-							},
-							function(err, result) {
-								if (err) {
-									console.log(err);
-									next();
-								} else {
-									//next();
+						// database.db.collection("games").updateOne(
+						// 	{ _id: id},
+						// 	{
+						// 		$set: {
+						// 			status: status
+						// 		}
+						// 	},
+						// 	function(err, result) {
+						// 		if (err) {
+						// 			console.log(err);
+						// 			next();
+						// 		} else {
+						// 			//next();
 
-									response.json(game);
-									next();
-								}
-							}
-						);
+						// 			response.json(game);
+						// 			next();
+						// 		}
+						// 	}
+						// );
 
-						// response.json(game);
-						// next();
+
+
+						response.json(game);
+						next();
 					}
 				});
 			}
@@ -546,6 +614,10 @@ function getHasShot(request, response, next){
 				console.log(err);
 				next();
 			} else {
+
+				// TEST SIMAO
+				// response.json(game);
+				// next();
 
 				//Tirar um tiro ao layer
 				console.log("Number of current shots: " +  game.nrShotsRemaining);
@@ -745,6 +817,7 @@ function getHasShot(request, response, next){
 
 
 }
+
 
 
 

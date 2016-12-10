@@ -14,15 +14,19 @@ var game_1 = require('./game');
 var tabuleiro_1 = require("./tabuleiro");
 var navio_1 = require("./navio");
 var board_defense_1 = require("./models/board-defense");
+var websocket_service_1 = require('../sockets/notifications/websocket.service');
 var GameComponent = (function () {
     //private celulas : number[][];
-    function GameComponent(gameService) {
+    function GameComponent(gameService, websocketService) {
         //document.getElementById('container').innerText='';
         var _this = this;
         this.gameService = gameService;
+        this.websocketService = websocketService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.LINES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-        this._username = 'Cao de Agua'; // = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
+        // this._username = 'Cao de Agua';// = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
+        this._username = JSON.parse(localStorage.getItem('currentUser')).username;
+        //DUVIDA(simão) => porquê?
         this.gameService.setUsername(this._username);
         this.playerStateGame = [];
         this.tabuleiro = new tabuleiro_1.Tabuleiro();
@@ -34,11 +38,16 @@ var GameComponent = (function () {
                 .subscribe((response) => this.games = response);*/
         this.gameService.getCurrentStateGames(this._username)
             .subscribe(function (response) {
-            _this.playerStateGame = response;
-            //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
             console.log("------ No CLIENTE -------");
-            console.dir(_this.playerStateGame);
+            console.dir(response);
             console.log("------ FIM No CLIENTE -------");
+            _this.playerStateGame = response;
+            // this.playerStateGame.forEach((game) => {
+            // });
+            //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+            // console.log("------ No CLIENTE -------");
+            // console.dir(this.playerStateGame );
+            // console.log("------ FIM No CLIENTE -------");
         });
         //desenhaTabuleiro();
     }
@@ -147,10 +156,24 @@ var GameComponent = (function () {
                     alert("Ainda não tem as peças todas");
                 }
                 else {
-                    alert("Começar jogo");
-                    game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.INPROGRESS);
+                    // alert("Começar jogo");
+                    //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
+                    // inicio websockets
+                    var json = {
+                        myMessage: 'I\'m ready.',
+                        othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' is ready.'
+                    };
+                    this.websocketService.useNotifications(idGame + ' notifications', json);
+                    // fim websockets
+                    //TODO SIMAO nao faz sentido mudar aqui, so no ultimo a fazer ready ou no gajo que comece o jogo
+                    // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
+                    game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.READY);
                     this.gameService.putCurrentStateGames(game, true)
                         .subscribe(function (response) {
+                        console.log("component - putCurrentStateGames - response");
+                        console.log(response);
+                        console.log("/component - putCurrentStateGames - response");
+                        // this.websocketService
                         // this.playerStateGame = response; //TODO
                         //
                         // console.log("esperaça!!!");
@@ -207,6 +230,22 @@ var GameComponent = (function () {
                         var attackBoard = _a[_i];
                         if (attackBoard.getUsername() == opponentUsername) {
                             attackBoard.setValue(line, column, (resp_1 != '' ? 'X' : '0'));
+                            //inicio websockets
+                            var json = {
+                                myMessage: 'You shot (' + line + ', ' + column + ') and ',
+                                othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
+                            };
+                            //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
+                            if (resp_1 != '') {
+                                json.myMessage += response + '.';
+                                json.othersMessage += response + '.';
+                            }
+                            else {
+                                json.myMessage += 'missed.';
+                                json.othersMessage += 'missed.';
+                            }
+                            _this.websocketService.useNotifications(idGame + ' notifications', json);
+                            //fim websockets
                             //TODO fazer post para a bd
                             _this.gameService.putCurrentStateGames(game, false)
                                 .subscribe(function (response) {
@@ -285,7 +324,7 @@ var GameComponent = (function () {
                 './game-defend-simao.css'
             ]
         }), 
-        __metadata('design:paramtypes', [game_service_1.GameService])
+        __metadata('design:paramtypes', [game_service_1.GameService, websocket_service_1.WebSocketService])
     ], GameComponent);
     return GameComponent;
 }());

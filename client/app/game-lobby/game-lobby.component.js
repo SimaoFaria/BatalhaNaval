@@ -18,7 +18,7 @@ var GameLobbyComponent = (function () {
         //Workaround do players.length
         //totalPlayers: Number[] = []; NOT WORKING
         this.player = {
-            "username": "mario",
+            "username": JSON.parse(localStorage.getItem('currentUser')).username,
             "score": 0,
             "classification": ""
         };
@@ -130,7 +130,7 @@ var GameLobbyComponent = (function () {
         var exists = false;
         for (var _i = 0, _a = game.players; _i < _a.length; _i++) {
             var player = _a[_i];
-            if (player.username === this.player.username) {
+            if (player.username == this.player.username) {
                 exists = true;
                 break;
             }
