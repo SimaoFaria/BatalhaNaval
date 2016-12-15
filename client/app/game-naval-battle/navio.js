@@ -285,6 +285,8 @@ var ShipForDB = (function () {
         this.position = position;
         this.type = type;
         this.orientation = orientation;
+        this.shots = [];
+        this.sank = false;
     }
     return ShipForDB;
 }());
@@ -297,4 +299,10 @@ var Position = (function () {
     return Position;
 }());
 exports.Position = Position;
+var Shot = (function () {
+    function Shot() {
+    }
+    return Shot;
+}());
+exports.Shot = Shot;
 //# sourceMappingURL=navio.js.map

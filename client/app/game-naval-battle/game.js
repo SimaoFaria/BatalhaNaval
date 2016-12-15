@@ -16,8 +16,8 @@ var Game = (function () {
         this.endDate = game.endDate;
         this.status = game.status;
         this.winner = game.winner;
-        //TODO confirmar se ainda é preciso
-        //deep clone para não atualizar na vista diretamente
+        // TODO confirmar se ainda é preciso
+        // deep clone para não atualizar na vista diretamente
         this.players = JSON.parse(JSON.stringify(game.players));
     }
     return Game;

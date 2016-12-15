@@ -786,9 +786,35 @@ function getHasShot(request, response, next){
 								}
 				);
 
-
+				// versão original
 				//TODO SO PODEMOS DEVOLVER A RESPOSTA DEPOIS DO UPDATEMANY
-				var result = '';
+				// var result = '';
+
+				// for (var idx in game.boardDefense) {
+
+				// 	console.log("=>>AQUI");
+				// 	//SHOT
+				// 	if(game.boardDefense[idx].position.line == line
+				// 		&& game.boardDefense[idx].position.column == column) {
+
+				// 		console.log("=>>>>>>>>>>>>>entrou");
+				// 		result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+
+
+
+
+
+				// 	}
+				// }
+
+				// versão com refactor
+				//TODO SO PODEMOS DEVOLVER A RESPOSTA DEPOIS DO UPDATEMANY
+				var result = {
+					shot: '',
+					shipType: '', 
+					sank: false,
+					allShipsSanked: true
+				}
 
 				for (var idx in game.boardDefense) {
 
@@ -798,19 +824,99 @@ function getHasShot(request, response, next){
 						&& game.boardDefense[idx].position.column == column) {
 
 						console.log("=>>>>>>>>>>>>>entrou");
-						result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+						// result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+						
+						//SIMAO
+						result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+						result.shipType = game.boardDefense[idx].type;
+						game.boardDefense[idx].shots.push({
+							"line" : line,
+         					"column" : column
+						});
 
+					}
+				}
 
+				//verifica se navio afundou
+					// se sim, 
+						// atualiza a prop sank do navio na DB 
+						// e atualiza result.afundou
+				for (var ship of game.boardDefense) {
 
+					if(ship.position.line == line
+						&& ship.position.column == column) {
+						//é este o ship
 
+						if (ship.type == 'Submarino') {
+							ship.sank = true;
+						} else {
+							// var numTargets = 0;
+							// ship.shots.forEach((shot) => {
+							// 	if (shot.hit) {
+							// 		numTargets++;
+							// 	}
+							// });
 
+							// TODO verificar se funciona
+							var numTargets = ship.shots.length;
+
+							switch (ship.type) {
+								case 'ContraTorpedeiro':
+									if(numTargets == 2) {
+										ship.sank = true;
+									}
+									break;
+								case 'Cruzador':
+									if(numTargets == 3) {
+										ship.sank = true;
+									}
+									break;
+								case 'Couracado':
+									if(numTargets == 4) {
+										ship.sank = true;
+									}
+									break;
+								case 'PortaAvioes':
+									if(numTargets == 5) {
+										ship.sank = true;
+									}
+									break;
+							}
+						}
+
+						if (ship.sank) {
+							result.sank = true;
+						}
+
+						//TODO(DONE) fazer UPDATE a prop sank do ship na DB
+						var id = new mongodb.ObjectID(game._id);
+						game._id = id;
+
+						database.db.collection("games-details").save(game,function(err, result) {
+							if(err) {
+								console.log(err);
+								next();
+							} else {
+								console.log(result);
+								next();
+							}
+						});
+
+						break;
+					}
+				}
+
+				// verifica se jogador tem todos os navios afundados
+				// TODO ver se tambem é para existir ou nao uma prop no player a dizer se perdeu ou nao
+				for (var ship of game.boardDefense) {
+					if (!ship.sank) {
+						result.allShipsSanked = false;
+						break;
 					}
 				}
 
 				response.json(result);
 				next();
-
-
 			}
 	});
 

@@ -184,6 +184,8 @@ export class GameService {
                         let orientation = ship.orientation;
                         let line = ship.position.line;
                         let column = ship.position.column;
+                        // let line = ship.initialPosition.line;
+                        // let column = ship.initialPosition.column;
                         let type = ship.type;
 
                         let ship_orientation: Orientacao;

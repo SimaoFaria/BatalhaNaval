@@ -118,6 +118,8 @@ var GameService = (function () {
                     var orientation = ship.orientation;
                     var line = ship.position.line;
                     var column = ship.position.column;
+                    // let line = ship.initialPosition.line;
+                    // let column = ship.initialPosition.column;
                     var type = ship.type;
                     var ship_orientation;
                     var ship_position;

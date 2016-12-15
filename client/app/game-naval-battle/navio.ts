@@ -322,11 +322,15 @@ export class ShipForDB {
     public position: Position;
     public type: string;
     public orientation: string;
+    public shots: Shot[];
+    public sank: boolean;
 
     constructor(position: Position, type: string, orientation: string){
         this.position = position;
         this.type = type;
         this.orientation = orientation;
+        this.shots = [];
+        this.sank = false;
     }
 
 }
@@ -339,8 +343,11 @@ export class Position {
         this.line = line;
         this.column = column;
     }
+}
 
-
+export class Shot {
+    public position: Position;
+    public hit: boolean;
 }
 
 

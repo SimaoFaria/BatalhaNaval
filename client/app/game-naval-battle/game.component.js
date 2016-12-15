@@ -218,33 +218,47 @@ var GameComponent = (function () {
         var _loop_1 = function(game) {
             if (game.idGame == idGame) {
                 //ver se foi tiro ?
-                var resp_1;
+                var resp = void 0;
                 this_1.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
                     .subscribe(function (response) {
                     console.log("=======> TIRO ");
                     console.dir(response);
-                    alert("TIRO: " + response);
-                    resp_1 = response;
+                    // alert("TIRO: "+ response);
+                    // alert("TIRO: "+ response.shot);
+                    // resp = response;
                     // this.playerStateGame = response; //TODO ?
                     for (var _i = 0, _a = game.boardsAttack; _i < _a.length; _i++) {
                         var attackBoard = _a[_i];
                         if (attackBoard.getUsername() == opponentUsername) {
-                            attackBoard.setValue(line, column, (resp_1 != '' ? 'X' : '0'));
+                            // attackBoard.setValue(line, column, (resp != '' ? 'X' : '0' ));
+                            attackBoard.setValue(line, column, (response.shot != '' ? 'X' : '0'));
                             //inicio websockets
                             var json = {
                                 myMessage: 'You shot (' + line + ', ' + column + ') and ',
                                 othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
                             };
                             //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
-                            if (resp_1 != '') {
-                                json.myMessage += response + '.';
-                                json.othersMessage += response + '.';
+                            if (response.shot != '') {
+                                json.myMessage += 'hit ' + response.shipType + '.';
+                                json.othersMessage += 'hit ' + response.shipType + '.';
                             }
                             else {
                                 json.myMessage += 'missed.';
                                 json.othersMessage += 'missed.';
                             }
                             _this.websocketService.useNotifications(idGame + ' notifications', json);
+                            if (response.sank) {
+                                json.myMessage = 'Congratulations! You have sank ' + response.shipType + '.';
+                                json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank ' + response.shipType + '.';
+                                _this.websocketService.useNotifications(idGame + ' notifications', json);
+                            }
+                            // TODO ainda falta tratar da situação de o jogador ter ficado sem navios
+                            if (response.allShipsSanked) {
+                                json.myMessage = 'Player TODO has all ship sank.';
+                                json.othersMessage = 'Player TODO has all ship sank.';
+                                _this.websocketService.useNotifications(idGame + ' notifications', json);
+                            }
+                            // TODO ainda falta tratar da situação do jogo terminar
                             //fim websockets
                             //TODO fazer post para a bd
                             _this.gameService.putCurrentStateGames(game, false)
