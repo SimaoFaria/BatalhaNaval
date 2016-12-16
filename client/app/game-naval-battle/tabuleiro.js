@@ -60,7 +60,7 @@ var Tabuleiro = (function () {
                 throw new Error('Numero maximo de barcos dos tipo ' + navio_1.Navio.type_toString(tipo) + " é " + this.getMaxShipsPerTypeByType(tipo));
             }
             this.currentValues[navio_1.Navio.type_toString(tipo)]++;
-            console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
+            // console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
             var navio_3 = new navio_1.Navio(tipo, orientacao, linha, coluna);
             if (posicao_1.Posicao.conflito(navio_3.posicoesOcupadas, this.posicoesOcupadas)) {
                 throw new Error('O navio "' + tipo + '" na posição (' + linha + coluna + ') e orientação "' + orientacao + '" está em sobreposição ou encostado a um navio já existente');

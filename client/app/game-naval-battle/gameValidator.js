@@ -31,11 +31,11 @@ var GameValidator = (function () {
     };
     // Verifica se um navio de um determinado tipo e com determinada orientação, cabe ou não dentro do tabuleiro
     GameValidator.verificaLimites = function (tipo, orientacao, posicao) {
-        console.log('VERIFICA LIMITES');
-        console.log('Tipo = ' + tipo);
-        console.log('Orientacao = ' + orientacao);
-        console.log(typeof posicao.coluna);
-        console.log('Posicao = ' + posicao.strValue());
+        // console.log('VERIFICA LIMITES');
+        // console.log('Tipo = '+tipo);
+        // console.log('Orientacao = '+orientacao);
+        // console.log(typeof posicao.coluna);
+        // console.log('Posicao = '+posicao.strValue());
         if (tipo == navio_1.TipoNavio.Submarino) {
             return true;
         }
@@ -94,20 +94,20 @@ var GameValidator = (function () {
                     return false;
                 }
         }
-        console.log("posicao.coluna");
-        console.log(posicao.coluna);
-        console.log(typeof posicao.coluna);
-        console.log("offsetHorizontal");
-        console.log(offsetHorizontal);
-        console.log(typeof offsetHorizontal);
-        console.log(posicao.coluna + offsetHorizontal);
+        // console.log("posicao.coluna");
+        // console.log(posicao.coluna);
+        // console.log(typeof posicao.coluna);
+        // console.log("offsetHorizontal");
+        // console.log(offsetHorizontal);
+        // console.log(typeof offsetHorizontal);
+        // console.log(posicao.coluna + offsetHorizontal);
         if (((posicao.coluna + offsetHorizontal) < 1) || ((posicao.coluna + offsetHorizontal) > 10)) {
             return false;
         }
-        console.log("posicao.linhaAsNumber()");
-        console.log(posicao.linhaAsNumber());
-        console.log("offsetVertical");
-        console.log(offsetVertical);
+        // console.log("posicao.linhaAsNumber()");
+        // console.log(posicao.linhaAsNumber());
+        // console.log("offsetVertical");
+        // console.log(offsetVertical);
         if (((posicao.linhaAsNumber() + offsetVertical) < 1) || ((posicao.linhaAsNumber() + offsetVertical) > 10)) {
             return false;
         }

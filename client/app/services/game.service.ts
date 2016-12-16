@@ -134,7 +134,7 @@ export class GameService {
             //         }
             //     }
             // }
-             this.playerStateGame = response.json()
+                this.playerStateGame = response.json()
             );
     }
 
@@ -158,9 +158,9 @@ export class GameService {
             .map((response: any) => <PlayerStateGame[]>response.json())
             .map((playerStateGames: any) => {
 
-                console.log("I - GAME.SERVICE");
-                console.log(playerStateGames);
-                console.log("F - GAME.SERVICE");
+                // console.log("I - GAME.SERVICE");
+                // console.log(playerStateGames);
+                // console.log("F - GAME.SERVICE");
 
                 this.playerStateGame = null;
                 this.playerStateGame = [];
@@ -174,6 +174,7 @@ export class GameService {
 
 
                     //tabuleiro 0 é o da defesa
+                    //TODO a prop boardDefense não foi declarada como array provavelmente
                     playerStateGame.boardDefense.forEach((ship: any) => {
 
                         let orientation = ship.orientation;
@@ -232,20 +233,20 @@ export class GameService {
 
                     let boardsAttack : BoardAttack[] = [];
                     if(!(playerStateGame.boardsAttack === undefined)){
-                        console.log("####################################################################################################################");
-                        console.dir(playerStateGame.boardsAttack);
+                        // // console.log("####################################################################################################################");
+                        // // console.dir(playerStateGame.boardsAttack);
 
 
                         for (let attackBoard of playerStateGame.boardsAttack) {
 
-                            console.dir(attackBoard);
+                            // console.dir(attackBoard);
 
                             let username : string = attackBoard.username;
-                            console.log("username :" + username);
+                            // console.log("username :" + username);
 
                             // let board : CellAttack[] = attackBoard.board;
-                            // console.log("board :");
-                            console.dir(attackBoard);
+                            // // console.log("board :");
+                            // console.dir(attackBoard);
 
                             let boardAttack : CellAttack[] = [];
                             for (let cell of attackBoard.board) {
@@ -257,17 +258,17 @@ export class GameService {
                                 boardAttack.push(new CellAttack(cell.line, cell.column, cell.value));
                             }
 
-                            console.dir(boardAttack);
+                            // console.dir(boardAttack);
 
                             let bo : BoardAttack = new BoardAttack(username, boardAttack);
-                            console.log("bo");
-                            console.dir(bo);
+                            // console.log("bo");
+                            // console.dir(bo);
 
 
 
 
                             boardsAttack.push(bo);
-                            console.dir(boardsAttack);
+                            // console.dir(boardsAttack);
 
 
                             //TODO navios??
@@ -280,13 +281,13 @@ export class GameService {
 
                             //playerStateGame.boardsAttack.forEach((attackBoard) => {
                             // attackBoard.forEach((attackBoard) => {
-                            //     console.log("zzz");
-                            //     console.dir(attackBoard);
+                            // //     console.log("zzz");
+                            // //     console.dir(attackBoard);
                             // });
                             //});
                         }
-                        console.log("####################################################################################################################");
-                        console.dir(boardsAttack);
+                        // console.log("####################################################################################################################");
+                        // console.dir(boardsAttack);
                     }
 
 
@@ -304,8 +305,8 @@ export class GameService {
 
                          //playerStateGameDs._username = playerStateGame.username;
 
-                        console.log("ramr");    
-                         console.dir(playerStateGameDs);
+                        // console.log("ramr");    
+                        //  console.dir(playerStateGameDs);
 
                     this.playerStateGame.push(
                         // new PlayerStateGame(
@@ -319,9 +320,9 @@ export class GameService {
 
                 });
 
-                console.log("-----------server side----------");
-                console.log(playerStateGames);
-                console.log("-----------server side----------");
+                // console.log("-----------server side----------");
+                // console.log(playerStateGames);
+                // console.log("-----------server side----------");
 
 
                 return this.playerStateGame;

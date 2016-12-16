@@ -105,15 +105,16 @@ var GameService = (function () {
         return this.http.get('/api/v1/current-state-games/' + username)
             .map(function (response) { return response.json(); })
             .map(function (playerStateGames) {
-            console.log("I - GAME.SERVICE");
-            console.log(playerStateGames);
-            console.log("F - GAME.SERVICE");
+            // console.log("I - GAME.SERVICE");
+            // console.log(playerStateGames);
+            // console.log("F - GAME.SERVICE");
             _this.playerStateGame = null;
             _this.playerStateGame = [];
             playerStateGames.forEach(function (playerStateGame) {
                 var boardDefense;
                 boardDefense = new board_defense_1.BoardDefense();
                 //tabuleiro 0 é o da defesa
+                //TODO a prop boardDefense não foi declarada como array provavelmente
                 playerStateGame.boardDefense.forEach(function (ship) {
                     var orientation = ship.orientation;
                     var line = ship.position.line;
@@ -161,16 +162,16 @@ var GameService = (function () {
                 });
                 var boardsAttack = [];
                 if (!(playerStateGame.boardsAttack === undefined)) {
-                    console.log("####################################################################################################################");
-                    console.dir(playerStateGame.boardsAttack);
+                    // // console.log("####################################################################################################################");
+                    // // console.dir(playerStateGame.boardsAttack);
                     for (var _i = 0, _a = playerStateGame.boardsAttack; _i < _a.length; _i++) {
                         var attackBoard = _a[_i];
-                        console.dir(attackBoard);
+                        // console.dir(attackBoard);
                         var username_1 = attackBoard.username;
-                        console.log("username :" + username_1);
+                        // console.log("username :" + username);
                         // let board : CellAttack[] = attackBoard.board;
-                        // console.log("board :");
-                        console.dir(attackBoard);
+                        // // console.log("board :");
+                        // console.dir(attackBoard);
                         var boardAttack = [];
                         for (var _b = 0, _c = attackBoard.board; _b < _c.length; _b++) {
                             var cell = _c[_b];
@@ -179,23 +180,20 @@ var GameService = (function () {
                             // console.log("value: "+cell.value);
                             boardAttack.push(new game_1.CellAttack(cell.line, cell.column, cell.value));
                         }
-                        console.dir(boardAttack);
+                        // console.dir(boardAttack);
                         var bo = new board_attack_1.BoardAttack(username_1, boardAttack);
-                        console.log("bo");
-                        console.dir(bo);
+                        // console.log("bo");
+                        // console.dir(bo);
                         boardsAttack.push(bo);
-                        console.dir(boardsAttack);
                     }
-                    console.log("####################################################################################################################");
-                    console.dir(boardsAttack);
                 }
                 var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack);
                 playerStateGameDs.user = playerStateGame.username;
                 playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
                 playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
                 //playerStateGameDs._username = playerStateGame.username;
-                console.log("ramr");
-                console.dir(playerStateGameDs);
+                // console.log("ramr");    
+                //  console.dir(playerStateGameDs);
                 _this.playerStateGame.push(
                 // new PlayerStateGame(
                 //     playerStateGame.idGame,
@@ -205,9 +203,9 @@ var GameService = (function () {
                 // )
                 playerStateGameDs);
             });
-            console.log("-----------server side----------");
-            console.log(playerStateGames);
-            console.log("-----------server side----------");
+            // console.log("-----------server side----------");
+            // console.log(playerStateGames);
+            // console.log("-----------server side----------");
             return _this.playerStateGame;
         });
         // getCurrentStateGames_ANTIIGO(username : string):Observable<PlayerStateGame[]>{

@@ -100,7 +100,7 @@ export class Tabuleiro {
                 throw new Error('Numero maximo de barcos dos tipo '+ Navio.type_toString(tipo) + " é " + this.getMaxShipsPerTypeByType(tipo));
             }
             this.currentValues[Navio.type_toString(tipo)]++;
-            console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
+            // console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
 
 
             let navio: Navio = new Navio(tipo, orientacao, linha, coluna);

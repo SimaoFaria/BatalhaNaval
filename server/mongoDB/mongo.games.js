@@ -490,12 +490,12 @@ function putCurrentStateGames(request, response, next) {
 				console.log(err);
 				next();
 			} else {
-				database.db.collection("games-details").findOne({ idGame: idGame, username: username},function(err, game) {
+				// database.db.collection("games-details").findOne({ idGame: idGame, username: username},function(err, game) {
+				database.db.collection("games-details").find({ idGame: idGame },function(err, games) {
 					if(err) {
 						console.log(err);
 						next();
 					} else {
-
 
 						//SIMAO só faz sentido se for o ultimo a pôr ready ou o owner?
 						// var id = new mongodb.ObjectID(idGame);
@@ -520,9 +520,10 @@ function putCurrentStateGames(request, response, next) {
 						// 	}
 						// );
 
+						console.log(games);
 
-
-						response.json(game);
+						// response.json(game);
+						response.json(games);
 						next();
 					}
 				});

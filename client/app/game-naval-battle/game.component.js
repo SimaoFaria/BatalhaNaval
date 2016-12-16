@@ -171,9 +171,9 @@ var GameComponent = (function () {
                     game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.READY);
                     this.gameService.putCurrentStateGames(game, true)
                         .subscribe(function (response) {
-                        // console.log("component - putCurrentStateGames - response");
-                        // console.log(response);
-                        // console.log("/component - putCurrentStateGames - response");
+                        console.log("response do READY");
+                        console.log(response);
+                        console.log("/response do READY");
                         // this.websocketService
                         // this.playerStateGame = response; //TODO
                         //

@@ -227,11 +227,11 @@ export class GameComponent {
                     this.gameService.putCurrentStateGames(game, true)
                         .subscribe((response: any) => {
 
-                            
-                            // console.log("component - putCurrentStateGames - response");
-                            // console.log(response);
-                            // console.log("/component - putCurrentStateGames - response");
 
+                            console.log("response do READY");
+                            console.log(response);
+                            console.log("/response do READY");
+                        
                             // this.websocketService
 
                             // this.playerStateGame = response; //TODO

@@ -22,7 +22,7 @@ var Navio = (function () {
     // Interface Publica da classe - Membros Principais
     // ------------------------------------------------------------------------------------------------
     function Navio(tipo, orientacao, linha, coluna) {
-        console.log("construtor navio1");
+        // console.log("construtor navio1");
         if (!gameValidator_1.GameValidator.verificaOrientacao(tipo, orientacao)) {
             throw new Error('A orientação "' + orientacao + '" é inválida para os navios do tipo  "' + tipo + '".');
         }
@@ -289,7 +289,7 @@ var ShipForDB = (function () {
         this.sank = false;
         //TODO preencher todas as posicoes
         this.occupiedPositions = [];
-        console.dir(posicoesOcupadas[0]);
+        // console.dir(posicoesOcupadas[0]);
         posicoesOcupadas.forEach(function (posicao) {
             var linha = posicao.linha;
             var coluna = posicao.coluna;
@@ -310,8 +310,6 @@ var Position = (function () {
 exports.Position = Position;
 var OccupiedPosition = (function () {
     function OccupiedPosition(line, column) {
-        // this.position.line = line;
-        // this.position.column = column;
         this.position = new Position(line, column);
         this.hit = false;
     }

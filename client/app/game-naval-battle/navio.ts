@@ -33,7 +33,7 @@ export class Navio{
     // Interface Publica da classe - Membros Principais
     // ------------------------------------------------------------------------------------------------
     public constructor (tipo: TipoNavio, orientacao: Orientacao, linha: string, coluna: number){
-        console.log("construtor navio1");
+        // console.log("construtor navio1");
         if (!GameValidator.verificaOrientacao(tipo, orientacao)){
             throw new Error('A orientação "' + orientacao + '" é inválida para os navios do tipo  "' + tipo + '".');
         }
@@ -334,7 +334,7 @@ export class ShipForDB {
         //TODO preencher todas as posicoes
         this.occupiedPositions = [];
 
-        console.dir(posicoesOcupadas[0]);
+        // console.dir(posicoesOcupadas[0]);
 
         posicoesOcupadas.forEach(
             (posicao) => {
@@ -364,8 +364,6 @@ export class OccupiedPosition {
     public hit: boolean;
 
     constructor(line: string, column: number){
-        // this.position.line = line;
-        // this.position.column = column;
         this.position = new Position(line, column);
         this.hit = false;
     }
