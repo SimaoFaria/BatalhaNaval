@@ -818,15 +818,16 @@ function getHasShot(request, response, next){
 
 				for (var idx in game.boardDefense) {
 
-					game.boardDefense[idx].occupiedPositions.forEach(
-						(occupiedPosition) => {
-							if(occupiedPosition.line == line && occupiedPosition.column == column) {
-								occupiedPosition.hit == true;
+					for (var idxPositionOccupied in game.boardDefense[idx]) {
+						if(game.boardDefense[idx].occupiedPositions[idxPositionOccupied].line == line 
+							&& game.boardDefense[idx].occupiedPositions[idxPositionOccupied].column == column) {
 
-								result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-								result.shipType = game.boardDefense[idx].type;
-							}
-					});
+							game.boardDefense[idx].occupiedPositions[idxPositionOccupied].hit == true;
+
+							result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+							result.shipType = game.boardDefense[idx].type;
+						}
+					}
 
 					// console.log("=>>AQUI");
 					//SHOT
@@ -845,7 +846,7 @@ function getHasShot(request, response, next){
 						// });
 						
 
-					}
+					
 				}
 
 				//verifica se navio afundou
