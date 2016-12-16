@@ -82,7 +82,8 @@ export class GameService {
                             navio.posicao.coluna,
                         ),
                         type,
-                        orientation
+                        orientation,
+                        navio.posicoesOcupadas // occupiedPositions
                     )
             )
 
@@ -93,18 +94,12 @@ export class GameService {
 
             let board = [];
             for (let cellsAttack of boardAttack.board) {
-                console.log("********* ---X-- *********");
-                console.dir(cellsAttack);
-                console.log("********* ---X-- *********");
                 //boardsAttack.push(board);
                 board.push(cellsAttack)
             }
             boardsAttack.push({"username" : boardAttack.username, "board": board});
         }
 
-        console.log("********* ------ *********");
-        console.log(boardsAttack);
-        console.log("********* ------ *********");
 
         let bodyJSON = {
             "username" : this._username,
@@ -119,27 +114,27 @@ export class GameService {
 
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map((response) => 
-            {
+            // {
 
                 //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
-                for (let game of this.playerStateGame) {
+            //     for (let game of this.playerStateGame) {
 
-                    if(game.idGame === response.json().idGame){
-                        game.boardDefense = null;
-                        game.boardDefense = new BoardDefense();
+            //         if(game.idGame === response.json().idGame){
+            //             game.boardDefense = null;
+            //             game.boardDefense = new BoardDefense();
 
-                        let naviosJSON = response.json().boardDefense;
-                        for (let navio of naviosJSON) {
-                            game.boardDefense.adicionaNavio(
-                                Navio.convertTypeToEnumTipoNavio(navio.type),
-                                Navio.convertOrientationToEnumOrientacao(navio.orientation),
-                                navio.position.line,
-                                navio.position.column);
-                        }
-                    }
-                }
-            }
-            // this.playerStateGame = response.json()
+            //             let naviosJSON = response.json().boardDefense;
+            //             for (let navio of naviosJSON) {
+            //                 game.boardDefense.adicionaNavio(
+            //                     Navio.convertTypeToEnumTipoNavio(navio.type),
+            //                     Navio.convertOrientationToEnumOrientacao(navio.orientation),
+            //                     navio.position.line,
+            //                     navio.position.column);
+            //             }
+            //         }
+            //     }
+            // }
+             this.playerStateGame = response.json()
             );
     }
 

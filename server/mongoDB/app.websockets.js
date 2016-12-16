@@ -9,17 +9,6 @@ ws.init = (server) => {
     wsServer.sockets.on('connection', function (socket) {
         
         console.log('a user connected');
-        
-        // // TODO
-        // // 1a)
-        // socket.emit('players',Date.now()+' Welcome to battleship');
-        // // 1b)
-        // socket.broadcast.emit('players',Date.now()+"A new player has arrived");
-        // // 3)
-        // socket.on('chat',(data) => {
-        //     wsServer.emit('chat',data);
-        // })        
-
 
         // io.sockets.to('game').emit('msg', obj_to_send);
         // io.to('game').emit('msg', obj_to_send);
@@ -92,10 +81,10 @@ ws.init = (server) => {
 
         socket.on('use notifications',(channel, json) => {
             
-            console.log("USE NOTIFICATIONS")
-            console.log(channel)
-            console.log(json)
-            console.log("/USE NOTIFICATIONS")
+            // console.log("USE NOTIFICATIONS")
+            // console.log(channel)
+            // console.log(json)
+            // console.log("/USE NOTIFICATIONS")
 
             // envia só para os clients do channel
             socket.to(channel).broadcast.emit(channel, json.othersMessage);

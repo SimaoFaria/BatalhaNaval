@@ -17,8 +17,8 @@ export class GameLobbyComponent{
 
     gamesInRoom:Game[];
 
-    //Workaround do players.length
-    //totalPlayers: Number[] = []; NOT WORKING
+    // Workaround do players.length
+    // criar esta prop
 
     player: GamingPlayer = {
         "username" : JSON.parse(localStorage.getItem('currentUser')).username,
@@ -31,7 +31,7 @@ export class GameLobbyComponent{
         this.gameInRoomService.getGamesInRoom()
             .subscribe((gamesInRoom) => {
                 this.gamesInRoom = gamesInRoom;
-                console.log(gamesInRoom);
+                // console.log(gamesInRoom);
 
                 /* este workaround não serve
                 this.totalPlayers = [];

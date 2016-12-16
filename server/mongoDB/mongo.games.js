@@ -534,14 +534,14 @@ function putCurrentStateGames(request, response, next) {
 
 function swatpTurn(idGame, currentPlayer) {
 
-	console.log("swatpTurn(" + idGame + "," +  currentPlayer +")");
+	// console.log("swatpTurn(" + idGame + "," +  currentPlayer +")");
 
 	//procurar o game que tem o vetor de jogadores
 
 	var id = new mongodb.ObjectID(idGame);
 	database.db.collection("games").findOne({ _id: id },function(err, game) {
 		if(err) {
-			console.log(err);
+			// console.log(err);
 			next();
 		} else {
 
@@ -549,29 +549,29 @@ function swatpTurn(idGame, currentPlayer) {
 
 			for(var idx in game.players) {
 
-				console.log("PLAYER=>" +game.players[idx].username);
+				// console.log("PLAYER=>" +game.players[idx].username);
 
 				//ver qual o indice do jogador currente
 				if(currentPlayer == game.players[idx].username) {
 
-					console.log("PLAYER CURRENT=>" +game.players[idx].username + "index" + idx);
+					// console.log("PLAYER CURRENT=>" +game.players[idx].username + "index" + idx);
 
 					//se igual ao tamanho do vetor
 
 					var nrPlayers = game.players.length - 1;
-					console.log("#players: " + nrPlayers);
+					// console.log("#players: " + nrPlayers);
 
 					if(idx == nrPlayers){
 						//passa o primeiro jogador a jogar
 						nextPlayerName = game.players[0].username;
-						console.log("New Player 0:" + nextPlayerName);
+						// console.log("New Player 0:" + nextPlayerName);
 						//return nextPlayerName;
 					}else {
 						//se nao passa ao proximo
 						var nextIndex = parseInt(idx) + 1;
-						console.log("Nexte index" + nextIndex);
+						// console.log("Nexte index" + nextIndex);
 						nextPlayerName = game.players[nextIndex].username;
-						console.log("New Player next:" + nextPlayerName);
+						// console.log("New Player next:" + nextPlayerName);
 						//return nextPlayerName;
 					}
 
@@ -620,10 +620,10 @@ function getHasShot(request, response, next){
 				// next();
 
 				//Tirar um tiro ao layer
-				console.log("Number of current shots: " +  game.nrShotsRemaining);
+				// console.log("Number of current shots: " +  game.nrShotsRemaining);
 				var nrShotsRemaining = game.nrShotsRemaining;
 				nrShotsRemaining = nrShotsRemaining -1;
-				console.log("Number of current shots ater: " + nrShotsRemaining);
+				// console.log("Number of current shots ater: " + nrShotsRemaining);
 
 				//caso 0
 				var currentPlayer = game.currentPlayer;
@@ -818,12 +818,12 @@ function getHasShot(request, response, next){
 
 				for (var idx in game.boardDefense) {
 
-					console.log("=>>AQUI");
+					// console.log("=>>AQUI");
 					//SHOT
 					if(game.boardDefense[idx].position.line == line
 						&& game.boardDefense[idx].position.column == column) {
 
-						console.log("=>>>>>>>>>>>>>entrou");
+						// console.log("=>>>>>>>>>>>>>entrou");
 						// result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
 						
 						//SIMAO

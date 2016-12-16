@@ -281,12 +281,21 @@ var Navio = (function () {
 }());
 exports.Navio = Navio;
 var ShipForDB = (function () {
-    function ShipForDB(position, type, orientation) {
+    function ShipForDB(position, type, orientation, posicoesOcupadas) {
+        var _this = this;
         this.position = position;
         this.type = type;
         this.orientation = orientation;
-        this.shots = [];
         this.sank = false;
+        //TODO preencher todas as posicoes
+        this.occupiedPositions = [];
+        console.dir(posicoesOcupadas[0]);
+        posicoesOcupadas.forEach(function (posicao) {
+            var linha = posicao.linha;
+            var coluna = posicao.coluna;
+            var occupiedPosition = new OccupiedPosition(linha, coluna);
+            _this.occupiedPositions.push(occupiedPosition);
+        });
     }
     return ShipForDB;
 }());
@@ -299,10 +308,14 @@ var Position = (function () {
     return Position;
 }());
 exports.Position = Position;
-var Shot = (function () {
-    function Shot() {
+var OccupiedPosition = (function () {
+    function OccupiedPosition(line, column) {
+        // this.position.line = line;
+        // this.position.column = column;
+        this.position = new Position(line, column);
+        this.hit = false;
     }
-    return Shot;
+    return OccupiedPosition;
 }());
-exports.Shot = Shot;
+exports.OccupiedPosition = OccupiedPosition;
 //# sourceMappingURL=navio.js.map

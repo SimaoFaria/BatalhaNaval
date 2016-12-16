@@ -322,15 +322,29 @@ export class ShipForDB {
     public position: Position;
     public type: string;
     public orientation: string;
-    public shots: Shot[];
+    public occupiedPositions: OccupiedPosition[];
     public sank: boolean;
 
-    constructor(position: Position, type: string, orientation: string){
+    constructor(position: Position, type: string, orientation: string, posicoesOcupadas: Posicao[]){
         this.position = position;
         this.type = type;
         this.orientation = orientation;
-        this.shots = [];
         this.sank = false;
+
+        //TODO preencher todas as posicoes
+        this.occupiedPositions = [];
+
+        console.dir(posicoesOcupadas[0]);
+
+        posicoesOcupadas.forEach(
+            (posicao) => {
+                let linha: string = posicao.linha;
+                let coluna: number = posicao.coluna;
+                let occupiedPosition: OccupiedPosition = 
+                    new OccupiedPosition(linha, coluna);   
+                this.occupiedPositions.push(occupiedPosition);
+            }
+        );
     }
 
 }
@@ -345,9 +359,16 @@ export class Position {
     }
 }
 
-export class Shot {
+export class OccupiedPosition {
     public position: Position;
     public hit: boolean;
+
+    constructor(line: string, column: number){
+        // this.position.line = line;
+        // this.position.column = column;
+        this.position = new Position(line, column);
+        this.hit = false;
+    }
 }
 
 

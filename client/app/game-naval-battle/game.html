@@ -3,6 +3,13 @@
 
     <div *ngIf="game.status == 'READY'" style="background-color:darkgrey;">
         <h3>There are still people positioning their ships.</h3>
+        
+
+        <!--<div *ngIf="this._username === game.createdBy" style="background-color:lightgrey;">
+            <span *ngFor="let opponent of opponents">
+
+            </span>
+        </div>-->
     </div>
 
     <div *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">

@@ -15,8 +15,8 @@ var GameLobbyComponent = (function () {
     function GameLobbyComponent(gameInRoomService) {
         var _this = this;
         this.gameInRoomService = gameInRoomService;
-        //Workaround do players.length
-        //totalPlayers: Number[] = []; NOT WORKING
+        // Workaround do players.length
+        // criar esta prop
         this.player = {
             "username": JSON.parse(localStorage.getItem('currentUser')).username,
             "score": 0,
@@ -25,7 +25,7 @@ var GameLobbyComponent = (function () {
         this.gameInRoomService.getGamesInRoom()
             .subscribe(function (gamesInRoom) {
             _this.gamesInRoom = gamesInRoom;
-            console.log(gamesInRoom);
+            // console.log(gamesInRoom);
             /* este workaround não serve
             this.totalPlayers = [];
             this.gamesInRoom.forEach((game) => {

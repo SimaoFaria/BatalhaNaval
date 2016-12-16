@@ -69,9 +69,9 @@ export class GameComponent {
         this.gameService.getCurrentStateGames(this._username)
             .subscribe((response: any) => {
 
-                console.log("------ No CLIENTE -------");
-                console.dir(response);
-                console.log("------ FIM No CLIENTE -------");
+                // console.log("------ No CLIENTE -------");
+                // console.dir(response);
+                // console.log("------ FIM No CLIENTE -------");
 
                 this.playerStateGame = response;
 
@@ -209,6 +209,8 @@ export class GameComponent {
 
                     // alert("Começar jogo");
 
+                    //console.log(game);
+
                     //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
                     // inicio websockets
                     let json = {
@@ -226,9 +228,9 @@ export class GameComponent {
                         .subscribe((response: any) => {
 
                             
-                            console.log("component - putCurrentStateGames - response");
-                            console.log(response);
-                            console.log("/component - putCurrentStateGames - response");
+                            // console.log("component - putCurrentStateGames - response");
+                            // console.log(response);
+                            // console.log("/component - putCurrentStateGames - response");
 
                             // this.websocketService
 
@@ -291,13 +293,13 @@ export class GameComponent {
 
             if(game.idGame == idGame) {
 
-                    //ver se foi tiro ?
+                //ver se foi tiro ?
                 let resp : string;
                 this.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
                     .subscribe((response: any) => {
 
-                        console.log("=======> TIRO ");
-                        console.dir(response);
+                        // console.log("=======> TIRO ");
+                        // console.dir(response);
                         // alert("TIRO: "+ response);
                         // alert("TIRO: "+ response.shot);
                         // resp = response;
@@ -316,6 +318,7 @@ export class GameComponent {
                                     myMessage: 'You shot (' + line + ', ' + column + ') and ',
                                     othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
                                 }
+
                                 //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
                                 if(response.shot != '') {
                                     json.myMessage += 'hit ' + response.shipType + '.';
@@ -430,9 +433,6 @@ export class GameComponent {
       }*/
 
     }
-
-
-
 
   //#1 ir buscar todos os jogos que precisa
 

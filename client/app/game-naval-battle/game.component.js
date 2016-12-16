@@ -38,9 +38,9 @@ var GameComponent = (function () {
                 .subscribe((response) => this.games = response);*/
         this.gameService.getCurrentStateGames(this._username)
             .subscribe(function (response) {
-            console.log("------ No CLIENTE -------");
-            console.dir(response);
-            console.log("------ FIM No CLIENTE -------");
+            // console.log("------ No CLIENTE -------");
+            // console.dir(response);
+            // console.log("------ FIM No CLIENTE -------");
             _this.playerStateGame = response;
             // this.playerStateGame.forEach((game) => {
             // });
@@ -157,6 +157,7 @@ var GameComponent = (function () {
                 }
                 else {
                     // alert("Começar jogo");
+                    //console.log(game);
                     //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
                     // inicio websockets
                     var json = {
@@ -170,9 +171,9 @@ var GameComponent = (function () {
                     game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.READY);
                     this.gameService.putCurrentStateGames(game, true)
                         .subscribe(function (response) {
-                        console.log("component - putCurrentStateGames - response");
-                        console.log(response);
-                        console.log("/component - putCurrentStateGames - response");
+                        // console.log("component - putCurrentStateGames - response");
+                        // console.log(response);
+                        // console.log("/component - putCurrentStateGames - response");
                         // this.websocketService
                         // this.playerStateGame = response; //TODO
                         //
@@ -221,8 +222,8 @@ var GameComponent = (function () {
                 var resp = void 0;
                 this_1.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
                     .subscribe(function (response) {
-                    console.log("=======> TIRO ");
-                    console.dir(response);
+                    // console.log("=======> TIRO ");
+                    // console.dir(response);
                     // alert("TIRO: "+ response);
                     // alert("TIRO: "+ response.shot);
                     // resp = response;

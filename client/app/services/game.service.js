@@ -56,7 +56,8 @@ var GameService = (function () {
             var navio = _a[_i];
             var orientation_1 = navio_1.Navio.orientation_toString(navio.orientacao);
             var type = navio_1.Navio.type_toString(navio.tipoNavio);
-            shipsforBD.push(new navio_1.ShipForDB(new navio_1.Position(navio.posicao.linha.toString(), navio.posicao.coluna), type, orientation_1));
+            shipsforBD.push(new navio_1.ShipForDB(new navio_1.Position(navio.posicao.linha.toString(), navio.posicao.coluna), type, orientation_1, navio.posicoesOcupadas // occupiedPositions
+            ));
         }
         var boardsAttack = [];
         for (var _b = 0, _c = playerStateGame.boardsAttack; _b < _c.length; _b++) {
@@ -64,17 +65,11 @@ var GameService = (function () {
             var board = [];
             for (var _d = 0, _e = boardAttack.board; _d < _e.length; _d++) {
                 var cellsAttack = _e[_d];
-                console.log("********* ---X-- *********");
-                console.dir(cellsAttack);
-                console.log("********* ---X-- *********");
                 //boardsAttack.push(board);
                 board.push(cellsAttack);
             }
             boardsAttack.push({ "username": boardAttack.username, "board": board });
         }
-        console.log("********* ------ *********");
-        console.log(boardsAttack);
-        console.log("********* ------ *********");
         var bodyJSON = {
             "username": this._username,
             "status": playerStateGame.status,
@@ -85,19 +80,24 @@ var GameService = (function () {
         var body = bodyJSON;
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map(function (response) {
+            // {
             //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
-            for (var _i = 0, _a = _this.playerStateGame; _i < _a.length; _i++) {
-                var game = _a[_i];
-                if (game.idGame === response.json().idGame) {
-                    game.boardDefense = null;
-                    game.boardDefense = new board_defense_1.BoardDefense();
-                    var naviosJSON = response.json().boardDefense;
-                    for (var _b = 0, naviosJSON_1 = naviosJSON; _b < naviosJSON_1.length; _b++) {
-                        var navio = naviosJSON_1[_b];
-                        game.boardDefense.adicionaNavio(navio_1.Navio.convertTypeToEnumTipoNavio(navio.type), navio_1.Navio.convertOrientationToEnumOrientacao(navio.orientation), navio.position.line, navio.position.column);
-                    }
-                }
-            }
+            //     for (let game of this.playerStateGame) {
+            //         if(game.idGame === response.json().idGame){
+            //             game.boardDefense = null;
+            //             game.boardDefense = new BoardDefense();
+            //             let naviosJSON = response.json().boardDefense;
+            //             for (let navio of naviosJSON) {
+            //                 game.boardDefense.adicionaNavio(
+            //                     Navio.convertTypeToEnumTipoNavio(navio.type),
+            //                     Navio.convertOrientationToEnumOrientacao(navio.orientation),
+            //                     navio.position.line,
+            //                     navio.position.column);
+            //             }
+            //         }
+            //     }
+            // }
+            return _this.playerStateGame = response.json();
         });
     };
     GameService.prototype.getCurrentStateGames = function (username) {
