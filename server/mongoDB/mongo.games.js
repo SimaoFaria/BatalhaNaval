@@ -490,8 +490,7 @@ function putCurrentStateGames(request, response, next) {
 				console.log(err);
 				next();
 			} else {
-				// database.db.collection("games-details").findOne({ idGame: idGame, username: username},function(err, game) {
-				database.db.collection("games-details").find({ idGame: idGame },function(err, games) {
+				database.db.collection("games-details").findOne({ idGame: idGame, username: username},function(err, game) {
 					if(err) {
 						console.log(err);
 						next();
@@ -519,8 +518,6 @@ function putCurrentStateGames(request, response, next) {
 						// 		}
 						// 	}
 						// );
-
-						console.log(games);
 
 						// response.json(game);
 						response.json(games);
@@ -765,9 +762,6 @@ function getHasShot(request, response, next){
 				// 	/******************************  FIM PROXIMO JOGAFOR ******************************************/
 				 }
 
-
-
-
 				database.db.collection("games-details").updateMany(
 								{ idGame: idGame },
 								{
@@ -819,16 +813,14 @@ function getHasShot(request, response, next){
 
 				for (var idx in game.boardDefense) {
 
-					for (var idxPositionOccupied in game.boardDefense[idx]) {
-						if(game.boardDefense[idx].occupiedPositions[idxPositionOccupied].line == line 
-							&& game.boardDefense[idx].occupiedPositions[idxPositionOccupied].column == column) {
-
-							game.boardDefense[idx].occupiedPositions[idxPositionOccupied].hit == true;
+					game.boardDefense[idx].occupiedPositions.forEach((occupiedPosition) => {
+						if(occupiedPosition.line == line && occupiedPosition.column == column) {
+							occupiedPosition.hit == true;
 
 							result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-							result.shipType = game.boardDefense[idx].type;
+							result.shipType = game.boardDefense[idx].type;							
 						}
-					}
+					});
 
 					// console.log("=>>AQUI");
 					//SHOT
