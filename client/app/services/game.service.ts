@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import {Game, PlayerStateGame, CellAttack} from './../game-naval-battle/game';
+import {Game, PlayerStateGame, CellAttack, GameStatus} from './../game-naval-battle/game';
 import {BoardDefense} from "../game-naval-battle/models/board-defense";
 import {Posicao} from "../game-naval-battle/posicao";
 import {TipoNavio, Orientacao, Navio, ShipForDB, Position} from "../game-naval-battle/navio";
@@ -62,7 +62,6 @@ export class GameService {
             .map((response) => response.json());
     }
 
-
     /**
      *
      * */
@@ -104,7 +103,7 @@ export class GameService {
         let bodyJSON = {
             "username" : this._username,
             "status" : playerStateGame.status,
-            "updateStatus": updateStatus,
+            "updateStatus" : updateStatus,
             "boardDefense" : shipsforBD,
             "boardsAttack" : boardsAttack
         };
@@ -483,4 +482,43 @@ export class GameService {
 
     }
 
+
+    
+    putReadyOnGame(game : PlayerStateGame) : Observable<PlayerStateGame>{
+
+        //PROPS a alterar -> status e boardDefense
+
+        game.status = PlayerStateGame.gameStatus_toString(GameStatus.READY);
+
+        let shipsforBD: ShipForDB[] = [];
+        for (let navio of game.boardDefense.navios) {
+
+            let orientation : string = Navio.orientation_toString(navio.orientacao);
+            let type: string = Navio.type_toString(navio.tipoNavio);
+
+            shipsforBD.push(
+                    new ShipForDB(
+                        new Position(
+                            navio.posicao.linha.toString(),
+                            navio.posicao.coluna,
+                        ),
+                        type,
+                        orientation,
+                        navio.posicoesOcupadas
+                    )
+            )
+
+        }
+
+        let body = {
+            "username" : this._username,
+            "status" : game.status,
+            "boardDefense" : shipsforBD
+        };
+
+        return this.http.put('/api/v1/ready-on-game/' + game.idGame, body)
+            .map((response: any) => response.json());
+
+        
+    }
 }

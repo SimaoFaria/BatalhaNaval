@@ -54,11 +54,28 @@ export class WebSocketService {
         this.socket.emit('join game channel', json);
     }
 
+    joinGameRoom(gameId: any) {
+        this.socket.emit('join game room', gameId);
+    }
+
     useChat(room: any, message: any) {
         this.socket.emit('use chat', room, message);
     }
 
     useNotifications(room: any, json: any) {
         this.socket.emit('use notifications', room, json);
+    }
+
+    alterGameState(room: any, json: any) {
+        this.socket.emit('change game state', room, json);
+    }
+
+    getGameState(any: any): Observable<any> {
+        return new Observable((observer:any) => {
+            this.socket.on(any, (data:any) => {
+                observer.next(data);
+            });
+            return () => this.socket.disconnect();
+        });
     }
 }

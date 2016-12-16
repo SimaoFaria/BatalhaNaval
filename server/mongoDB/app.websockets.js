@@ -40,6 +40,12 @@ ws.init = (server) => {
             
             //TODO ver situações que façam o user sair do channel
         })
+ 
+        socket.on('join game room',(json) => {
+
+            socket.join(json);
+            // console.log(json);
+        })
 
         socket.on('leave game channel',(json) => {
             socket.leave(json.chatChannel);
@@ -93,28 +99,16 @@ ws.init = (server) => {
             socket.emit(channel, json.myMessage);
         })
 
+        socket.on('change game state',(channel, games) => {
+
+            // console.log("CHANGE STATE")
+            // console.log(channel)
+            // console.log(games)
+            // console.log("/CHANGE STATE")
+            socket.to(channel).broadcast.emit('change game state', games);
+        })
+
         socket.on('disconnect', function(){
-            
-            //TODO DUVIDA
-            //é necessário fazer o leave dos rooms ou nem por isso?
-
-            // nao funka, TODO perguntar prof o porquê no on disconnect o socket não ter rooms
-            // console.log("socket.rooms");
-            // console.log(socket.rooms);
-            // var channel; 
-            // socket.rooms.forEach((room) => {
-            //     //existe sempre um devido ao construtor
-            //     if(room.indexOf('notifications') !== -1) {
-            //         channel = room;
-            //     }    
-            // });
-            // json = {
-            //     //TODO como obter o username aqui?
-            //     othersMessage: 'Player TODO has disconnected'
-            // }
-            // // envia só para os clients do channel
-            // socket.to(channel).broadcast.emit(channel, json.othersMessage);
-
             console.log('a user disconnected');
         });
     });

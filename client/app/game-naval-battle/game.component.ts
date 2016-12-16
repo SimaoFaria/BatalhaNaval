@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { GameService } from './../services/game.service';
 
 import {Game, PlayerStateGame, GameStatus, CellAttack} from './game';
 
 import {Tabuleiro} from "./tabuleiro";
-import {TipoNavio, Orientacao} from "./navio";
+import {TipoNavio, Orientacao, Navio} from "./navio";
 import {TipoCelula} from "./celula";
 import {Posicao} from "./posicao";
 import {BoardDefense} from "./models/board-defense";
+
 
 import {WebSocketService } from '../sockets/notifications/websocket.service';
 
@@ -86,10 +87,50 @@ export class GameComponent {
                 // console.dir(this.playerStateGame );
                 // console.log("------ FIM No CLIENTE -------");
 
+
+
+                 // ----
+
+                this.playerStateGame.forEach((game) => {
+                    this.websocketService.joinGameRoom(game.idGame);
+                });
+                
+                this.websocketService.getGameMessages('change game state')
+                .subscribe( (json: PlayerStateGame[]) => {
+                    
+                    console.log("OBTEU JOGO POR SOCKET");
+                    
+                    json.forEach((jsonGame) => {
+                        this.playerStateGame.forEach((myGame) => {
+
+                            // console.log('--------------')
+                            // console.log(myGame.idGame)
+                            // console.log(jsonGame.idGame)
+                            // console.log(jsonGame.username)
+                            // console.log(this._username)
+                            // console.log('--------------')
+
+                            if (myGame.idGame === jsonGame.idGame
+                                && this._username === jsonGame.username) {
+                                
+                                // console.log('ENTROU =(')
+                                // console.log(myGame.status)
+                                // console.log(jsonGame.status)
+
+                                // myGame = jsonGame;
+                                myGame.status = jsonGame.status;
+                                // myGame.status = jsonGame.status = 'INPROGRESS';
+
+                                // console.log(myGame.status)
+                                // console.log(jsonGame.status)
+
+                            }
+                        });
+                    });
+                    console.log("/OBTEU JOGO POR SOCKET");
+                } );
+
             });
-
-
-
 
         //desenhaTabuleiro();
     }
@@ -197,55 +238,169 @@ export class GameComponent {
     // }
 
 
-    ready(idGame: string) : void {
+    // ready(idGame: string) : void {
 
-        for(let game of this.playerStateGame) {
+    //     for(let game of this.playerStateGame) {
 
-            if(game.idGame == idGame) {
+    //         if(game.idGame == idGame) {
 
-                if(game.boardDefense.isConfigDone() === false){
-                    alert("Ainda não tem as peças todas");
-                }else {
+    //             if(game.boardDefense.isConfigDone() === false){
+    //                 alert("Ainda não tem as peças todas");
+    //             }else {
 
-                    // alert("Começar jogo");
+    //                 // alert("Começar jogo");
 
-                    //console.log(game);
+    //                 //console.log(game);
 
-                    //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
-                    // inicio websockets
-                    let json = {
-                        myMessage: 'I\'m ready.',
-                        othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' is ready.'
-                    }
-                    this.websocketService.useNotifications(idGame + ' notifications', json);
-                    // fim websockets
+    //                 //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
+    //                 // inicio websockets
+    //                 let json = {
+    //                     myMessage: 'I\'m ready.',
+    //                     othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' is ready.'
+    //                 }
+    //                 this.websocketService.useNotifications(idGame + ' notifications', json);
+    //                 // fim websockets
 
-                    //TODO SIMAO nao faz sentido mudar aqui, so no ultimo a fazer ready ou no gajo que comece o jogo
-                    // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
-                    game.status = PlayerStateGame.gameStatus_toString(GameStatus.READY);
+    //                 //TODO SIMAO nao faz sentido mudar aqui, so no ultimo a fazer ready ou no gajo que comece o jogo
+    //                 // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
+    //                 game.status = PlayerStateGame.gameStatus_toString(GameStatus.READY);
 
-                    this.gameService.putCurrentStateGames(game, true)
-                        .subscribe((response: any) => {
+    //                 this.gameService.putCurrentStateGames(game, true)
+    //                     .subscribe((response: any) => {
 
 
-                            console.log("response do READY");
-                            console.log(response);
-                            console.log("/response do READY");
+    //                         console.log("response do READY");
+    //                         console.log(response);
+    //                         console.log("/response do READY");
                         
-                            // this.websocketService
+    //                         // this.websocketService
 
-                            // this.playerStateGame = response; //TODO
-                            //
-                            // console.log("esperaça!!!");
-                            // console.log(this.playerStateGame);
-                            // console.log("fim da esperaça!!!");
-                            //
-                            // console.dir(this.playerStateGame[0].boardDefense.navios);
+    //                         // this.playerStateGame = response; //TODO
+    //                         //
+    //                         // console.log("esperaça!!!");
+    //                         // console.log(this.playerStateGame);
+    //                         // console.log("fim da esperaça!!!");
+    //                         //
+    //                         // console.dir(this.playerStateGame[0].boardDefense.navios);
 
-                            //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
-                        });
-                }
+    //                         //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+    //                     });
+    //             }
+    //         }
+    //     }
+
+
+
+
+
+
+    //     // for (let game of this.playerStateGame) {
+    //     //     if(game.idGame == idGame) {
+    //     //
+    //     //         //enivas as cenas para a bd
+    //     //         this.gameService.putCurrentStateGames(game)
+    //     //             .subscribe((response) => {
+    //     //
+    //     //                 // this.playerStateGame = response;
+    //     //                 //
+    //     //                 // console.log("esperaça!!!");
+    //     //                 // console.log(this.playerStateGame);
+    //     //                 // console.log("fim da esperaça!!!");
+    //     //                 //
+    //     //                 // console.dir(this.playerStateGame[0].boardDefense.navios);
+    //     //
+    //     //                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
+    //     //
+    //     //
+    //     //         });
+    //     //
+    //     //         //break; //TODO avriguar a situation
+    //     //     }
+    //     // }
+
+
+
+    //     //se tudo ok
+    //         //mete a cena dos ships invisivel
+
+
+    // }
+
+    ready(game: PlayerStateGame) : void {
+
+
+        if(game.boardDefense.isConfigDone() === false){
+            alert("Ainda não tem as peças todas");
+        }else {
+
+            
+            // this.websocketService.getGameMessages('change game state')
+            //     .subscribe( (json: PlayerStateGame[]) => {
+                    
+            //         console.log("OBTEU JOGO POR SOCKET");
+                    
+            //         json.forEach((jsonGame) => {
+
+            //                 // console.log('--------------')
+            //                 // console.log(game.idGame)
+            //                 // console.log(jsonGame.idGame)
+            //                 // console.log(jsonGame.username)
+            //                 // console.log(this._username)
+            //                 // console.log('--------------')
+
+            //                 if (game.idGame === jsonGame.idGame
+            //                     && this._username === jsonGame.username) {
+                                
+            //                     console.log('ENTROU =(')
+            //                     console.log(game.status)
+            //                     console.log(jsonGame.status)
+            //                     game = null;
+            //                     game = jsonGame;
+            //                     game.status = jsonGame.status;
+                                
+            //                     console.log(game.status)
+            //                     console.log(jsonGame.status)
+
+            //                 }
+            //         });
+            //         console.log("/OBTEU JOGO POR SOCKET");
+            //     } );
+
+            // alert("Começar jogo");
+
+            //console.log(game);
+
+            //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
+            // inicio websockets
+            let json = {
+                myMessage: 'I\'m ready.',
+                othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' is ready.'
             }
+            this.websocketService.useNotifications(game.idGame + ' notifications', json);
+            // fim websockets
+
+            this.gameService.putReadyOnGame(game)
+                .subscribe((games: PlayerStateGame[]) => {
+
+                    if (game.boardsAttack.length + 1 === games.length) {
+                        let json = {
+                            myMessage: 'Everyone is ready',
+                            othersMessage: 'Everyone is ready.'
+                        }
+                        this.websocketService.useNotifications(game.idGame + ' notifications', json);
+                        
+                        // TODO nao devia ser feito aqui
+                        games.forEach((g) => {
+                            if (g.username === this._username) {
+                                game.status = g.status;
+                                console.log(game.status)
+                            }
+                        });
+                        // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
+                        
+                        this.websocketService.alterGameState(game.idGame, games);
+                    }
+                });
         }
 
 

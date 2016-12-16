@@ -929,7 +929,73 @@ function getHasShot(request, response, next){
 
 }
 
+function readyOnGame(request, response, next){
+	
+	//PARAMS
+	var idGame = request.params.id;
 
+	//BODY
+	var body = request.body;
+	var username = body.username;
+	var status = body.status;
+	var boardDefense = body.boardDefense;
+
+	var numPlayers;
+
+	database.db.collection("games-details").updateOne(
+		{ idGame: idGame, username: username},
+		{
+			$set: {
+				status: status,
+				boardDefense: boardDefense
+			}
+		},
+		function(err, result) {
+			if(err) {
+				console.log(err);
+				next();
+			} else {
+				database.db.collection("games").findOne({_id: new mongodb.ObjectID(idGame)})
+				.then(game => {
+					numPlayers = game.players.length;
+				});
+
+				database.db.collection("games-details").find({
+						$and: [
+							{ idGame: idGame },
+							// { username: { $nin: [ username ] } }, 
+							{ status: 'READY' }
+						]}
+						// , { status:true }
+					)
+					.toArray()
+					.then(games => {
+
+						// console.log(games.length);
+
+						if (games.length === numPlayers) {
+
+							games.forEach((game) => {
+								game.status = 'INPROGRESS';
+							
+								database.db.collection("games-details").updateOne(
+									{ idGame: game.idGame, username: game.username},
+									{
+										$set: {
+											status: game.status
+										}
+									});
+							});
+						}
+
+
+						response.json(games || []);
+						next();
+					});
+			}
+		}
+	);
+}
 
 
 // Routes for the games
@@ -947,6 +1013,8 @@ games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);
 	server.post(apiBaseUri+'current-state-games-shot/:id', getHasShot);
+
+	server.put(apiBaseUri+'ready-on-game/:id', readyOnGame);
 
 	console.log("Games routes registered");
 }
