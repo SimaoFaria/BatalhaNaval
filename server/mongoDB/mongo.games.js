@@ -818,21 +818,32 @@ function getHasShot(request, response, next){
 
 				for (var idx in game.boardDefense) {
 
+					game.boardDefense[idx].occupiedPositions.forEach(
+						(occupiedPosition) => {
+							if(occupiedPosition.line == line && occupiedPosition.column == column) {
+								occupiedPosition.hit == true;
+
+								result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+								result.shipType = game.boardDefense[idx].type;
+							}
+					});
+
 					// console.log("=>>AQUI");
 					//SHOT
-					if(game.boardDefense[idx].position.line == line
-						&& game.boardDefense[idx].position.column == column) {
+					// if(game.boardDefense[idx].position.line == line
+					// 	&& game.boardDefense[idx].position.column == column) {
 
 						// console.log("=>>>>>>>>>>>>>entrou");
 						// result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
 						
 						//SIMAO
-						result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-						result.shipType = game.boardDefense[idx].type;
-						game.boardDefense[idx].shots.push({
-							"line" : line,
-         					"column" : column
-						});
+						// result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+						// result.shipType = game.boardDefense[idx].type;
+						// game.boardDefense[idx].shots.push({
+						// 	"line" : line,
+         				// 	"column" : column
+						// });
+						
 
 					}
 				}
