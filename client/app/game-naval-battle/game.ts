@@ -1,6 +1,6 @@
 
-import { Player } from '../models/player';
-import { GamingPlayer } from '../models/player';
+import { Player } from '../_models/player';
+import { GamingPlayer } from '../_models/player';
 
 import { BoardDefense } from './models/board-defense';
 import {BoardAttack} from "./models/board-attack";

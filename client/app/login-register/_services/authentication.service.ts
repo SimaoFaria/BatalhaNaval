@@ -7,16 +7,18 @@ import { Observable } from 'rxjs';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+//import Observable =
 
 @Injectable()
 export class AuthenticationService {
     public token: string;
     private subject : string;
+    public hasLogged : boolean;
+    public username : string;
+
 
     constructor(private http: Http) {
-        // set token if saved in local storage
-        //var currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        //this.token = currentUser && currentUser.token;
+
     }
 
 
@@ -38,15 +40,20 @@ export class AuthenticationService {
                     let token = user.token;
                     // store username and token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-                    this.user = user;
+                    //this.user = user;
                     this.token = token;
+                    this.hasLogged = true;
+                    this.username = username;
                     // return true to indicate successful login
+
                     return true;
                 }
                     // return false to indicate failed login
             }).catch((error =>this.handleError(error)));
             
     }
+
+
 
     private handleError (error: any){
 
@@ -66,6 +73,8 @@ export class AuthenticationService {
         // clear token remove user from local storage to log user out
         this.token = null;
         localStorage.removeItem('currentUser');
+        this.hasLogged = false;
+        this.username = null;
     }
 
     //getCurrentGames(username : string):Observable<Game[]>{
@@ -109,7 +118,7 @@ export class AuthenticationService {
             password:password
         };
 
-        return this.http.post('api/v1/players', json).map((response: Response) =>{
+        return this.http.post('api/v1/new_user', json).map((response: Response) =>{
             let userFromBD = response.json();
 
             if (userFromBD.username === username){

@@ -40,14 +40,16 @@ export class GameService {
     }
 
 
-
+    /**
+     *
+     * */
     putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column) : Observable<string> {
 
-
-        console.log("idGame:"+idGame);
-        console.log("opponentUsername:"+opponentUsername);
-        console.log("line:"+line);
-        console.log("column"+column);
+        //DEBUG
+        // console.log("idGame:"+idGame);
+        // console.log("opponentUsername:"+opponentUsername);
+        // console.log("line:"+line);
+        // console.log("column"+column);
 
         let bodyJSONObj = {
             "opponentUsername" : opponentUsername,
@@ -55,7 +57,7 @@ export class GameService {
             "column": column,
         };
 
-        console.log(bodyJSONObj);
+        //DEGUB
         console.dir(bodyJSONObj);
 
         return this.http.post('/api/v1/current-state-games-shot/' + idGame, bodyJSONObj)

@@ -1,31 +1,41 @@
 <div class="container">
-    <h1>Game Lobby</h1>
-    <div>
-        <!--<span>Create Game: </span>-->
-        <button type="button" (click)="createGame()">Create Game</button>
-    </div>
-
-    <h3>Pending Games:</h3>
-    <div *ngIf="gamesInRoom">
-        <div *ngFor="let game of gamesInRoom">
-            <li>
-                <div *ngIf="game.createdBy === player.username" class="owner">
-                    <span class="joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
-                    <button (click)="removeGame(game)">Apagar</button>
-                    <button *ngIf="game.players.length > 1" (click)="startGame(game)" [routerLink]="['/current-games']">Começar</button>
-                </div>
-                <div *ngIf="game.createdBy !== player.username">
-                    <span *ngIf="playerIn(game)" class="joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
-                    <span *ngIf="!playerIn(game)" class="not-joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
-                    <button *ngIf="playerIn(game)" (click)="leaveGame(game)">Sair</button>
-                    <button *ngIf="!playerIn(game) && game.players.length < 4" (click)="enterGame(game)">Entrar</button>
-                </div>
-                <span *ngIf="game.players.length === 4">(Full)</span>
-            </li>
+    <div class="panel-group">
+        <h1>Game Lobby</h1>
+        <div>
+            <!--<span>Create Game: </span>-->
+            <button class="btn" type="button" (click)="createGame()">Create Game</button>
         </div>
-    </div>
 
-    <div *ngIf="!gamesInRoom">
-        <span>Failed to connect to server.</span>
+        <div class="panel panel-default" style="margin-top: 10px;">
+
+            <div class="panel-heading">Pending Games:</div>
+            <ul class="list-group">
+                <li class="list-group-item" *ngFor="let game of gamesInRoom">
+                    <div>
+                        <div *ngIf="game.createdBy === player.username" class="owner">
+                            <span class="joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
+                            <div style="margin-left: 0px;">
+                                <button class="btn" (click)="removeGame(game)">Apagar</button>
+                                <button class="btn" *ngIf="game.players.length > 1" (click)="startGame(game)" [routerLink]="['/current-games']">Começar</button>
+                            </div>
+                        </div>
+                        <div *ngIf="game.createdBy !== player.username">
+                            <span *ngIf="playerIn(game)" class="joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
+                            <span *ngIf="!playerIn(game)" class="not-joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
+                            <div style="margin-left: 0px;">
+                                <button class="btn" *ngIf="playerIn(game)" (click)="leaveGame(game)">Sair</button>
+                                <button class="btn" *ngIf="!playerIn(game) && game.players.length < 4" (click)="enterGame(game)">Entrar</button>
+                            </div>
+                        </div>
+                        <span *ngIf="game.players.length === 4">(Full)</span>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+
+        <div *ngIf="!gamesInRoom">
+            <span>Failed to connect to server.</span>
+        </div>
     </div>
 </div>

@@ -212,7 +212,7 @@
 
     database.connect(url, function () {
 
-        console.log('\nInserting data...\n');
+        console.log('\nInserting dataChartAVGGamesPerDay...\n');
 
         players.forEach(function(player) {
             createPlayer(player);

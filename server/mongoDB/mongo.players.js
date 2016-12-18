@@ -4,6 +4,8 @@ var mongodb = require('mongodb');
 var database = require('./mongo.database');
 var players = module.exports = {};
 
+const sha1 = require('sha1');
+
 function getPlayers(request, response, next){
 	// TODO: query players collection 
 	// and return a JSON response will all players
@@ -90,14 +92,14 @@ function updatePlayer(request, response, next){
 
 function createPlayer(request, response, next){
 	// TODO: create a new player and save it on the players collection
-	// New player data is obtained from the object sent on the request body. 
+	// New player dataChartAVGGamesPerDay is obtained from the object sent on the request body.
 	// Return a JSON response with that player  
 
 	const player = request.body;
     player.passwordHash = sha1(player.password);
     delete player.password;
     if (player === undefined) {
-        response.send(400, 'No player data');
+        response.send(400, 'No player dataChartAVGGamesPerDay');
         return next();
     }
 
@@ -196,6 +198,8 @@ players.init = function(server,apiBaseUri, settings){
 
 	// server.get(settings.prefix + 'getUser/:id', getUser);
 	server.get(apiBaseUri + 'getUser/:id', getUser);
+
+    server.post(apiBaseUri + 'new_user', createPlayer);
 
 	console.log("Players routes registered");
 }

@@ -31,17 +31,21 @@ var GameService = (function () {
         //TODO
         //por o json num arrya de game para mandar para o cliente
     };
+    /**
+     *
+     * */
     GameService.prototype.putHasShotCurrentStateGamePerUsernameByPosition = function (idGame, opponentUsername, line, column) {
-        console.log("idGame:" + idGame);
-        console.log("opponentUsername:" + opponentUsername);
-        console.log("line:" + line);
-        console.log("column" + column);
+        //DEBUG
+        // console.log("idGame:"+idGame);
+        // console.log("opponentUsername:"+opponentUsername);
+        // console.log("line:"+line);
+        // console.log("column"+column);
         var bodyJSONObj = {
             "opponentUsername": opponentUsername,
             "line": line,
             "column": column,
         };
-        console.log(bodyJSONObj);
+        //DEGUB
         console.dir(bodyJSONObj);
         return this.http.post('/api/v1/current-state-games-shot/' + idGame, bodyJSONObj)
             .map(function (response) { return response.json(); });

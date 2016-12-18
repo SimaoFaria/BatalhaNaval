@@ -2,20 +2,107 @@
     <div class="panel-group">
 
         <h1>Historical</h1>
-        <h3>Filter by:</h3>
-        <button type="button" id="filter_my_games" class="btn active" onclick="filter_my_games()" (click)="getMyGames()">My Games</button>
-        <button type="button" id="filter_all_games" class="btn disabled" disabled="disabled" onclick="filter_all_games()" (click)="getAllGames()">All Games</button>
+
+        <!-- SEARCH FORM -->
+        <label for="filterToAplly">Search</label>
+        <form id="search" (ngSubmit)="onSubmit($event);searchForm.reset();" #searchForm="ngForm" >
+            <div class="row">
+
+                <div class="col-sm-3">
+                    <select class="form-control" id="filterToAplly" required [(ngModel)]="selectedFilterString" name="selectedFilter">
+                        <option selected *ngFor="let filter of _FILTERS" [value]="filter.value">{{filter.label}}</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-6">
+                    <input id="inputValue" type="text" class="form-control" placeholder="{{selectedFilterString}}" required
+                           [(ngModel)]="valueToSearch" name="inputValue" #inputValue="ngModel">
+                    <!--<div [hidden]="inputValue.valid || inputValue.pristine"
+                         class="alert alert-danger">
+                        Value to search is required
+                    </div>-->
+                </div>
+
+                <div class="col-sm-3">
+                    <!--<button type="submit" form="search" class="btn btn-default" [disabled]="!searchForm.form.valid">Search</button>-->
+                    <button type="submit" form="search" class="btn btn-default" [disabled]="!searchForm.form.valid">
+                        <span class="glyphicon glyphicon-search"></span> Search
+                    </button>
+                </div>
+
+            </div>
+        </form>
+        <!-- END SEARCH FORM -->
+
+        <!-- SHORTCUTS -->
+        <h3>Shortcuts:</h3>
+        <nav>
+            <button type="button" id="filter_my_games" class="btn active" onclick="filter_my_games()" (click)="getMyGames()">My Games</button>
+            <button type="button" id="filter_all_games" class="btn disabled" disabled="disabled" onclick="filter_all_games()" (click)="getAllGames()">All Games</button>
+            <button type="button" id="statistics" class="btn active" (click)="toogleStatistics()">Statistics</button>
+        </nav>
+        <!-- END SHORTCUTS -->
+
+
+        <!-- STATISTICS -->
+        <div class="panel panel-default" style="margin-top: 10px;" *ngIf="hasStatisticsSelected">
+            <div class="panel-heading">Statistics</div>
+
+            <div class="list-group">
+
+                <div class="list-group-item">
+                    <!-- Games per Day -->
+                    <div class="container-fluid">
+                        <h4><b style="color: #009688">Games per day</b></h4>
+
+                        <div class="panel-body" *ngIf="!errorDataChartAVGGamesPerDay">
+                            <p-chart type="bar" [data]="dataChartAVGGamesPerDay"></p-chart>
+                        </div>
+
+                        <!-- ERROR RESULTS -->
+                        <div class="alert alert-warning" *ngIf="errorDataChartAVGGamesPerDay">
+                            <strong>Warning! </strong> {{errorDataChartAVGGamesPerDay}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-group-item">
+                    <!-- Top 10 dos jogadores que jogaram mais jogos -->
+                    <div class="container-fluid">
+                        <h4><b style="color: #009688">Players with more games</b></h4>
+
+                        <div class="panel-body" *ngIf="!errorDataChartTop5PlayerWithMoreGames">
+                            <p-chart type="pie" [data]="dataChartTop5PlayerWithMoreGames"></p-chart>
+                        </div>
+
+                        <!-- ERROR RESULTS -->
+                        <div class="alert alert-warning" *ngIf="errorDataChartTop5PlayerWithMoreGames">
+                            <strong>Warning! </strong> {{errorDataChartTop5PlayerWithMoreGames}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- END STATISTICS -->
+
+
+
 
         <div class="panel panel-default" style="margin-top: 10px;">
+
             <div class="panel-heading">Results</div>
+
+            <!-- ERROR RESULTS -->
             <div class="alert alert-warning" *ngIf="error">
                 <strong>Warning! </strong> {{error}}
             </div>
+
+            <!-- RESULTS -->
             <div class="panel-body">
 
                 <div class="container-fluid">
                     <div class="row">
-
                         <ul class="list-group">
                             <li class="list-group-item" *ngFor="let historical of historicals">
 
@@ -47,14 +134,14 @@
                                     </tr>
                                     </tbody>
                                 </table>
-
                             </li>
-
                         </ul>
                     </div>
                 </div>
-
             </div>
+            <!-- END RESULTS -->
+
         </div>
+
     </div>
 </div>

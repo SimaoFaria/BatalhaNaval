@@ -1,39 +1,40 @@
-<div class="tops" *ngIf="top10Victories && top10Points">
-    <h1>Top 10</h1>
-    <div class="victories">
-        <h4>Top 10 Victories</h4>
-        <table>
-            <tr>
-                <th class="name">Name</th>
-                <th class="score">Victories</th>
-            </tr>
-            <div *ngFor="let player of top10Victories" class="player">
-                <tr>
-                    <td class="name">{{player.name}}</td>
-                    <td class="score">{{player.totalVictories}}</td>
-                </tr>
-            </div>
-        </table>
-    </div>
+<div class="container">
+        <h1>Top 10</h1>
 
-    <div class="points">
-        <h4>Top 10 Points</h4>
-        <table>
+        <h2>Top 10 Victories</h2>
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <th class="name">Name</th>
-                <th class="score">Points</th>
+                <th>Name</th>
+                <th>Victories</th>
             </tr>
-            <div *ngFor="let player of top10Points" class="player">
-                <tr>
-                    <td class="name">{{player.name}}</td>
-                    <td class="score">{{player.totalPoints}}</td>
+            </thead>
+            <tbody>
+                <tr *ngFor="let player of top10Victories">
+                    <td>{{player.name}}</td>
+                    <td>{{player.totalVictories}}</td>
                 </tr>
-            </div>
+            </tbody>
         </table>
-    </div>
+
+        <h2>Top 10 Points</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Points</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let player of top10Points">
+                    <td>{{player.name}}</td>
+                    <td>{{player.totalPoints}}</td>
+                </tr>
+            </tbody>
+        </table>
 </div>
 
-<div class="tops" *ngIf="!top10Victories && !top10Points">
+<!--<div class="tops" *ngIf="!top10Victories && !top10Points">
     <h1>Top 10</h1>
     <span>Failed to connect to server.</span>
-</div> 
+</div>-->

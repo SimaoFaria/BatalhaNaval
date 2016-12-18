@@ -15,13 +15,15 @@ var tabuleiro_1 = require("./tabuleiro");
 var navio_1 = require("./navio");
 var board_defense_1 = require("./models/board-defense");
 var websocket_service_1 = require('../sockets/notifications/websocket.service');
+var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameComponent = (function () {
     //private celulas : number[][];
-    function GameComponent(gameService, websocketService) {
+    function GameComponent(gameService, websocketService, authenticationService) {
         //document.getElementById('container').innerText='';
         var _this = this;
         this.gameService = gameService;
         this.websocketService = websocketService;
+        this.authenticationService = authenticationService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.LINES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
         // this._username = 'Cao de Agua';// = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
@@ -214,61 +216,69 @@ var GameComponent = (function () {
         //mete a cena dos ships invisivel
     };
     GameComponent.prototype.shot = function (idGame, opponentUsername, line, column) {
+        //DEGUB
         //alert("Game " + idGame + " Shot on : " + opponentUsername + " line: " + line + " column" + column);
+        //alert("username: " + this.authenticationService.username)
         var _this = this;
         var _loop_1 = function(game) {
             if (game.idGame == idGame) {
-                //ver se foi tiro ?
-                var resp = void 0;
-                this_1.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
-                    .subscribe(function (response) {
-                    // console.log("=======> TIRO ");
-                    // console.dir(response);
-                    // alert("TIRO: "+ response);
-                    // alert("TIRO: "+ response.shot);
-                    // resp = response;
-                    // this.playerStateGame = response; //TODO ?
-                    for (var _i = 0, _a = game.boardsAttack; _i < _a.length; _i++) {
-                        var attackBoard = _a[_i];
-                        if (attackBoard.getUsername() == opponentUsername) {
-                            // attackBoard.setValue(line, column, (resp != '' ? 'X' : '0' ));
-                            attackBoard.setValue(line, column, (response.shot != '' ? 'X' : '0'));
-                            //inicio websockets
-                            var json = {
-                                myMessage: 'You shot (' + line + ', ' + column + ') and ',
-                                othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
-                            };
-                            //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
-                            if (response.shot != '') {
-                                json.myMessage += 'hit ' + response.shipType + '.';
-                                json.othersMessage += 'hit ' + response.shipType + '.';
-                            }
-                            else {
-                                json.myMessage += 'missed.';
-                                json.othersMessage += 'missed.';
-                            }
-                            _this.websocketService.useNotifications(idGame + ' notifications', json);
-                            if (response.sank) {
-                                json.myMessage = 'Congratulations! You have sank ' + response.shipType + '.';
-                                json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank ' + response.shipType + '.';
+                if (game.currentPlayer != this_1.authenticationService.username) {
+                    alert("Its not your turn. Wait.");
+                }
+                else {
+                    //ver se foi tiro ?
+                    var resp = void 0;
+                    this_1.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
+                        .subscribe(function (response) {
+                        //DEBUG
+                        // console.log("=======> TIRO ");
+                        // console.dir(response);
+                        // alert("TIRO: "+ response);
+                        // alert("TIRO: "+ response.shot);
+                        // resp = response;
+                        // this.playerStateGame = response; //TODO ?
+                        for (var _i = 0, _a = game.boardsAttack; _i < _a.length; _i++) {
+                            var attackBoard = _a[_i];
+                            if (attackBoard.getUsername() == opponentUsername) {
+                                // attackBoard.setValue(line, column, (resp != '' ? 'X' : '0' ));
+                                attackBoard.setValue(line, column, (response.shot != '' ? 'X' : '0'));
+                                //inicio websockets
+                                var json = {
+                                    myMessage: 'You shot (' + line + ', ' + column + ') and ',
+                                    othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
+                                };
+                                //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
+                                if (response.shot != '') {
+                                    json.myMessage += 'hit ' + response.shipType + '.';
+                                    json.othersMessage += 'hit ' + response.shipType + '.';
+                                }
+                                else {
+                                    json.myMessage += 'missed.';
+                                    json.othersMessage += 'missed.';
+                                }
                                 _this.websocketService.useNotifications(idGame + ' notifications', json);
+                                if (response.sank) {
+                                    json.myMessage = 'Congratulations! You have sank ' + response.shipType + '.';
+                                    json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank ' + response.shipType + '.';
+                                    _this.websocketService.useNotifications(idGame + ' notifications', json);
+                                }
+                                // TODO ainda falta tratar da situação de o jogador ter ficado sem navios
+                                if (response.allShipsSanked) {
+                                    json.myMessage = 'Player TODO has all ship sank.';
+                                    json.othersMessage = 'Player TODO has all ship sank.';
+                                    _this.websocketService.useNotifications(idGame + ' notifications', json);
+                                }
+                                // TODO ainda falta tratar da situação do jogo terminar
+                                //fim websockets
+                                //TODO fazer post para a bd
+                                _this.gameService.putCurrentStateGames(game, false)
+                                    .subscribe(function (response) {
+                                    // this.playerStateGame = response; //TODO
+                                });
                             }
-                            // TODO ainda falta tratar da situação de o jogador ter ficado sem navios
-                            if (response.allShipsSanked) {
-                                json.myMessage = 'Player TODO has all ship sank.';
-                                json.othersMessage = 'Player TODO has all ship sank.';
-                                _this.websocketService.useNotifications(idGame + ' notifications', json);
-                            }
-                            // TODO ainda falta tratar da situação do jogo terminar
-                            //fim websockets
-                            //TODO fazer post para a bd
-                            _this.gameService.putCurrentStateGames(game, false)
-                                .subscribe(function (response) {
-                                // this.playerStateGame = response; //TODO
-                            });
                         }
-                    }
-                });
+                    });
+                }
             }
         };
         var this_1 = this;
@@ -339,7 +349,7 @@ var GameComponent = (function () {
                 './game-defend-simao.css'
             ]
         }), 
-        __metadata('design:paramtypes', [game_service_1.GameService, websocket_service_1.WebSocketService])
+        __metadata('design:paramtypes', [game_service_1.GameService, websocket_service_1.WebSocketService, authentication_service_1.AuthenticationService])
     ], GameComponent);
     return GameComponent;
 }());

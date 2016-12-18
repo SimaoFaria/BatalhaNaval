@@ -11,16 +11,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var common_1 = require('@angular/common');
 var platform_browser_1 = require('@angular/platform-browser');
+var forms_1 = require('@angular/forms');
+var http_1 = require('@angular/http');
+var notifications_module_1 = require('../sockets/notifications/notifications.module');
+/**
+ * Components
+ * */
 var game_component_1 = require('./game.component');
 var defend_component_1 = require('./defend/defend.component');
 var attack_component_1 = require('./attack/attack.component');
 var config_board_ships_component_1 = require('./config-board-ships/config.board.ships.component');
 var chat_component_1 = require('../sockets/chat.component');
-var notifications_module_1 = require('../sockets/notifications/notifications.module');
-var websocket_service_1 = require('../sockets/notifications/websocket.service');
-var auth_service_1 = require('../sockets/auth.service');
-var forms_1 = require('@angular/forms');
-var http_1 = require('@angular/http');
+var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameNavalBattleModule = (function () {
     function GameNavalBattleModule() {
     }
@@ -37,9 +39,9 @@ var GameNavalBattleModule = (function () {
                 game_component_1.GameComponent,
                 defend_component_1.GameDefendComponent,
                 attack_component_1.GameAttackComponent,
-                chat_component_1.ChatComponent
+                chat_component_1.ChatComponent,
             ],
-            providers: [websocket_service_1.WebSocketService, auth_service_1.AuthService]
+            providers: [authentication_service_1.AuthenticationService]
         }), 
         __metadata('design:paramtypes', [])
     ], GameNavalBattleModule);

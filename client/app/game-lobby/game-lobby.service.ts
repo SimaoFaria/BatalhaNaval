@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 
 import { Game } from '../game-naval-battle/game';
 import { GameWithoutId } from '../game-naval-battle/game';
-import { GamingPlayer } from '../models/player';
+import { GamingPlayer } from '../_models/player';
 
 @Injectable()
 export class GameLobbyService {

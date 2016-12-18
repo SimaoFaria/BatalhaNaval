@@ -20,23 +20,26 @@ export class LoginComponent implements OnInit {
     players:any[]=[];
     username:string;
     password:string;
+    hasLogged: any;
+
 
     constructor(
         private router: Router,
-        private authenticationService: AuthenticationService) { 
+        private authenticationService: AuthenticationService) {
 
-            console.log("antes do logout no login.component");
-            this.authenticationService.logout();
-            
-            console.log("depois do logout no login.component");
+        this.hasLogged = authenticationService.hasLogged;
+
+
         }
 
-    ngOnInit() {
-        console.log("antes do logout no login.component");
-        this.authenticationService.logout();
-        
-        console.log("depois do logout no login.component");
-    }
+    //ngOnInit() {
+    //
+    //
+    //    console.log("antes do logout no login.component");
+    //    this.authenticationService.logout();
+    //
+    //    console.log("depois do logout no login.component");
+    //}
 
     loginClick() {
         this.loading = true;
@@ -44,6 +47,7 @@ export class LoginComponent implements OnInit {
             .subscribe(result => {
                 console.log(result);
                 if (result === true) {
+
                     this.router.navigate(['/game-lobby']);
                 }
             },error =>
@@ -51,5 +55,13 @@ export class LoginComponent implements OnInit {
                 this.loading = false});
     }
 
+    //logout() {
+    //
+    //
+    //    console.log("antes do logout no login.component");
+    //    this.authenticationService.logout();
+    //
+    //    console.log("depois do logout no login.component");
+    //}
 
 }
