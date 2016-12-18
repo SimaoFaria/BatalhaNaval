@@ -99,6 +99,7 @@ export class GameComponent {
                 .subscribe( (json: PlayerStateGame[]) => {
                     
                     console.log("OBTEU JOGO POR SOCKET");
+                    // console.log("OBTEU JOGO POR SOCKET");
                     
                     json.forEach((jsonGame) => {
                         this.playerStateGame.forEach((myGame) => {
@@ -128,6 +129,7 @@ export class GameComponent {
                         });
                     });
                     console.log("/OBTEU JOGO POR SOCKET");
+                    // console.log("/OBTEU JOGO POR SOCKET");
                 } );
 
             });
