@@ -54,7 +54,7 @@ export class GameService {
         let bodyJSONObj = {
             "opponentUsername" : opponentUsername,
             "line" : line,
-            "column": column,
+            "column": column
         };
 
         //DEGUB

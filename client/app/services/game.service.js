@@ -43,7 +43,7 @@ var GameService = (function () {
         var bodyJSONObj = {
             "opponentUsername": opponentUsername,
             "line": line,
-            "column": column,
+            "column": column
         };
         //DEGUB
         console.dir(bodyJSONObj);

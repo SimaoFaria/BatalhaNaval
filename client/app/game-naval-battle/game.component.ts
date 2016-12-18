@@ -462,6 +462,7 @@ export class GameComponent {
 
                     //ver se foi tiro ?
                     let resp: string;
+
                     this.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
                         .subscribe((response: any) => {
 
@@ -515,7 +516,14 @@ export class GameComponent {
                                     this.gameService.putCurrentStateGames(game, false)
                                         .subscribe((response: any) => {
 
-                                            // this.playerStateGame = response; //TODO
+                                            // this.playerStateGame = response; // TODO
+                                            console.log(response);
+                                            game.nrShotsRemaining = response.nrShotsRemaining;
+                                            game.currentPlayer = response.currentPlayer;
+                                            
+                                            // so para testes
+                                            // game = response;
+                                            // game.boardsAttack = response.boardsAttack;
 
                                         });
                                 }

@@ -385,7 +385,13 @@ var GameComponent = (function () {
                                 //TODO fazer post para a bd
                                 _this.gameService.putCurrentStateGames(game, false)
                                     .subscribe(function (response) {
-                                    // this.playerStateGame = response; //TODO
+                                    // this.playerStateGame = response; // TODO
+                                    console.log(response);
+                                    game.nrShotsRemaining = response.nrShotsRemaining;
+                                    game.currentPlayer = response.currentPlayer;
+                                    // so para testes
+                                    // game = response;
+                                    // game.boardsAttack = response.boardsAttack;
                                 });
                             }
                         }

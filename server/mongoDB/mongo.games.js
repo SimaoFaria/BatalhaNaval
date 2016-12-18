@@ -664,7 +664,7 @@ function putCurrentStateGames(request, response, next) {
 				console.log(err);
 				next();
 			} else {
-				database.db.collection("games-details").findOne({ idGame: idGame, username: username},function(err, game) {
+				database.db.collection("games-details").findOne({ idGame: idGame, username: username },function(err, game) {
 					if(err) {
 						console.log(err);
 						next();
@@ -693,8 +693,7 @@ function putCurrentStateGames(request, response, next) {
 						// 	}
 						// );
 
-						// response.json(game);
-						response.json(games);
+						response.json(game);
 						next();
 					}
 				});
@@ -750,6 +749,8 @@ function swatpTurn(idGame, currentPlayer) {
 
 			}
 
+			console.log("CONFIRMAÇAO")
+			console.log(nextPlayerName)
 			return nextPlayerName;
 			//next(); //TODO DUVIDA
 		}
@@ -769,12 +770,26 @@ function getHasShot(request, response, next){
 	var line = body.line;
 	var column = body.column;
 
+
 	//DEBUG
 	// console.log('Inside getHasShot');
 	// console.log("idGame: " + idGame);
 	// console.log("opponentUsername: " + opponentUsername);
 	// console.log("line: " + line);
 	// console.log("column: " + column);
+
+	// var boardsAttack = body.boardsAttack;
+
+	// database.db.collection("games-details").updateOne(
+	// 	{ idGame: idGame, username: username},
+	// 	{
+	// 		$set: {
+	// 			boardsAttack: boardsAttack
+	// 		}
+	// 	}
+	// );
+
+
 
 	database.db.collection("games-details").findOne(
 		{ idGame: idGame, username: opponentUsername},
@@ -783,10 +798,6 @@ function getHasShot(request, response, next){
 				console.log(err);
 				next();
 			} else {
-
-				// TEST SIMAO
-				// response.json(game);
-				// next();
 
 				//Tirar um tiro ao layer
 				// console.log("Number of current shots: " +  game.nrShotsRemaining);
@@ -803,7 +814,10 @@ function getHasShot(request, response, next){
 					//mudar de player
 					var idGameSwap = game.idGame;
 					var currentPlayerSwap = game.currentPlayer;
+
+					//TODO por em promise(vem a null)
 					currentPlayer = swatpTurn(idGameSwap, currentPlayerSwap);
+					// currentPlayer = "richard";
 
 
 
@@ -983,33 +997,42 @@ function getHasShot(request, response, next){
 					allShipsSanked: true
 				}
 
+				// percorre todos os ships
 				for (var idx in game.boardDefense) {
 
+					// percorre todas as posicoes ocupadas
 					game.boardDefense[idx].occupiedPositions.forEach((occupiedPosition) => {
-						if(occupiedPosition.line == line && occupiedPosition.column == column) {
+						// console.log(3*2);
+						// console.log(occupiedPosition.position.line + " -> " + line);
+						// console.log(occupiedPosition.position.column + " -> " + column);
+						if(occupiedPosition.position.line == line && occupiedPosition.position.column == column) {
+							
+							// console.log("ENTROU");
+
 							occupiedPosition.hit == true;
 
 							result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-							result.shipType = game.boardDefense[idx].type;							
+							result.shipType = game.boardDefense[idx].type;	
+
+							// console.log(result.shot);						
+							// console.log(result.shipType);						
 						}
 					});
 
-					// console.log("=>>AQUI");
-					//SHOT
+					// console.log(line)
+					// console.log(column)
+
 					// if(game.boardDefense[idx].position.line == line
 					// 	&& game.boardDefense[idx].position.column == column) {
 
-						// console.log("=>>>>>>>>>>>>>entrou");
-						// result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+					// 	result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
+					// 	result.shipType = game.boardDefense[idx].type;
+					// 	game.boardDefense[idx].shots.push({
+					// 		"line" : line,
+         			// 		"column" : column
+					// 	});
 						
-						//SIMAO
-						// result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-						// result.shipType = game.boardDefense[idx].type;
-						// game.boardDefense[idx].shots.push({
-						// 	"line" : line,
-         				// 	"column" : column
-						// });
-						
+					// }
 
 					
 				}
@@ -1027,15 +1050,9 @@ function getHasShot(request, response, next){
 						if (ship.type == 'Submarino') {
 							ship.sank = true;
 						} else {
-							// var numTargets = 0;
-							// ship.shots.forEach((shot) => {
-							// 	if (shot.hit) {
-							// 		numTargets++;
-							// 	}
-							// });
+							var numTargets = 0;
 
-							// TODO verificar se funciona
-							var numTargets = ship.shots.length;
+							var numTargets = ship.occupiedPositions.length;
 
 							switch (ship.type) {
 								case 'ContraTorpedeiro':
@@ -1062,7 +1079,7 @@ function getHasShot(request, response, next){
 						}
 
 						if (ship.sank) {
-							result.sank = true;
+							result.sank = true;	
 						}
 
 						//TODO(DONE) fazer UPDATE a prop sank do ship na DB
@@ -1074,8 +1091,8 @@ function getHasShot(request, response, next){
 								console.log(err);
 								next();
 							} else {
-								console.log(result);
-								next();
+								// console.log(result);
+								// next();
 							}
 						});
 
@@ -1091,6 +1108,9 @@ function getHasShot(request, response, next){
 						break;
 					}
 				}
+
+
+				
 
 				response.json(result);
 				next();
