@@ -20,8 +20,8 @@ export class WebSocketService {
 
     // getPlayersMessages(): Observable<any> {
     //     return new Observable((observer:any) => {
-    //         this.socket.on('players', (data:any) => {
-    //             observer.next(data);
+    //         this.socket.on('players', (dataChartAVGGamesPerDay:any) => {
+    //             observer.next(dataChartAVGGamesPerDay);
     //         });
     //         return () => this.socket.disconnect();
     //     });
@@ -29,8 +29,8 @@ export class WebSocketService {
 
     // getChatMessages(): Observable<any> {
     //     return new Observable((observer:any) => {
-    //         this.socket.on('chat', (data:any) => {
-    //             observer.next(data);
+    //         this.socket.on('chat', (dataChartAVGGamesPerDay:any) => {
+    //             observer.next(dataChartAVGGamesPerDay);
     //         });
     //         return () => this.socket.disconnect();
     //     });

@@ -10,15 +10,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
+var forms_1 = require("@angular/forms");
+/**
+* Components
+* */
 var historical_component_1 = require('./historical.component');
+/**
+ * Services
+ * */
+var historical_service_1 = require("./services/historical.service");
+var statistics_service_1 = require("../services/statistics/statistics.service");
+/**
+ * PrimefaceNG
+ *  {@link http://www.primefaces.org/primeng/#/chart/pie | 2016.12.18}
+ * */
+var chart_js_1 = require("primeng/components/chart/chart.js");
 var HistoricalModule = (function () {
     function HistoricalModule() {
     }
     HistoricalModule = __decorate([
         core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule],
+            imports: [platform_browser_1.BrowserModule, forms_1.FormsModule, chart_js_1.ChartModule],
             declarations: [historical_component_1.HistoricalComponent],
-            bootstrap: [historical_component_1.HistoricalComponent]
+            providers: [historical_service_1.HistoricalService, statistics_service_1.StatisticsService]
         }), 
         __metadata('design:paramtypes', [])
     ], HistoricalModule);

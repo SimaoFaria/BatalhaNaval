@@ -14,13 +14,11 @@ var forms_1 = require('@angular/forms');
 var http_1 = require('@angular/http'); //TODO Faz sentido?
 var app_component_1 = require('./app.component');
 var app_routing_module_1 = require('./app-routing.module');
+var historical_module_1 = require('./historical/historical.module');
 var top10_module_1 = require('./top10/top10.module');
 var game_module_1 = require('./game-naval-battle/game.module');
-var dashboard_component_1 = require('./dashboard/dashboard.component');
 var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
-var historical_component_1 = require('./historical/historical.component');
 // import { SocketsComponent} from './sockets/sockets.component';
-var historical_service_1 = require('./services/historical.service');
 var game_service_1 = require('./services/game.service');
 var auth_service_1 = require('./sockets/auth.service');
 var websocket_service_1 = require('./sockets/notifications/websocket.service');
@@ -29,6 +27,7 @@ var auth_guard_1 = require('./login-register/_guards/auth.guard');
 var authentication_service_1 = require('./login-register/_services/authentication.service');
 var login_component_1 = require('./login-register/login/login.component');
 var register_component_1 = require('./login-register/register/register.component');
+var menu_module_1 = require("./menu/menu.module");
 // import { ChatComponent } from './sockets/chat.component';
 var AppModule = (function () {
     function AppModule() {
@@ -40,20 +39,20 @@ var AppModule = (function () {
                 http_1.HttpModule,
                 app_routing_module_1.AppRoutingModule,
                 //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
-                //HistoricalModule,
+                historical_module_1.HistoricalModule,
                 //LoginModule,
                 top10_module_1.Top10Module,
                 game_module_1.GameNavalBattleModule,
+                //SocketsModule,
+                menu_module_1.MenuModule
             ],
             declarations: [app_component_1.AppComponent,
-                dashboard_component_1.DashboardComponent,
                 game_lobby_component_1.GameLobbyComponent,
-                historical_component_1.HistoricalComponent,
                 // SocketsComponent
                 login_component_1.LoginComponent,
                 register_component_1.RegisterComponent,
             ],
-            providers: [historical_service_1.HistoricalService,
+            providers: [
                 game_service_1.GameService,
                 auth_service_1.AuthService,
                 websocket_service_1.WebSocketService,

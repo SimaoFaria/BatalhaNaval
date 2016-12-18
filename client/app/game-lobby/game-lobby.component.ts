@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { Game, PlayerStateGame, GameStatus } from '../game-naval-battle/game';
 import { GameWithoutId } from '../game-naval-battle/game';
 import { GameLobbyService } from './game-lobby.service';
-import { GamingPlayer } from '../models/player';
+import { GamingPlayer } from '../_models/player';
 
 @Component({
     moduleId: module.id,

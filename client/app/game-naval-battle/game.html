@@ -1,84 +1,118 @@
-<div class="container" class="panel panel-default">
-<div *ngFor="let game of playerStateGame" id="{{game.idGame}}" class="panel-body">
+<div class="container">
 
-    <div *ngIf="game.status == 'READY'" style="background-color:darkgrey;">
-        <h3>There are still people positioning their ships.</h3>
+    <div class="panel panel-default" *ngFor="let game of playerStateGame" id="{{game.idGame}}">
+        <div class="panel-heading">ID: {{game.idGame}}</div>
+        <div class="panel-body">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+            <div *ngIf="game.status == 'READY'" style="background-color:darkgrey;">
+                <h3>There are still people positioning their ships.</h3>
+            </div>
+
+
+            <div *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
+                <h3>Config Ships</h3>
+                Tipo de Navio:
+                <select id=tiponavio>
+                    <option value=0 selected>Porta-Aviões ({{game.boardDefense.currentValues['PortaAvioes']}}/1)</option>
+                    <option value=1>Couraçado ({{game.boardDefense.currentValues['Couracado']}}/1)</option>
+                    <option value=2>Cruzador ({{game.boardDefense.currentValues['Cruzador']}}/2)</option>
+                    <option value=3>Contra-Torpedeiro ({{game.boardDefense.currentValues['ContraTorpedeiro']}}/3)</option>
+                    <option value=4>Submarino ({{game.boardDefense.currentValues['Submarino']}}/4)</option>
+                </select>
+                Orientação
+                <select id=orientacao>
+                    <option value=0 selected>Normal</option>
+                    <option value=1>Roda 90º</option>
+                    <option value=2>Roda 180º</option>
+                    <option value=3>Roda 270º</option>
+                </select>
+                Linha (A..J): <input type=text id=linha>
+                Coluna (1..10): <input type=text id=coluna>
+                <button id=add (click)="addNavioToBoardDefense(game.idGame)">Add Ship</button>
+                <button id=limpar (click)="limparTabuleiro(game.idGame)">Clear Board</button>
+                <button id=ready (click)="ready(game.idGame)">Ready</button>
+                <hr>
+                <h3>Exceção: <span id=msgerro style="color:red"></span></h3>
+                <hr>
+                <!--<table id=tabela border=1>
+                </table>    -->
+                <hr>
+                <h3>Lista de navios</h3>
+                <ul id=listanavios>
+                </ul>
+            </div>
+            </div>
+            </div>
+
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <h5><span style="font-weight: bold">Current Player:</span> {{game.currentPlayer}}</h5>
+            <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
+            <table id=tabela style="background-color:#337ab7;float:left;">
+                <tr *ngFor="let line of LINES" class="dad-row">
+                    <td readonly class="dad-cell">{{line}}</td>
+                    <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
+                        <input readonly type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="N"/>
+                    </td>
+                </tr>
+                <tr class="dad-row">
+                    <td readonly class="dad-cell"></td>
+                    <td readonly *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
+                </tr>
+                <tr colspan="10">{{game.user}}</tr>
+            </table>
+
+            <div *ngIf="game.status == 'INPROGRESS'">
+                <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">
+                    <tr *ngFor="let line of LINES" class="dad-row">
+                        <td readonly class="dad-cell">{{line}}</td>
+                        <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
+                            <input readonly type="text" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column)"/>
+                        </td>
+                        <!--<p style="visibility: hidden">{{game.userOnTable == boardAttack.username}}</p>-->
+
+                    </tr>
+                    <tr class="dad-row">
+                        <td readonly class="dad-cell"></td>
+                        <td readonly *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
+                    </tr>
+                    <tr colspan="10">{{boardAttack.username}}</tr>
+                    <!--<th colspan="2">Hugo</th>-->
+                </table>
+            </div>
+
+            </div>
+            </div>
+
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Player Notifications</div>
+                <div class="panel-body">
+
+                    <notification-panel [roomId]="game.idGame"></notification-panel>
+                </div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">Chat history</div>
+                <div class="panel-body">
+
+                    <chat-control [roomId]="game.idGame"></chat-control>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
     </div>
 
-    <div *ngIf="game.status == 'PENDING'" style="background-color:darkgrey;">
-        <h3>Config Ships</h3>
-        Tipo de Navio: 
-        <select id=tiponavio>
-            <option value=0 selected>Porta-Aviões ({{game.boardDefense.currentValues['PortaAvioes']}}/1)</option>
-            <option value=1>Couraçado ({{game.boardDefense.currentValues['Couracado']}}/1)</option>
-            <option value=2>Cruzador ({{game.boardDefense.currentValues['Cruzador']}}/2)</option>
-            <option value=3>Contra-Torpedeiro ({{game.boardDefense.currentValues['ContraTorpedeiro']}}/3)</option>
-            <option value=4>Submarino ({{game.boardDefense.currentValues['Submarino']}}/4)</option>
-        </select>
-        Orientação
-        <select id=orientacao>
-            <option value=0 selected>Normal</option>
-            <option value=1>Roda 90º</option>
-            <option value=2>Roda 180º</option>
-            <option value=3>Roda 270º</option>
-        </select>    
-        Linha (A..J): <input type=text id=linha>
-        Coluna (1..10): <input type=text id=coluna>
-        <button id=add (click)="addNavioToBoardDefense(game.idGame)">Add Ship</button>
-        <button id=limpar (click)="limparTabuleiro(game.idGame)">Clear Board</button>
-        <button id=ready (click)="ready(game)">Ready</button>
-        <hr>
-        <h3>Exceção: <span id=msgerro style="color:red"></span></h3>
-        <hr>
-        <!--<table id=tabela border=1>
-        </table>    -->
-        <hr>
-        <h3>Lista de navios</h3>
-        <ul id=listanavios>
-        </ul>
-    </div>
-
-    <div class="panel-heading"><h3><span style="font-weight: bold">ID:</span>{{game.idGame}}</h3></div>
-    <h5><span style="font-weight: bold">Current Player:</span> {{game.currentPlayer}}</h5>
-    <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
-    <table id=tabela style="background-color:#337ab7;float:left;">
-        <tr *ngFor="let line of LINES" class="dad-row">
-            <td class="dad-cell">{{line}}</td>
-            <td *ngFor="let column of COLUMNS" class="dad-cell">
-                <input type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="N"/>
-            </td>
-        </tr>
-        <tr class="dad-row">
-            <td class="dad-cell"></td>
-            <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
-        </tr>
-        <tr colspan="10">{{game.user}}</tr>
-    </table>
-
-    <div *ngIf="game.status == 'INPROGRESS'">
-        <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">
-            <tr *ngFor="let line of LINES" class="dad-row">
-                <td class="dad-cell">{{line}}</td>
-                <td *ngFor="let column of COLUMNS" class="dad-cell">
-                    <input type="text" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column)"/>
-                </td>
-                <!--<p style="visibility: hidden">{{game.userOnTable == boardAttack.username}}</p>-->
-
-            </tr>
-            <tr class="dad-row">
-                <td class="dad-cell"></td>
-                <td *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
-            </tr>
-            <tr colspan="10">{{boardAttack.username}}</tr>
-            <!--<th colspan="2">Hugo</th>-->
-        </table>
-    </div>
-
-    <div class="list-group">
-        <notification-panel [roomId]="game.idGame"></notification-panel>
-        <hr/>
-        <chat-control [roomId]="game.idGame"></chat-control>
-    </div>
 
 </div>
-</div>
+
+

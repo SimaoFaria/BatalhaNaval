@@ -9,8 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var historical_service_1 = require('./services/historical.service');
-var game_service_1 = require('./services/game.service');
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -18,8 +16,7 @@ var AppComponent = (function () {
         core_1.Component({
             selector: 'my-app',
             templateUrl: './app/app-index.html',
-            //styleUrls: [ './app/app-styles.css' ], //TODO dps para os primefaces e bootstrapes
-            providers: [historical_service_1.HistoricalService, game_service_1.GameService]
+            styleUrls: ['./app/app-styles.css']
         }), 
         __metadata('design:paramtypes', [])
     ], AppComponent);

@@ -11,5 +11,3 @@ export class GamingPlayer {
     score: number;
     classification: string;
 }
-
-//referencia para o game em que teve max pontuaçoa?

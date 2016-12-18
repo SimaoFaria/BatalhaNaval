@@ -13,12 +13,10 @@ import { Top10Module } from './top10/top10.module';
 import { GameNavalBattleModule } from './game-naval-battle/game.module';
 import { SocketsModule } from './sockets/sockets.module';
 
-import { DashboardComponent } from './dashboard/dashboard.component';
 import { GameLobbyComponent } from './game-lobby/game-lobby.component';
-import { HistoricalComponent } from './historical/historical.component';
+
 // import { SocketsComponent} from './sockets/sockets.component';
 
-import { HistoricalService } from './services/historical.service';
 import { GameService } from './services/game.service';
 
 import { AuthService } from './sockets/auth.service';
@@ -32,8 +30,14 @@ import { AuthenticationService } from './login-register/_services/authentication
 import { LoginComponent } from './login-register/login/login.component';
 import { GameComponent } from './login-register/game/game.component';
 import { RegisterComponent } from './login-register/register/register.component';
+import {MenuComponent} from "./menu/menu.component";
+import {MenuModule} from "./menu/menu.module";
+
 
 // import { ChatComponent } from './sockets/chat.component';
+
+
+
 
 @NgModule({
   imports:      [   BrowserModule,
@@ -41,23 +45,23 @@ import { RegisterComponent } from './login-register/register/register.component'
                     HttpModule,
                     AppRoutingModule,
                     //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
-                    //HistoricalModule,
+                    HistoricalModule,
                     //LoginModule,
                     Top10Module,
                     GameNavalBattleModule,
-                    //SocketsModule
+                    //SocketsModule,
+                    MenuModule
+
   ],
   declarations: [   AppComponent,
-                    DashboardComponent,
                     GameLobbyComponent,
-                    HistoricalComponent,
                     // SocketsComponent
                     LoginComponent,
                     RegisterComponent,
                     // ChatComponent
-                    
+
   ],
-  providers: [      HistoricalService,
+  providers: [
                     GameService,
                     AuthService,
                     WebSocketService,

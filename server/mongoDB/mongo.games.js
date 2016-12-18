@@ -21,6 +21,10 @@ function getGames(request, response, next){
   });
 }
 
+
+
+
+
 function getGame(request, response, next){
 	// TODO: obtain one game (by ObjectID) from games collection 
 	// and return a JSON response with that game
@@ -104,7 +108,7 @@ function updateGame(request, response, next){
 
 function createGame(request, response, next){
 	// TODO: create a new game and save it on the games collection
-	// New game data is obtained from the object sent on the request body. 
+	// New game dataChartAVGGamesPerDay is obtained from the object sent on the request body.
 	// Return a JSON response with that game  
 
 	// games-details
@@ -192,20 +196,28 @@ function deleteGame(request, response, next){
   });
 }
 
+/**********************************************************************************************************************
+ * 												HISTORICAL															  *
+ **********************************************************************************************************************/
+
+/**
+ *
+ * */
 function getHistoricals(request, response, next){
-	// TODO: query games collection 
-	// and return a JSON response will all games
 	database.db.collection("games").find({"status":"ENDED"}).toArray(function(err, games) {
 		if(err) {
-        console.log(err);
-        next();
-    } else {
-	    response.json(games);
-	    next();
-    }
-  });
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+  	});
 }
 
+/**
+ *
+ * */
 function getHistoricalsByUsername(request, response, next){
 	// TODO: obtain one game (by ObjectID) from games collection 
 	// and return a JSON response with that game
@@ -222,6 +234,168 @@ function getHistoricalsByUsername(request, response, next){
     }
   });
 }
+
+/**
+ *
+ * */
+function getHistoricalsByGameID(request, response, next){
+
+	var gameID = request.params.gameID;
+	var _id = new mongodb.ObjectID(gameID);
+
+	database.db.collection("games").find({_id:_id, status:"ENDED"}).toArray(function(err, games) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+	});
+}
+
+/**
+ *
+ * */
+function getHistoricalsByGameCreator(request, response, next){
+
+	var createdBy = request.params.gameCreator;
+
+	database.db.collection("games").find({createdBy:createdBy, status:"ENDED"}).toArray(function(err, games) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+	});
+}
+
+/**
+ *
+ * */
+function getHistoricalsByWinnerPlayer(request, response, next){
+
+	var winner = request.params.playerUsername;
+
+	database.db.collection("games").find({winner:winner, status:"ENDED"}).toArray(function(err, games) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+	});
+}
+
+/**
+ *
+ * */
+function getHistoricalsByPlayer(request, response, next){
+
+	var player = request.params.playerUsername;
+
+	database.db.collection("games").find({$and: [{"players.username":player}, {"status":"ENDED"}]}).toArray(function(err, games) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(games);
+			next();
+		}
+	});
+}
+
+/**********************************************************************************************************************
+ * 												STATISTICS															  *
+ **********************************************************************************************************************/
+
+/**
+ *
+ * */
+function getStatisticsAVGGamesDay(request, response, next){
+	// TODO: query games collection
+	// and return a JSON response will all games
+
+	//database.db.collection("games").find({"status":"ENDED"}).count();
+	//var nrGames = database.db.collection("games").find({}).count();
+	// var nrGames = database.db.collection("games").count();
+	// console.log('nrGames' + nrGames);
+	//
+	// database.db.collection("games").find({"startDate" : "21-21-2121"}).toArray(function(err, games) {
+	// if(err) {
+	// 	console.log(err);
+	// 	next();
+	// } else {
+	//     var size = games.length;
+	//         console.log("AQUI" + size);
+	// 	//response.json(games);
+	// 	//response.json({'size' : size});
+	// 	next();
+	// }
+	// });
+
+
+
+	// var x = database.db.collection("games").aggregate( [ { $group : { _id : "$startDate" } } ] );
+	// for (var property in x) {
+	//     if (x.hasOwnProperty(property)) {
+	//         console.log(x);
+	//     }
+	// }
+
+
+
+
+
+
+	// var result = database.db.collection("games").aggregate( [
+	// 	{
+	// 		$group : { startDate : "$by_date", num_per_day : {$sum : 1}}
+	// 	}
+	// ]);
+    //
+	// console.log(result);
+	// response.json(result);
+
+	// response.json({
+	// 	"result" : [
+	// 	{
+	// 		"_id" : "tutorials point",
+	// 		"num_tutorial" : 2
+	// 	},
+	// 	{
+	// 		"_id" : "Neo4j",
+	// 		"num_tutorial" : 1
+	// 	}
+	// ],
+	// 	"ok" : 1
+	// });
+
+
+	response.json({});
+}
+
+/**
+ *
+ * */
+function getStatisticsTop5NumberGames(request, response, next){
+	//TODO
+	response.json({});
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 function getGamesInRoom(request, response, next){
@@ -529,7 +703,6 @@ function putCurrentStateGames(request, response, next) {
 	);
 }
 
-
 function swatpTurn(idGame, currentPlayer) {
 
 	// console.log("swatpTurn(" + idGame + "," +  currentPlayer +")");
@@ -584,6 +757,7 @@ function swatpTurn(idGame, currentPlayer) {
 }
 
 
+
 function getHasShot(request, response, next){
 
 	//PARAMS
@@ -595,15 +769,12 @@ function getHasShot(request, response, next){
 	var line = body.line;
 	var column = body.column;
 
-	/**
-	 * DEBUG
-	 * */
+	//DEBUG
+	// console.log('Inside getHasShot');
 	// console.log("idGame: " + idGame);
 	// console.log("opponentUsername: " + opponentUsername);
 	// console.log("line: " + line);
 	// console.log("column: " + column);
-
-
 
 	database.db.collection("games-details").findOne(
 		{ idGame: idGame, username: opponentUsername},
@@ -633,6 +804,7 @@ function getHasShot(request, response, next){
 					var idGameSwap = game.idGame;
 					var currentPlayerSwap = game.currentPlayer;
 					currentPlayer = swatpTurn(idGameSwap, currentPlayerSwap);
+
 
 
 				// 	/****************************** PROXIMO JOGAFOR ******************************************/
@@ -1005,8 +1177,22 @@ games.init = function(server,apiBaseUri){
 	server.put(apiBaseUri+'games/:id',updateGame);
 	server.post(apiBaseUri+'games',createGame);
 	server.del(apiBaseUri+'games/:id',deleteGame);
-	server.get(apiBaseUri+'historicals', getHistoricals);
-	server.get(apiBaseUri+'historicals/:username', getHistoricalsByUsername);
+
+	/* Routes for historical */
+	server.get(apiBaseUri+'historicals', getHistoricals); // all games endded
+	server.get(apiBaseUri+'historicals/:username', getHistoricalsByUsername); // all games endded by user
+	server.get(apiBaseUri+'historicals/gameID/:gameID', getHistoricalsByGameID); // the game endded by id
+	server.get(apiBaseUri+'historicals/cretedBy/:gameCreator', getHistoricalsByGameCreator); // all games ended created by player XPTO
+	server.get(apiBaseUri+'historicals/winner/:playerUsername', getHistoricalsByWinnerPlayer); // all games winner by player XPTO
+	server.get(apiBaseUri+'historicals/player/:playerUsername', getHistoricalsByPlayer); // all games that player XPTO had played
+	console.log("Historical routes registered");
+
+	/* Routes for statistics */
+	server.get(apiBaseUri+'statistics/avg/games/day', getStatisticsAVGGamesDay); // the number the games played per day
+	server.get(apiBaseUri+'statistics/top5/number-games', getStatisticsTop5NumberGames); // the number of games played by 5 players with more games
+	console.log("Statistics routes registered");
+
+
 	server.get(apiBaseUri+'waiting-room-games', getGamesInRoom);
 	server.put(apiBaseUri+'start-game/:id', startGame);
 	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
