@@ -1,0 +1,60 @@
+<div class="container">
+    <div class="panel-group">
+
+        <h1>Historical</h1>
+        <h3>Filter by:</h3>
+        <button type="button" id="filter_my_games" class="btn active" onclick="filter_my_games()" (click)="getMyGames()">My Games</button>
+        <button type="button" id="filter_all_games" class="btn disabled" disabled="disabled" onclick="filter_all_games()" (click)="getAllGames()">All Games</button>
+
+        <div class="panel panel-default" style="margin-top: 10px;">
+            <div class="panel-heading">Results</div>
+            <div class="alert alert-warning" *ngIf="error">
+                <strong>Warning! </strong> {{error}}
+            </div>
+            <div class="panel-body">
+
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <ul class="list-group">
+                            <li class="list-group-item" *ngFor="let historical of historicals">
+
+                                <div class="col-sm-6" style="background-color:white;">
+                                    <h5><b style="color: #009688">ID Game:</b> {{historical._id}}</h5>
+                                    <p><b>Create By:</b>  {{historical.createdBy}}</p>
+                                    <p><b>Winner:</b>  {{historical.winner}}</p>
+                                </div>
+
+                                <div class="col-sm-6" style="background-color:white;">
+                                    <p><b>Aborted:</b>  {{historical.aborted}}</p>
+                                    <p><b>Start Date:</b>  {{historical.startDate}}</p>
+                                    <p><b>End Date:</b>  {{historical.endDate}}</p>
+                                </div>
+
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Classification</th>
+                                        <th>Username</th>
+                                        <th>Score</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let player of historical.players">
+                                        <td>{{player.classification}}º</td>
+                                        <td>{{player.username}}</td>
+                                        <td>{{player.score}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
