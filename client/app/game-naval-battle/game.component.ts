@@ -99,7 +99,7 @@ export class GameComponent {
                     this.websocketService.joinGameRoom(game.idGame);
                 });
                 
-                this.websocketService.getGameMessages('change game state')
+                this.websocketService.getGameState('change game state')
                 .subscribe( (json: PlayerStateGame[]) => {
                     
                     console.log("OBTEU JOGO POR SOCKET");
@@ -108,19 +108,8 @@ export class GameComponent {
                     json.forEach((jsonGame) => {
                         this.playerStateGame.forEach((myGame) => {
 
-                            // console.log('--------------')
-                            // console.log(myGame.idGame)
-                            // console.log(jsonGame.idGame)
-                            // console.log(jsonGame.username)
-                            // console.log(this._username)
-                            // console.log('--------------')
-
                             if (myGame.idGame === jsonGame.idGame
                                 && this._username === jsonGame.username) {
-                                
-                                // console.log('ENTROU =(')
-                                // console.log(myGame.status)
-                                // console.log(jsonGame.status)
 
                                 // myGame = jsonGame;
                                 myGame.status = jsonGame.status;
@@ -134,7 +123,50 @@ export class GameComponent {
                     });
                     console.log("/OBTEU JOGO POR SOCKET");
                     // console.log("/OBTEU JOGO POR SOCKET");
-                } );
+                });
+
+                this.websocketService.getCurrentPlayer('update current player')
+                .subscribe( (json: any) => {
+                    
+                    console.log("OBTEU update current player POR SOCKET");
+
+                    this.playerStateGame.forEach((myGame) => {
+                        if (myGame.idGame === json.idGame) {
+                            myGame.currentPlayer = json.currentPlayer;
+                            myGame.nrShotsRemaining = json.nrShotsRemaining;
+
+                            console.log(myGame.currentPlayer + '|' + myGame.nrShotsRemaining)
+                            console.log(json.currentPlayer + '|' + json.nrShotsRemaining)
+                        }
+                    });
+
+                    console.log("/OBTEU update current player POR SOCKET");
+                    
+                });
+
+                this.websocketService.getCurrentPlayer('update game status')
+                .subscribe( (json: any) => {
+                    
+                    console.log("OBTEU update game status POR SOCKET");
+
+                    // console.log(json)
+                    // console.log(this._username)
+
+                    if (this._username === json.username) {
+                        // console.log('SOU EU')
+                        this.playerStateGame.forEach((myGame) => {
+                            if (myGame.idGame === json.idGame) {
+                                // console.log('É O MEU JOGO')
+                                myGame.status = json.status;
+                                // console.log(myGame.status)
+                                // console.log(json.status)
+                            }
+                        });
+                    }
+
+                    console.log("/OBTEU update game status POR SOCKET");
+                    
+                });
 
             });
 
@@ -334,49 +366,10 @@ export class GameComponent {
 
     ready(game: PlayerStateGame) : void {
 
-
         if(game.boardDefense.isConfigDone() === false){
             alert("Ainda não tem as peças todas");
         }else {
 
-            
-            // this.websocketService.getGameMessages('change game state')
-            //     .subscribe( (json: PlayerStateGame[]) => {
-                    
-            //         console.log("OBTEU JOGO POR SOCKET");
-                    
-            //         json.forEach((jsonGame) => {
-
-            //                 // console.log('--------------')
-            //                 // console.log(game.idGame)
-            //                 // console.log(jsonGame.idGame)
-            //                 // console.log(jsonGame.username)
-            //                 // console.log(this._username)
-            //                 // console.log('--------------')
-
-            //                 if (game.idGame === jsonGame.idGame
-            //                     && this._username === jsonGame.username) {
-                                
-            //                     console.log('ENTROU =(')
-            //                     console.log(game.status)
-            //                     console.log(jsonGame.status)
-            //                     game = null;
-            //                     game = jsonGame;
-            //                     game.status = jsonGame.status;
-                                
-            //                     console.log(game.status)
-            //                     console.log(jsonGame.status)
-
-            //                 }
-            //         });
-            //         console.log("/OBTEU JOGO POR SOCKET");
-            //     } );
-
-            // alert("Começar jogo");
-
-            //console.log(game);
-
-            //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
             // inicio websockets
             let json = {
                 myMessage: 'I\'m ready.',
@@ -398,8 +391,9 @@ export class GameComponent {
                         // TODO nao devia ser feito aqui
                         games.forEach((g) => {
                             if (g.username === this._username) {
+                                // altero o status do meu jogo
                                 game.status = g.status;
-                                console.log(game.status)
+                                // console.log(game.status)
                             }
                         });
                         // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
@@ -463,7 +457,7 @@ export class GameComponent {
                     //ver se foi tiro ?
                     let resp: string;
 
-                    this.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column)
+                    this.gameService.putHasShotCurrentStateGamePerUsernameByPosition(idGame, opponentUsername, line, column, this._username)
                         .subscribe((response: any) => {
 
                             //DEBUG
@@ -475,72 +469,78 @@ export class GameComponent {
 
                             // this.playerStateGame = response; //TODO ?
 
+                            console.log(response)
+                            game.nrShotsRemaining = response.nrShotsRemaining;
+                            game.currentPlayer = response.currentPlayer;
+
                             for (let attackBoard of game.boardsAttack) {
 
                                 if (attackBoard.getUsername() == opponentUsername) {
 
-                                    // attackBoard.setValue(line, column, (resp != '' ? 'X' : '0' ));
+                                    // TODO não esta a fazer a atualização, ver depois a cena do moodle (restify), BUG a atribuição, se calhar não ira funcionar, porque o depois perde os seus metodos
+                                    // attackBoard = response.boardAttack;
                                     attackBoard.setValue(line, column, (response.shot != '' ? 'X' : '0' ));
 
-                                    //inicio websockets
-                                    let json = {
-                                        myMessage: 'You shot (' + line + ', ' + column + ') and ',
-                                        othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot (' + line + ', ' + column + ') and '
-                                    }
-
-                                    //TODO SIMAO por agora recebo a string do response, mas se a response devolvesse um object seria mais facil
-                                    if (response.shot != '') {
-                                        json.myMessage += 'hit ' + response.shipType + '.';
-                                        json.othersMessage += 'hit ' + response.shipType + '.';
-                                    } else {
-                                        json.myMessage += 'missed.';
-                                        json.othersMessage += 'missed.';
-                                    }
-                                    this.websocketService.useNotifications(idGame + ' notifications', json);
-                                    if (response.sank) {
-                                        json.myMessage = 'Congratulations! You have sank ' + response.shipType + '.';
-                                        json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank ' + response.shipType + '.';
-                                        this.websocketService.useNotifications(idGame + ' notifications', json);
-                                    }
-                                    // TODO ainda falta tratar da situação de o jogador ter ficado sem navios
-                                    if (response.allShipsSanked) {
-                                        json.myMessage = 'Player TODO has all ship sank.';
-                                        json.othersMessage = 'Player TODO has all ship sank.';
-                                        this.websocketService.useNotifications(idGame + ' notifications', json);
-                                    }
-
-                                    // TODO ainda falta tratar da situação do jogo terminar
-                                    //fim websockets
-
-                                    //TODO fazer post para a bd
-                                    this.gameService.putCurrentStateGames(game, false)
-                                        .subscribe((response: any) => {
-
-                                            // this.playerStateGame = response; // TODO
-                                            console.log(response);
-                                            game.nrShotsRemaining = response.nrShotsRemaining;
-                                            game.currentPlayer = response.currentPlayer;
-                                            
-                                            // so para testes
-                                            // game = response;
-                                            // game.boardsAttack = response.boardsAttack;
-
-                                        });
                                 }
                             }
+
+                            //inicio websockets
+                            let json = {
+                                myMessage: 'You shot ' + response.defendingPlayer + '(' + line + ', ' + column + ') and ',
+                                // othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' shot '+ response.defendingPlayer + '(' + line + ', ' + column + ') and '
+                                othersMessage: 'Player ' + this._username + ' shot '+ response.defendingPlayer + '(' + line + ', ' + column + ') and '
+                            }
+
+                            if (response.shot != '') {
+                                json.myMessage += 'hit ' + response.shipType + '.';
+                                json.othersMessage += 'hit ' + response.shipType + '.';
+                            } else {
+                                json.myMessage += 'missed.';
+                                json.othersMessage += 'missed.';
+                            }
+                            this.websocketService.useNotifications(idGame + ' notifications', json);
+                            
+                            if (response.sank) {
+                                json.myMessage = 'Congratulations! You have sank ' + response.defendingPlayer + ' ' + response.shipType + '.';
+                                // json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank ' + response.defendingPlayer + ' ' + response.shipType + '.';
+                                json.othersMessage = 'Player ' + this._username + ' has sank ' + response.defendingPlayer + ' ' + response.shipType + '.';
+                                this.websocketService.useNotifications(idGame + ' notifications', json);
+                            }
+
+                            if (response.allShipsSanked) {
+                                json.myMessage = 'You have sank all ' + response.defendingPlayer + ' ships.';
+                                // json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank all ' + response.defendingPlayer + ' ships.';
+                                json.othersMessage = 'Player ' + this._username + ' has sank all ' + response.defendingPlayer + ' ships.';
+                                this.websocketService.useNotifications(idGame + ' notifications', json);
+                                
+                                // TODO? mandar dados por websocket para o jogador que perdeu? para fazer highlight? talvez sempre que é tiro? ship sank? all ship sank? animar com jquery??
+                                // manda por websocket o status ENDED ao jogador que perdeu
+                                let updateJson = {
+                                    idGame: idGame,
+                                    username: opponentUsername,
+                                    status: PlayerStateGame.gameStatus_toString(GameStatus.ENDED)
+                                }
+                                this.websocketService.updateGameStatus(idGame, updateJson);
+
+                                console.log(response.gameEnded)
+                                if (response.gameEnded) {
+                                    json.myMessage = 'Congratz!! You have won the game!';
+                                    json.othersMessage = 'Player ' + this._username + ' has won the game.';
+                                    this.websocketService.useNotifications(idGame + ' notifications', json);
+
+                                    // nao deveria ser assim
+                                    game.status = PlayerStateGame.gameStatus_toString(GameStatus.ENDED);
+                                }
+                            }
+
+                            let updateJson = {
+                                idGame: idGame,
+                                nrShotsRemaining: response.nrShotsRemaining,
+                                currentPlayer: response.currentPlayer
+                            }
+                            this.websocketService.updateCurrentPlayer(idGame, updateJson);
+                            // fim sockets
                         });
-
-                    //receber mensagem se foi tiro
-
-                    //desbloqear a celula para edicao se o utilizador quiser pode marcar como tiro ou agua A ou T
-
-                    // this.gameService.putCurrentStateGames(game, true)
-                    //     .subscribe((response) => {
-                    //
-                    //         // this.playerStateGame = response; //TODO ?
-                    //
-                    // });
-
                 }
             }
 

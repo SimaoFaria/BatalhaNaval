@@ -34,7 +34,7 @@ var GameService = (function () {
     /**
      *
      * */
-    GameService.prototype.putHasShotCurrentStateGamePerUsernameByPosition = function (idGame, opponentUsername, line, column) {
+    GameService.prototype.putHasShotCurrentStateGamePerUsernameByPosition = function (idGame, opponentUsername, line, column, username) {
         //DEBUG
         // console.log("idGame:"+idGame);
         // console.log("opponentUsername:"+opponentUsername);
@@ -43,7 +43,8 @@ var GameService = (function () {
         var bodyJSONObj = {
             "opponentUsername": opponentUsername,
             "line": line,
-            "column": column
+            "column": column,
+            "username": username
         };
         //DEGUB
         console.dir(bodyJSONObj);

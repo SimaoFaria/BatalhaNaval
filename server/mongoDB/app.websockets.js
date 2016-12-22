@@ -108,6 +108,14 @@ ws.init = (server) => {
             socket.to(channel).broadcast.emit('change game state', games);
         })
 
+        socket.on('update current player',(channel, updatedCurrentPlayer) => {
+            socket.to(channel).broadcast.emit('update current player', updatedCurrentPlayer);
+        })
+        
+        socket.on('update game status',(channel, updatedGameStatus) => {
+            socket.to(channel).broadcast.emit('update game status', updatedGameStatus);
+        })
+
         socket.on('disconnect', function(){
             console.log('a user disconnected');
         });

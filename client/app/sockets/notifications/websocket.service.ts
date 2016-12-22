@@ -78,4 +78,30 @@ export class WebSocketService {
             return () => this.socket.disconnect();
         });
     }
+    
+    updateCurrentPlayer(room: any, json: any) {
+        this.socket.emit('update current player', room, json);
+    }
+
+    getCurrentPlayer(any: any): Observable<any> {
+        return new Observable((observer:any) => {
+            this.socket.on(any, (data:any) => {
+                observer.next(data);
+            });
+            return () => this.socket.disconnect();
+        });
+    }
+
+    updateGameStatus(room: any, json: any) {
+        this.socket.emit('update game status', room, json);
+    }
+
+    getUpdateGameStatus(any: any): Observable<any> {
+        return new Observable((observer:any) => {
+            this.socket.on(any, (data:any) => {
+                observer.next(data);
+            });
+            return () => this.socket.disconnect();
+        });
+    }
 }

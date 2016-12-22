@@ -32,7 +32,7 @@
                 Coluna (1..10): <input type=text id=coluna>
                 <button id=add (click)="addNavioToBoardDefense(game.idGame)">Add Ship</button>
                 <button id=limpar (click)="limparTabuleiro(game.idGame)">Clear Board</button>
-                <button id=ready (click)="ready(game.idGame)">Ready</button>
+                <button id=ready (click)="ready(game)">Ready</button>
                 <hr>
                 <h3>Exceção: <span id=msgerro style="color:red"></span></h3>
                 <hr>
@@ -48,21 +48,28 @@
 
             <div class="panel panel-default">
             <div class="panel-body">
-            <h5><span style="font-weight: bold">Current Player:</span> {{game.currentPlayer}}</h5>
-            <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
-            <table id=tabela style="background-color:#337ab7;float:left;">
-                <tr *ngFor="let line of LINES" class="dad-row">
-                    <td readonly class="dad-cell">{{line}}</td>
-                    <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
-                        <input readonly type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="N"/>
-                    </td>
-                </tr>
-                <tr class="dad-row">
-                    <td readonly class="dad-cell"></td>
-                    <td readonly *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
-                </tr>
-                <tr colspan="10">{{game.user}}</tr>
-            </table>
+            <div *ngIf="game.status != 'ENDED'">
+                <div *ngIf="game.status == 'INPROGRESS'">
+                    <h5><span style="font-weight: bold">Current Player:</span> {{game.currentPlayer}}</h5>
+                    <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
+                </div>
+                <table id=tabela style="background-color:#337ab7;float:left;">
+                    <tr *ngFor="let line of LINES" class="dad-row">
+                        <td readonly class="dad-cell">{{line}}</td>
+                        <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
+                            <input readonly type="text" *ngIf="game.boardDefense.getCelula(line, column).tipo == 1" value="N"/>
+                        </td>
+                    </tr>
+                    <tr class="dad-row">
+                        <td readonly class="dad-cell"></td>
+                        <td readonly *ngFor="let column of COLUMNS" class="dad-cell">{{column}}</td>
+                    </tr>
+                    <tr colspan="10">{{game.user}}</tr>
+                </table>
+            </div>
+            <div *ngIf="game.status == 'ENDED'">
+                <h2>GAME ENDED</h2>
+            </div>
 
             <div *ngIf="game.status == 'INPROGRESS'">
                 <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">

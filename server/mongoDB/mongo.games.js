@@ -433,6 +433,9 @@ function startGame(request, response, next){
 
 				game.players.forEach((player) => {
 
+					var nrShots = game.players.length - 1;
+					nrShots *= 2;
+
 					var otherPlayers = [];
 					game.players.forEach((pl) => {
 						
@@ -446,7 +449,6 @@ function startGame(request, response, next){
 						}
 					});
 
-
 					var gameDetails = {
 						//"_id" : new mongodb.ObjectID(),
 						"idGame" : game._id.toString(),
@@ -454,7 +456,9 @@ function startGame(request, response, next){
 						// "username" : "",
 						"username" : player.username,
 						"boardDefense" : [],
-						"boardsAttack" : otherPlayers
+						"boardsAttack" : otherPlayers,
+						"currentPlayer": game.createdBy,
+						"nrShotsRemaining": nrShots
 					}
 					// gameDetails._id = new mongodb.ObjectID(gameDetails.idGame, gameDetails.username);
 					// gameDetails.username = player.username;
@@ -556,59 +560,6 @@ function getCurrentStateGames(request, response, next){
 		}
 	});
 }
-
-// versao simao
-// function getCurrentStateGames(request, response, next){
-// 	// TODO: obtain one game (by ObjectID) from games collection
-// 	// and return a JSON response with that game
-// 	// Endpoint URL example: api/v1/games/58299dfa515f3da86af58060
-// 	//var username = new mongodb.ObjectID(request.params.username);
-
-// 	//TODO fazer bem feito par nao haver falhas de segurança (so passar o tabuleiro do utilizar e o estado e o id e blablabla)
-// 	//var select = {players[0].tabuleiros.};
-
-// 	var username = request.params.username;
-// 	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
-// 	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
-// 		// console.log("----------------------------------------------");
-// 		// console.log(games);
-// 		// console.log("----------------------------------------------");
-		
-// 		if(err) {
-// 			console.log(err);
-// 			next();
-// 		} else {
-
-//             // var gamesIds = [];
-
-// 			// games.forEach((game) => {
-// 			// 	game.players.forEach((player) => {
-// 			// 		if (player.username == username) {
-// 			// 			gamesIds.push(game._id.toString());
-// 			// 		}
-// 			// 	});
-// 			// });
-
-//             // database.db.collection("games-details").find({idGame : {$in:gamesIds}, username: username}).toArray(function(err, gamesStates) {
-//             //     if(err) {
-//             //         console.log(err);
-//             //         next();
-//             //     } else {
-//             //     	//console.log(gamesStates);
-//             //         response.json(gamesStates);
-//             //         next();
-//             //     }
-//             // });
-
-// 			// // TODO depois considerar este next em vez de dentro do pedido
-// 			// // next();
-
-// 			response.json(games);
-// 			next();
-// 		}
-// 	});
-// }
-
 
 //TODO http://www.fusioncharts.com/blog/2013/12/jsdoc-vs-yuidoc-vs-doxx-vs-docco-choosing-a-javascript-documentation-generator/
 /**
@@ -769,7 +720,7 @@ function getHasShot(request, response, next){
 	var opponentUsername = body.opponentUsername;
 	var line = body.line;
 	var column = body.column;
-
+	var username = body.username;
 
 	//DEBUG
 	// console.log('Inside getHasShot');
@@ -778,16 +729,6 @@ function getHasShot(request, response, next){
 	// console.log("line: " + line);
 	// console.log("column: " + column);
 
-	// var boardsAttack = body.boardsAttack;
-
-	// database.db.collection("games-details").updateOne(
-	// 	{ idGame: idGame, username: username},
-	// 	{
-	// 		$set: {
-	// 			boardsAttack: boardsAttack
-	// 		}
-	// 	}
-	// );
 
 
 
@@ -799,28 +740,131 @@ function getHasShot(request, response, next){
 				next();
 			} else {
 
-				//Tirar um tiro ao layer
-				// console.log("Number of current shots: " +  game.nrShotsRemaining);
-				var nrShotsRemaining = game.nrShotsRemaining;
-				nrShotsRemaining = nrShotsRemaining -1;
-				// console.log("Number of current shots ater: " + nrShotsRemaining);
+				var result = {
+					shot: '',
+					shipType: '', 
+					sank: false,
+					allShipsSanked: true,
+					defendingPlayer: game.username,
+					gameEnded: false,
+					nrShotsRemaining: -1,
+					currentPlayer: '',
+					boardAttack: []
+				}
 
-				//caso 0
+				// //Tirar um tiro ao layer
+				// // console.log("Number of current shots: " +  game.nrShotsRemaining);
+				// var nrShotsRemaining = game.nrShotsRemaining;
+				// nrShotsRemaining = nrShotsRemaining -1;
+				// // console.log("Number of current shots ater: " + nrShotsRemaining);
+
+				// //caso 0
+				// var currentPlayer = game.currentPlayer;
+				// if(nrShotsRemaining == 0) {
+				// 	//RECARRGAR 3 TIROS DO PLAYER
+				// 	nrShotsRemaining = 3;
+
+				// 	//mudar de player
+				// 	var idGameSwap = game.idGame;
+				// 	var currentPlayerSwap = game.currentPlayer;
+
+				// 	//TODO por em promise(vem a null)
+				// 	// currentPlayer = swatpTurn(idGameSwap, currentPlayerSwap);
+				// 	// currentPlayer = "richard";
+
+				// 	// TODO tratar disto
+				// 	var id = new mongodb.ObjectID(idGame);
+				// 	database.db.collection("games").findOne({ _id: id },function(err, game) {
+				// 		if(err) {
+				// 			// console.log(err);
+				// 			next();
+				// 		} else {
+
+				// 			console.log('query do game')
+
+				// 			var nextPlayerName = null;
+
+				// 			for(var idx in game.players) {
+				// 				if(currentPlayer == game.players[idx].username) {
+				// 					var nrPlayers = game.players.length - 1;
+				// 					if(idx == nrPlayers){
+				// 						nextPlayerName = game.players[0].username;
+				// 					}else {
+				// 						var nextIndex = parseInt(idx) + 1;
+				// 						nextPlayerName = game.players[nextIndex].username;
+										
+				// 					}
+				// 				}
+				// 			}
+
+				// 			currentPlayer = nextPlayerName;
+
+				// 			// versao simao pus o updatemany aqui que assim sei que funciona, fiz refactoring para funcionar assim tambem
+				// 			database.db.collection("games-details").updateMany(
+				// 				{ idGame: idGame },
+				// 				{
+				// 					$set: {
+				// 						nrShotsRemaining : nrShotsRemaining,
+				// 						currentPlayer : currentPlayer //TODO SO PODE SER EXECUTADO AQUI QUANDO JA TIVERMOS O NOVO PLAYER (ESPERAR PELA RESPOSTA DO MONGO . CALLBACK ?)
+				// 					}
+				// 				},
+				// 				function(err, result) {
+				// 					if (err) {
+				// 						console.log(err);
+				// 						next();
+				// 					} else {
+				// 						console.log('update many games details')
+				// 						//response.json(result);
+				// 						//next();
+				// 					}
+				// 				}
+				// 			);
+				// 		}
+				// 	});
+				
+				// inicio versao simao da cena do current player
+				
+				var nrShotsRemaining = game.nrShotsRemaining - 1;
 				var currentPlayer = game.currentPlayer;
-				if(nrShotsRemaining == 0) {
-					//RECARRGAR 3 TIROS DO PLAYER
-					nrShotsRemaining = 3;
+				database.db.collection("games").findOne({ _id: new mongodb.ObjectID(idGame) },function(err, gam) {
+					if(err) {
+						// console.log(err);
+						next();
+					} else {
 
-					//mudar de player
-					var idGameSwap = game.idGame;
-					var currentPlayerSwap = game.currentPlayer;
+						console.log('query do game')
 
-					//TODO por em promise(vem a null)
-					currentPlayer = swatpTurn(idGameSwap, currentPlayerSwap);
-					// currentPlayer = "richard";
+						if(nrShotsRemaining > 0) {
+							currentPlayer = game.currentPlayer;
+						} else {
 
+							nrShotsRemaining = gam.players.length - 1;
+							nrShotsRemaining *= 2;
 
+							var nextPlayerName = null;
+							for(var idx in gam.players) {
+								if(currentPlayer == gam.players[idx].username) {
+									var nrPlayers = gam.players.length - 1;
+									if(idx == nrPlayers){
+										nextPlayerName = gam.players[0].username;
+									}else {
+										var nextIndex = parseInt(idx) + 1;
+										nextPlayerName = gam.players[nextIndex].username;
+									}
+								}
+							}
+							currentPlayer = nextPlayerName;
+						}
 
+						console.log(currentPlayer + '|' + nrShotsRemaining)
+						
+						result.nrShotsRemaining = nrShotsRemaining;
+						result.currentPlayer = currentPlayer;
+					}
+				});
+
+				// fim versao simao da cena do current player
+				
 				// 	/****************************** PROXIMO JOGAFOR ******************************************/
                 //
                 //
@@ -946,162 +990,97 @@ function getHasShot(request, response, next){
                 //
                 //
 				// 	/******************************  FIM PROXIMO JOGAFOR ******************************************/
-				 }
-
-				database.db.collection("games-details").updateMany(
-								{ idGame: idGame },
-								{
-									$set: {
-										nrShotsRemaining : nrShotsRemaining,
-										currentPlayer : currentPlayer //TODO SO PODE SER EXECUTADO AQUI QUANDO JA TIVERMOS O NOVO PLAYER (ESPERAR PELA RESPOSTA DO MONGO . CALLBACK ?)
-									}
-								},
-								function(err, result) {
-									if (err) {
-										console.log(err);
-										next();
-									} else {
-										//response.json(result);
-										//next();
-									}
-								}
-				);
-
-				// versão original
-				//TODO SO PODEMOS DEVOLVER A RESPOSTA DEPOIS DO UPDATEMANY
-				// var result = '';
-
-				// for (var idx in game.boardDefense) {
-
-				// 	console.log("=>>AQUI");
-				// 	//SHOT
-				// 	if(game.boardDefense[idx].position.line == line
-				// 		&& game.boardDefense[idx].position.column == column) {
-
-				// 		console.log("=>>>>>>>>>>>>>entrou");
-				// 		result = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-
-
-
-
-
-				// 	}
+				 
 				// }
 
-				// versão com refactor
-				//TODO SO PODEMOS DEVOLVER A RESPOSTA DEPOIS DO UPDATEMANY
-				var result = {
-					shot: '',
-					shipType: '', 
-					sank: false,
-					allShipsSanked: true
-				}
+				//  versao hugo
+				// database.db.collection("games-details").updateMany(
+				// 				{ idGame: idGame },
+				// 				{
+				// 					$set: {
+				// 						nrShotsRemaining : nrShotsRemaining,
+				// 						currentPlayer : currentPlayer //TODO SO PODE SER EXECUTADO AQUI QUANDO JA TIVERMOS O NOVO PLAYER (ESPERAR PELA RESPOSTA DO MONGO . CALLBACK ?)
+				// 					}
+				// 				},
+				// 				function(err, result) {
+				// 					if (err) {
+				// 						console.log(err);
+				// 						next();
+				// 					} else {
+				// 						//response.json(result);
+				// 						//next();
+				// 					}
+				// 				}
+				// );
 
-				// percorre todos os ships
-				for (var idx in game.boardDefense) {
-
-					// percorre todas as posicoes ocupadas
-					game.boardDefense[idx].occupiedPositions.forEach((occupiedPosition) => {
-						// console.log(3*2);
-						// console.log(occupiedPosition.position.line + " -> " + line);
-						// console.log(occupiedPosition.position.column + " -> " + column);
-						if(occupiedPosition.position.line == line && occupiedPosition.position.column == column) {
-							
-							// console.log("ENTROU");
-
-							occupiedPosition.hit == true;
-
-							result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-							result.shipType = game.boardDefense[idx].type;	
-
-							// console.log(result.shot);						
-							// console.log(result.shipType);						
-						}
-					});
-
-					// console.log(line)
-					// console.log(column)
-
-					// if(game.boardDefense[idx].position.line == line
-					// 	&& game.boardDefense[idx].position.column == column) {
-
-					// 	result.shot = 'Posição '+line+column +' - Tiro no ' + game.boardDefense[idx].type;
-					// 	result.shipType = game.boardDefense[idx].type;
-					// 	game.boardDefense[idx].shots.push({
-					// 		"line" : line,
-         			// 		"column" : column
-					// 	});
-						
-					// }
-
-					
-				}
-
+				var hitted = false;
 				//verifica se navio afundou
 					// se sim, 
-						// atualiza a prop sank do navio na DB 
+						// atualiza a prop sank do navio
 						// e atualiza result.afundou
 				for (var ship of game.boardDefense) {
+					for (var occupiedPosition of ship.occupiedPositions) {
+						if(occupiedPosition.position.line == line
+							&& occupiedPosition.position.column == column) {
+							
+							// var id = new mongodb.ObjectID(game._id);
+							// game._id = id;
+							game._id = new mongodb.ObjectID(game._id);
 
-					if(ship.position.line == line
-						&& ship.position.column == column) {
-						//é este o ship
+							hitted = true;
+							occupiedPosition.hit = true;
+							result.shot = 'Posição '+line+column +' - Tiro no ' + ship.type;
+							result.shipType = ship.type;	
 
-						if (ship.type == 'Submarino') {
-							ship.sank = true;
-						} else {
-							var numTargets = 0;
-
-							var numTargets = ship.occupiedPositions.length;
-
-							switch (ship.type) {
-								case 'ContraTorpedeiro':
-									if(numTargets == 2) {
-										ship.sank = true;
-									}
-									break;
-								case 'Cruzador':
-									if(numTargets == 3) {
-										ship.sank = true;
-									}
-									break;
-								case 'Couracado':
-									if(numTargets == 4) {
-										ship.sank = true;
-									}
-									break;
-								case 'PortaAvioes':
-									if(numTargets == 5) {
-										ship.sank = true;
-									}
-									break;
-							}
-						}
-
-						if (ship.sank) {
-							result.sank = true;	
-						}
-
-						//TODO(DONE) fazer UPDATE a prop sank do ship na DB
-						var id = new mongodb.ObjectID(game._id);
-						game._id = id;
-
-						database.db.collection("games-details").save(game,function(err, result) {
-							if(err) {
-								console.log(err);
-								next();
+							if (ship.type == 'Submarino') {
+								ship.sank = true;
 							} else {
-								// console.log(result);
-								// next();
-							}
-						});
 
-						break;
+								var numTargets = ship.occupiedPositions.length;
+								var targetsShot = 0;
+								for (var p of ship.occupiedPositions) {
+									if (p.hit) {
+										targetsShot++;
+									}
+								}
+
+								if (targetsShot == numTargets) {
+									switch (ship.type) {
+										case 'ContraTorpedeiro':
+											if(numTargets == 2) {
+												ship.sank = true;
+											}
+											break;
+										case 'Cruzador':
+											if(numTargets == 3) {
+												ship.sank = true;
+											}
+											break;
+										case 'Couracado':
+											if(numTargets == 4) {
+												ship.sank = true;
+											}
+											break;
+										case 'PortaAvioes':
+											if(numTargets == 5) {
+												ship.sank = true;
+											}
+											break;
+									}
+								}
+
+							}
+
+							if (ship.sank) {
+								result.sank = true;	
+							}
+
+							break;
+						}
 					}
 				}
 
 				// verifica se jogador tem todos os navios afundados
-				// TODO ver se tambem é para existir ou nao uma prop no player a dizer se perdeu ou nao
 				for (var ship of game.boardDefense) {
 					if (!ship.sank) {
 						result.allShipsSanked = false;
@@ -1109,16 +1088,203 @@ function getHasShot(request, response, next){
 					}
 				}
 
+				if(result.allShipsSanked) {
+					game.status = 'ENDED';
+				}
 
-				
+				var findPlayersWhoLost = function() {
+					
+					console.log('findPlayersWhoLost')
+					
+					database.db.collection("games-details").find({
+						$and: [
+							{ idGame: idGame },
+							{ username: { $nin: [ username ] } }, 
+							{ status: 'ENDED' }
+						]}
+						, { boardsAttack:true }
+						, verifyGameEnded
+					); 
+				}
 
-				response.json(result);
-				next();
+				var verifyGameEnded = function(err, cursor) {
+					
+					console.log('verifyGameEnded')
+
+					cursor.toArray(function(err, games) {
+						if (games.length > 0 && games.length == games[0].boardsAttack.length) {
+							result.gameEnded = true;
+						}
+
+						database.db.collection("games").updateOne(
+							{ _id: new mongodb.ObjectID(idGame) },
+							{
+								$set: {
+									status: result.gameEnded ? 'ENDED' : 'INPROGRESS'
+								}
+							}, 
+							function(err, resu) {
+								if (err) {
+									console.log(err)
+								} else {
+									// console.log('result.gameEnded')
+									// console.log(result.gameEnded)
+
+									database.db.collection("games-details").updateOne(
+										{ idGame: idGame, username: username},
+										{
+											$set: {
+												status: result.gameEnded ? 'ENDED' : 'INPROGRESS'
+											}
+										},
+										function(err, res) {
+											if(err) {
+												console.log(err);
+												next();
+											} else {
+												console.log('FIM')
+												response.json(result);
+											}
+										});
+								}
+							});
+					});
+				}
+
+				// database.db.collection("games-details").save(game,function(err, res) {
+				// 	if(err) {
+				// 		console.log(err);
+				// 		next();
+				// 	} else {
+				// 		findPlayersWhoLost();
+				// 	}
+				// });
+
+				// --------------------------------
+
+				// versao funcional mas falta a atualizacao do boardsAttack
+				// database.db.collection("games-details").save(game,function(err, res) {
+				// 	if(err) {
+				// 		console.log(err);
+				// 		next();
+				// 	} else {
+
+				// 		console.log('games-details save')
+
+				// 		database.db.collection("games-details").updateMany(
+				// 			{ idGame: idGame },
+				// 			{
+				// 				$set: {
+				// 					nrShotsRemaining : nrShotsRemaining,
+				// 					currentPlayer : currentPlayer 
+				// 				}
+				// 			},
+				// 			{ upsert: true },
+				// 			function(err, result) {
+
+				// 				console.log('query do update many')
+
+				// 				if (err) {
+				// 					console.log(err);
+				// 					next();
+				// 				} else {
+				// 					// console.log(result);
+				// 					findPlayersWhoLost();
+				// 					next();
+				// 				}
+				// 			}
+				// 		);
+				// 		next();
+				// 	}
+				// });
+
+				// ----------------
+
+				// versao com a atualizacao do boardsAttack
+				database.db.collection("games-details").findOne({ idGame: idGame, username: username },function(err, myGame) {
+					if(err) {
+						console.log(err);
+						next();
+					} else {
+
+						for(var opponent of myGame.boardsAttack) {
+							if(opponent.username == opponentUsername) {
+								var newAttack = {
+									"line" : line,
+									"column" : column,
+									"value" : hitted ? 'X' : '0'
+								}
+								opponent.board.push(newAttack);
+
+								// esta linha é para passar os dados para o cliente
+								// TODO penso que devaria ser feito depois da resposta do update, ver depois
+								result.boardAttack = opponent.board;
+							}
+						}
+
+						database.db.collection("games-details").updateOne(
+							{ idGame: idGame, username: username},
+							// myGame,
+							{
+								$set: {
+									boardsAttack: myGame.boardsAttack,
+									status: myGame.status
+								}
+							},
+							function(err, resu) {
+								if(err) {
+									console.log(err);
+									next();
+								} else {
+									
+									// TODO penso que devaria ser feito aqui, ver depois
+									// resu.boardAttack = boardsAttack
+
+									database.db.collection("games-details").save(game,function(err, res) {
+										if(err) {
+											console.log(err);
+											next();
+										} else {
+
+											console.log('games-details save')
+
+											database.db.collection("games-details").updateMany(
+												{ idGame: idGame },
+												{
+													$set: {
+														nrShotsRemaining : nrShotsRemaining,
+														currentPlayer : currentPlayer 
+													}
+												},
+												{ upsert: true },
+												function(err, result) {
+
+													console.log('query do update many')
+
+													if (err) {
+														console.log(err);
+														next();
+													} else {
+														// console.log(result);
+														findPlayersWhoLost();
+														next();
+													}
+												}
+											);
+											next();
+										}
+									});
+									next();
+								}
+							}
+						);
+						next();
+					}
+				});
+
+				// -----------------------------
 			}
 	});
-
-
-
 }
 
 function readyOnGame(request, response, next){
