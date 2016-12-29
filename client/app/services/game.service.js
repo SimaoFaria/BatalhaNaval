@@ -192,8 +192,9 @@ var GameService = (function () {
                         boardsAttack.push(bo);
                     }
                 }
-                var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack);
+                var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack, playerStateGame.isPlaying, playerStateGame.won);
                 playerStateGameDs.user = playerStateGame.username;
+                // TODO por mim isto ia para o construtor
                 playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
                 playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
                 //playerStateGameDs._username = playerStateGame.username;
@@ -324,6 +325,13 @@ var GameService = (function () {
             "boardDefense": shipsforBD
         };
         return this.http.put('/api/v1/ready-on-game/' + game.idGame, body)
+            .map(function (response) { return response.json(); });
+    };
+    GameService.prototype.closeGame = function (idGame) {
+        var body = {
+            "username": this._username
+        };
+        return this.http.put('/api/v1/close-game/' + idGame, body)
             .map(function (response) { return response.json(); });
     };
     GameService._G_BOARDDEFENSE = 0;

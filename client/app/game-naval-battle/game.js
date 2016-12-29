@@ -43,11 +43,13 @@ exports.GameWithoutId = GameWithoutId;
  * Description: Class that save a state of the game
  * */
 var PlayerStateGame = (function () {
-    function PlayerStateGame(idGame, status, boardDefense, boardsAttack) {
+    function PlayerStateGame(idGame, status, boardDefense, boardsAttack, isPlaying, won) {
         this.idGame = idGame;
         this.status = status;
         this.boardDefense = boardDefense;
         this.boardsAttack = boardsAttack;
+        this.isPlaying = isPlaying;
+        this.won = won;
     }
     Object.defineProperty(PlayerStateGame.prototype, "username", {
         get: function () {

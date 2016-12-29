@@ -462,6 +462,20 @@ var GameComponent = (function () {
             document.getElementById('msgerro').innerText=e;
         }*/
     };
+    GameComponent.prototype.closeGame = function (idGame) {
+        var _this = this;
+        this.gameService.closeGame(idGame)
+            .subscribe(function (response) {
+            console.log('INI - RESPOSTA DO CLOSEGAME');
+            console.log(response);
+            console.log('FIM - RESPOSTA DO CLOSEGAME');
+            _this.playerStateGame.forEach(function (stateGame) {
+                if (stateGame.idGame == response.idGame) {
+                    stateGame.isPlaying = response.isPlaying;
+                }
+            });
+        });
+    };
     GameComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

@@ -88,15 +88,19 @@ export class PlayerStateGame {
     public status: string;
     public boardDefense: BoardDefense;
     public boardsAttack: BoardAttack[];
-    //boardAttack: BoardAttack[];
+    public isPlaying: boolean;
+    public won: boolean;
     public user;
 
-    constructor(idGame : string, status: string, boardDefense: BoardDefense, boardsAttack : BoardAttack[]){
+    constructor(idGame : string, status: string, boardDefense: BoardDefense, boardsAttack : BoardAttack[], isPlaying: boolean, won: boolean){
         
         this.idGame = idGame;
         this.status = status;
         this.boardDefense = boardDefense;
         this.boardsAttack  = boardsAttack;
+
+        this.isPlaying = isPlaying;
+        this.won = won;
 
     }
 

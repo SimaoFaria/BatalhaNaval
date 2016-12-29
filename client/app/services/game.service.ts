@@ -292,16 +292,18 @@ export class GameService {
                         // console.dir(boardsAttack);
                     }
 
-
-
                     let playerStateGameDs = new PlayerStateGame(
                             playerStateGame.idGame,
                             playerStateGame.status,
                             boardDefense,
-                            boardsAttack
+                            boardsAttack,
+                            playerStateGame.isPlaying,
+                            playerStateGame.won
                         );
 
                         playerStateGameDs.user = playerStateGame.username;
+
+                        // TODO por mim isto ia para o construtor
                         playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
                         playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
 
@@ -521,7 +523,15 @@ export class GameService {
 
         return this.http.put('/api/v1/ready-on-game/' + game.idGame, body)
             .map((response: any) => response.json());
+    }
 
+    closeGame(idGame: string) : Observable<PlayerStateGame> {
         
+        let body = {
+            "username" : this._username
+        };
+
+        return this.http.put('/api/v1/close-game/' + idGame, body)
+            .map((response: any) => response.json());
     }
 }

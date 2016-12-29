@@ -453,7 +453,8 @@ function startGame(request, response, next){
 						//"_id" : new mongodb.ObjectID(),
 						"idGame" : game._id.toString(),
 						"status" : game.status,
-						// "username" : "",
+						"isPlaying" : true,
+						"won" : false,
 						"username" : player.username,
 						"boardDefense" : [],
 						"boardsAttack" : otherPlayers,
@@ -511,8 +512,6 @@ function getCurrentGames(request, response, next){
   });
 }
 
-
-// versao hugo
 function getCurrentStateGames(request, response, next){
 	// TODO: obtain one game (by ObjectID) from games collection
 	// and return a JSON response with that game
@@ -524,39 +523,54 @@ function getCurrentStateGames(request, response, next){
 
 	var username = request.params.username;
 	//database.db.collection("games").find({$and: [{status:{$in:["pending", "INPROGRESS"]}}, {"players.username":username}]}, { players: { $elemMatch: { username: username }}}).toArray(function(err, games) {
-	database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
-		// console.log("----------------------------------------------");
-		// console.log(games);
-		// console.log("----------------------------------------------");
+	// database.db.collection("games").find({$and: [{status:{$in:["PENDING", "INPROGRESS"]}}]}).toArray(function(err, games) {
+	// 	// console.log("----------------------------------------------");
+	// 	// console.log(games);
+	// 	// console.log("----------------------------------------------");
 		
+	// 	if(err) {
+	// 		console.log(err);
+	// 		next();
+	// 	} else {
+
+    //         var gamesIds = [];
+
+	// 		games.forEach((game) => {
+	// 			game.players.forEach((player) => {
+	// 				if (player.username == username) {
+	// 					gamesIds.push(game._id.toString());
+	// 				}
+	// 			});
+	// 		});
+
+    //         database.db.collection("games-details").find({idGame : {$in:gamesIds}, username: username}).toArray(function(err, gamesStates) {
+    //             if(err) {
+    //                 console.log(err);
+    //                 next();
+    //             } else {
+    //             	//console.log(gamesStates);
+    //                 response.json(gamesStates);
+    //                 next();
+    //             }
+    //         });
+
+	// 		// TODO depois considerar este next em vez de dentro do pedido
+	// 		// next();
+	// 	}
+	// });
+
+
+
+
+	// SIMAO mudei isto para em vez de ir primeiro procurar nos GAMES, ir direto aos STATEGAMES
+	// TODO mudar depois caso seja apenas usada um documento game com os stategames la dentro
+	database.db.collection("games-details").find(
+		{ username: username }).toArray(function(err, gamesStates) {
 		if(err) {
 			console.log(err);
-			next();
 		} else {
-
-            var gamesIds = [];
-
-			games.forEach((game) => {
-				game.players.forEach((player) => {
-					if (player.username == username) {
-						gamesIds.push(game._id.toString());
-					}
-				});
-			});
-
-            database.db.collection("games-details").find({idGame : {$in:gamesIds}, username: username}).toArray(function(err, gamesStates) {
-                if(err) {
-                    console.log(err);
-                    next();
-                } else {
-                	//console.log(gamesStates);
-                    response.json(gamesStates);
-                    next();
-                }
-            });
-
-			// TODO depois considerar este next em vez de dentro do pedido
-			// next();
+			//console.log(gamesStates);
+			response.json(gamesStates);
 		}
 	});
 }
@@ -707,8 +721,6 @@ function swatpTurn(idGame, currentPlayer) {
 		}
 	});
 }
-
-
 
 function getHasShot(request, response, next){
 
@@ -1318,15 +1330,15 @@ function getHasShot2(request, response, next){
 		console.log('1 - obtainShotOpponentStateGame')
 		database.db.collection("games-details").findOne(
 			{ idGame: idGame, username: opponentUsername},
-			function(err, game) {
+			function(err, stateGame) {
+				console.log('	1 - obtainShotOpponentStateGame')
 				if(err) {
 					console.log(err);
 				} else {
-
-					jsonResponse.defendingPlayer = game.username
+					jsonResponse.defendingPlayer = stateGame.username
 
 					// callback = obtainGameById
-					callback(idGame, game, updateOpponentStateGame);
+					callback(idGame, stateGame, updateOpponentStateGame);
 				}
 			}
 		);
@@ -1334,34 +1346,77 @@ function getHasShot2(request, response, next){
 
 	obtainShotOpponentStateGame(idGame, opponentUsername, obtainGameById);
 
-	function currentPlayerWithRemainingShots(game, stateGame) {
+	function obtainGameById(idGame, stateGame, callback) { 
+		console.log('2 - obtainGameById')
+		database.db.collection("games").findOne(
+			{ _id: new mongodb.ObjectID(idGame) },
+			function(err, game) {
+				console.log('	2 - obtainGameById')
+				if(err) {
+					console.log(err);
+				} else {
+
+					// TODO isto daqui só pode ser feito depois do update(ou seja pode ser feito no update many)
+					// var foo = currentPlayerWithRemainingShots(game, stateGame.nrShotsRemaining, stateGame.currentPlayer);
+					// jsonResponse.nrShotsRemaining = foo.nrShotsRemaining;
+					// jsonResponse.currentPlayer = foo.currentPlayer;
+					
+					// stateGame.nrShotsRemaining = foo.nrShotsRemaining;
+					// stateGame.currentPlayer = foo.currentPlayer;
+
+					// foo = treatShips(stateGame.boardDefense);
+					var foo = treatShips(stateGame.boardDefense);
+					stateGame.boardDefense = foo.boardDefense;
+					jsonResponse.hit = foo.hit;
+					jsonResponse.shot = foo.shot;
+					jsonResponse.shipType = foo.shipType;
+					jsonResponse.allShipsSanked = foo.allShipsSanked;
+					jsonResponse.sank = foo.sank;
+
+					if (foo.allShipsSanked) {
+						stateGame.status = 'ENDED';
+					}
+
+					// callback = updateOpponentStateGame
+					callback(stateGame, obtainMyStateGame);
+				}
+		});
+	}
+
+	function currentPlayerWithRemainingShots(game, nrShotsRemaining, currentPlayer) {
 		console.log('3 - currentPlayerWithRemainingShots');		
 
-		var nrShotsRemaining = stateGame.nrShotsRemaining - 1;
-		var currentPlayer = stateGame.currentPlayer;
+		nrShotsRemaining -= 1;
 
-		if(nrShotsRemaining > 0) {
-			currentPlayer = stateGame.currentPlayer;
-		} else {
+		if(nrShotsRemaining == 0) {
 
+			// TODO passar para uma linha
 			nrShotsRemaining = game.players.length - 1;
 			nrShotsRemaining *= 2;
 
+			// TODO prop lost do GAME ainda não existe
+			playingPlayers = [];
+			for(var player of game.players) {
+				if (!player.lost) {
+					playingPlayers.push(player);
+				}
+			}
+
 			var nextPlayerName = null;
-			for(var idx in game.players) {
-				if(currentPlayer == game.players[idx].username) {
-					var nrPlayers = game.players.length - 1;
-					if(idx == nrPlayers){
-						nextPlayerName = game.players[0].username;
+			for(var idx in playingPlayers) {
+				if(currentPlayer == playingPlayers[idx].username) {
+					if(idx == playingPlayers.length - 1){
+						nextPlayerName = playingPlayers[0].username;
 					}else {
 						var nextIndex = parseInt(idx) + 1;
-						nextPlayerName = game.players[nextIndex].username;
+						nextPlayerName = playingPlayers[nextIndex].username;
 					}
 				}
 			}
 			currentPlayer = nextPlayerName;
 		}
-		
+
+		console.log('	3 - currentPlayerWithRemainingShots');	
 		return {
 			currentPlayer: currentPlayer,
 			nrShotsRemaining: nrShotsRemaining};
@@ -1452,6 +1507,7 @@ function getHasShot2(request, response, next){
 			}
 		}
 		
+		console.log('	4 - treatShips')
 		return {
 			boardDefense: boardDefense,
 			hit: hit,
@@ -1462,45 +1518,13 @@ function getHasShot2(request, response, next){
 		};
 	}
 
-	function obtainGameById(idGame, stateGame, callback) { 
-		console.log('2 - obtainGameById')
-		database.db.collection("games").findOne(
-			{ _id: new mongodb.ObjectID(idGame) },
-			function(err, game) {
-			if(err) {
-				console.log(err);
-			} else {
-				var foo = currentPlayerWithRemainingShots(game, stateGame);
-				jsonResponse.nrShotsRemaining = foo.nrShotsRemaining;
-				jsonResponse.currentPlayer = foo.currentPlayer;
-				
-				stateGame.nrShotsRemaining = foo.nrShotsRemaining;
-				stateGame.currentPlayer = foo.currentPlayer;
-
-				foo = treatShips(stateGame.boardDefense);
-				stateGame.boardDefense = foo.boardDefense;
-				jsonResponse.hit = foo.hit;
-				jsonResponse.shot = foo.shot;
-				jsonResponse.shipType = foo.shipType;
-				jsonResponse.allShipsSanked = foo.allShipsSanked;
-				jsonResponse.sank = foo.sank;
-
-				if (foo.allShipsSanked) {
-					stateGame.status = 'ENDED';
-				}
-
-				// callback = updateOpponentStateGame
-				callback(stateGame, obtainMyStateGame);
-			}
-		});
-	}
-
 	function updateOpponentStateGame(stateGame, callback) {
 		console.log('5 - updateOpponentStateGame');
 
 		database.db.collection("games-details").save(
 			stateGame,
 			function(err, result) {
+				console.log('	5 - updateOpponentStateGame');
 				if(err) {
 					console.log(err);
 				} else {
@@ -1517,17 +1541,19 @@ function getHasShot2(request, response, next){
 		database.db.collection("games-details").findOne(
 			{ idGame: idGame, username: username},
 			function(err, myStateGame) {
+				console.log('	6 - obtainMyStateGame')
 				if(err) {
 					console.log(err);
 				} else {
 
-					myStateGame.nrShotsRemaining = jsonResponse.nrShotsRemaining;
-					myStateGame.currentPlayer = jsonResponse.currentPlayer;
+					// TODO tratar no updateMany
+					// myStateGame.nrShotsRemaining = jsonResponse.nrShotsRemaining;
+					// myStateGame.currentPlayer = jsonResponse.currentPlayer;
 
 					myStateGame.boardsAttack = addShotToMyBoardAttack(myStateGame.boardsAttack, opponentUsername, line, column, jsonResponse.hit);
 
 					// callback = updateMyStateGame
-					callback(myStateGame, updateOtherPlayersWithCurrentPlayerAndNrShots);
+					callback(myStateGame, updatePlayersWithCurrentPlayerAndNrShots);
 				}
 			}
 		);
@@ -1551,6 +1577,7 @@ function getHasShot2(request, response, next){
 			}
 		}
 
+		console.log('	7 - addShotToMyBoardAttack');
 		return boardsAttack;
 	}
 
@@ -1561,34 +1588,35 @@ function getHasShot2(request, response, next){
 		database.db.collection("games-details").save(
 			stateGame,
 			function(err, result) {
+				console.log('	8 - updateMyStateGame');
 				if(err) {
 					console.log(err);
 				} else {
-					// callback = updateOtherPlayersWithCurrentPlayerAndNrShots
+					// callback = updatePlayersWithCurrentPlayerAndNrShots
 					callback(findPlayersWhoLost);
 				}
 			}
 		);
 	}
 
-	function updateOtherPlayersWithCurrentPlayerAndNrShots(callback) {
-		console.log('9 - updateOtherPlayersWithCurrentPlayerAndNrShots');
+	function updatePlayersWithCurrentPlayerAndNrShots(callback) {
+		console.log('9 - updatePlayersWithCurrentPlayerAndNrShots');
 
 		database.db.collection("games-details").updateMany(
-			// { idGame: idGame },
-			{
-				$and: [
-					{ idGame: idGame },
-					{ 
-						username: { 
-							$nin: [ 
-								username, 
-								opponentUsername 
-							] 
-						} 
-					}
-				]
-			},
+			{ idGame: idGame },
+			// {
+			// 	$and: [
+			// 		{ idGame: idGame },
+			// 		{ 
+			// 			username: { 
+			// 				$nin: [ 
+			// 					// username, 
+			// 					// opponentUsername 
+			// 				] 
+			// 			} 
+			// 		}
+			// 	]
+			// },
 			{
 				$set: {
 					nrShotsRemaining : jsonResponse.nrShotsRemaining,
@@ -1597,6 +1625,7 @@ function getHasShot2(request, response, next){
 			},
 			// { upsert: true },
 			function(err, result) {
+				console.log('	9 - updatePlayersWithCurrentPlayerAndNrShots');
 				if (err) {
 					console.log(err);
 				} else {
@@ -1618,6 +1647,7 @@ function getHasShot2(request, response, next){
 			]}
 			, { boardsAttack:true }
 			, function(err, cursor) {
+				console.log('	10 - findPlayersWhoLost')
 				if (err) {
 					console.log(err);
 				} else {
@@ -1652,6 +1682,7 @@ function getHasShot2(request, response, next){
 				}
 			}, 
 			function(err, resu) {
+				console.log('	11 - updateStatusInGame')
 				if (err) {
 					console.log(err)
 				} else {
@@ -1672,10 +1703,509 @@ function getHasShot2(request, response, next){
 				}
 			}, 
 			function(err, result) {
+				console.log('	12 - updateMyStatusInGame')
 				if (err) {
 					console.log(err)
 				} else {
 					console.log('FIM getHasShot2')
+					response.json(jsonResponse)
+				}
+			}
+		);
+	}
+}
+
+function getHasShot3(request, response, next){
+
+	console.log('INICIO getHasShot3')
+
+	//PARAMS
+	var idGame = request.params.id;
+
+	//BODY
+	var body = request.body;
+	var opponentUsername = body.opponentUsername;
+	var line = body.line;
+	var column = body.column;
+	var username = body.username;
+
+	var jsonResponse = {
+		hit: false,
+		shot: '',
+		shipType: '', 
+		sank: false,
+		allShipsSanked: true,
+		defendingPlayer: '',
+		gameEnded: false,
+		nrShotsRemaining: -1,
+		currentPlayer: '',
+		boardAttack: []
+	}
+
+	/**
+	 * 	obtainShotOpponentStateGame
+	 * 	treatShips
+	 * 	updateOpponentStateGame
+	 * 
+	 *  obtainMyStateGame
+	 *  addShotToMyBoardAttack
+	 *  updateMyStateGame
+	 * 
+	 * 	obtainStateGames
+	 *  updatePlayersWithCurrentPlayerAndNrShots
+	 *  updateStateGames
+	 * 
+	 *  findPlayersWhoLost
+	 *  updateStatusInGame
+	 *  updateMyStatusInGame
+	 */
+
+	function obtainShotOpponentStateGame(idGame, opponentUsername, callback) { 
+		console.log('1 - obtainShotOpponentStateGame')
+		database.db.collection("games-details").findOne(
+			{ idGame: idGame, username: opponentUsername},
+			function(err, stateGame) {
+				console.log('	1 - obtainShotOpponentStateGame')
+				if(err) {
+					console.log(err);
+				} else {
+					jsonResponse.defendingPlayer = stateGame.username
+
+					// // callback = obtainGameById
+					// callback(idGame, stateGame, updateOpponentStateGame);
+
+					var foo = treatShips(stateGame.boardDefense);
+					stateGame.boardDefense = foo.boardDefense;
+					jsonResponse.hit = foo.hit;
+					jsonResponse.shot = foo.shot;
+					jsonResponse.shipType = foo.shipType;
+					jsonResponse.allShipsSanked = foo.allShipsSanked;
+					jsonResponse.sank = foo.sank;
+
+					if (foo.allShipsSanked) {
+						stateGame.status = 'ENDED';
+					}
+
+					// callback = updateOpponentStateGame
+					callback(stateGame, obtainMyStateGame);
+				}
+			}
+		);
+	};
+
+	// obtainShotOpponentStateGame(idGame, opponentUsername, obtainGameById);
+	obtainShotOpponentStateGame(idGame, opponentUsername, updateOpponentStateGame);
+
+	function obtainGameById(idGame, stateGame, callback) { 
+		console.log('2 - obtainGameById')
+		database.db.collection("games").findOne(
+			{ _id: new mongodb.ObjectID(idGame) },
+			function(err, game) {
+				console.log('	2 - obtainGameById')
+				if(err) {
+					console.log(err);
+				} else {
+
+					// TODO isto daqui só pode ser feito depois do update(ou seja pode ser feito no update many)
+					// var foo = currentPlayerWithRemainingShots(game, stateGame.nrShotsRemaining, stateGame.currentPlayer);
+					// jsonResponse.nrShotsRemaining = foo.nrShotsRemaining;
+					// jsonResponse.currentPlayer = foo.currentPlayer;
+					
+					// stateGame.nrShotsRemaining = foo.nrShotsRemaining;
+					// stateGame.currentPlayer = foo.currentPlayer;
+
+					// foo = treatShips(stateGame.boardDefense);
+					// var foo = treatShips(stateGame.boardDefense);
+					// stateGame.boardDefense = foo.boardDefense;
+					// jsonResponse.hit = foo.hit;
+					// jsonResponse.shot = foo.shot;
+					// jsonResponse.shipType = foo.shipType;
+					// jsonResponse.allShipsSanked = foo.allShipsSanked;
+					// jsonResponse.sank = foo.sank;
+
+					// if (foo.allShipsSanked) {
+					// 	stateGame.status = 'ENDED';
+					// }
+
+					// // callback = updateOpponentStateGame
+					// callback(stateGame, obtainMyStateGame);
+				}
+		});
+	}
+
+	function treatShips(boardDefense) {
+		console.log('2 - treatShips')
+
+		var hit = false;
+
+		var shot = '';
+		var shipType = '';
+		var sank = false;
+		var allShipsSanked = true;
+		
+		//verifica se navio afundou
+			// se sim, 
+				// atualiza a prop sank do navio
+				// e atualiza jsonResponse.afundou
+		for (var ship of boardDefense) {
+			for (var occupiedPosition of ship.occupiedPositions) {
+				if(occupiedPosition.position.line == line
+					&& occupiedPosition.position.column == column) {
+					
+					// TODO entender para que isto serve
+					// game._id = new mongodb.ObjectID(game._id);
+
+					hit = true;
+					occupiedPosition.hit = true;
+
+					shot = 'Posição '+line+column +' - Tiro no ' + ship.type;
+					shipType = ship.type;	
+
+					if (ship.type == 'Submarino') {
+						ship.sank = true;
+					} else {
+
+						var numTargets = ship.occupiedPositions.length;
+						var targetsShot = 0;
+						for (var p of ship.occupiedPositions) {
+							if (p.hit) {
+								targetsShot++;
+							}
+						}
+
+						if (targetsShot == numTargets) {
+							switch (ship.type) {
+								case 'ContraTorpedeiro':
+									if(numTargets == 2) {
+										ship.sank = true;
+									}
+									break;
+								case 'Cruzador':
+									if(numTargets == 3) {
+										ship.sank = true;
+									}
+									break;
+								case 'Couracado':
+									if(numTargets == 4) {
+										ship.sank = true;
+									}
+									break;
+								case 'PortaAvioes':
+									if(numTargets == 5) {
+										ship.sank = true;
+									}
+									break;
+							}
+						}
+
+					}
+
+					if (ship.sank) {
+						sank = true;	
+					}
+
+					break;
+				}
+			}
+		}
+
+		// TODO se isto fosse uma prop já não era preciso este ciclo, discutir com grupo
+		// verifica se jogador tem todos os navios afundados
+		for (var ship of boardDefense) {
+			if (!ship.sank) {
+				allShipsSanked = false;
+				break;
+			}
+		}
+		
+		console.log('	2 - treatShips')
+		return {
+			boardDefense: boardDefense,
+			hit: hit,
+			shot: shot,
+			shipType: shipType,
+			allShipsSanked: allShipsSanked,
+			sank: sank
+		};
+	}
+
+	function updateOpponentStateGame(stateGame, callback) {
+		console.log('3 - updateOpponentStateGame');
+
+		database.db.collection("games-details").save(
+			stateGame,
+			function(err, result) {
+				console.log('	3 - updateOpponentStateGame');
+				if(err) {
+					console.log(err);
+				} else {
+					// callback = obtainMyStateGame
+					callback(updateMyStateGame);
+				}
+			}
+		);
+	}
+
+	function obtainMyStateGame(callback) { 
+		console.log('4 - obtainMyStateGame')
+		
+		database.db.collection("games-details").findOne(
+			{ idGame: idGame, username: username},
+			function(err, myStateGame) {
+				console.log('	4 - obtainMyStateGame')
+				if(err) {
+					console.log(err);
+				} else {
+
+					// TODO tratar no updateMany
+					// myStateGame.nrShotsRemaining = jsonResponse.nrShotsRemaining;
+					// myStateGame.currentPlayer = jsonResponse.currentPlayer;
+
+					myStateGame.boardsAttack = addShotToMyBoardAttack(myStateGame.boardsAttack, opponentUsername, line, column, jsonResponse.hit);
+
+					// callback = updateMyStateGame
+					callback(myStateGame, obtainStateGames);
+				}
+			}
+		);
+	};
+
+	function addShotToMyBoardAttack(boardsAttack, opponentUsername, line, column, hit) {
+		console.log('5 - addShotToMyBoardAttack');
+
+		for(var opponent of boardsAttack) {
+			if(opponent.username == opponentUsername) {
+				var newAttack = {
+					"line" : line,
+					"column" : column,
+					"value" : hit ? 'X' : '0'
+				}
+				opponent.board.push(newAttack);
+
+				// esta linha é para passar os dados para o cliente
+				// TODO talvez deveria ser feito depois do update com sucesso mas é granda volta a meu ver, discutir
+				jsonResponse.boardAttack = opponent.board;
+			}
+		}
+
+		console.log('	5 - addShotToMyBoardAttack');
+		return boardsAttack;
+	}
+
+	// TODO transformar depois o updateOpponentStateGame e o updateMyStateGame num so
+	function updateMyStateGame(stateGame, callback) {
+		console.log('6 - updateMyStateGame');
+
+		database.db.collection("games-details").save(
+			stateGame,
+			function(err, result) {
+				console.log('	6 - updateMyStateGame');
+				if(err) {
+					console.log(err);
+				} else {
+					// callback = obtainStateGames
+					callback(updatePlayersWithCurrentPlayerAndNrShots);
+				}
+			}
+		);
+	}
+
+	function obtainStateGames(callback) { 
+		console.log('7 - obtainStateGames')
+		
+		database.db.collection("games-details").find(
+			{ idGame: idGame }
+			// , { 
+			// 	username:true,
+			// 	isPlaying:true,
+			// 	nrShotsRemaining:true,
+			// 	currentPlayer:true 
+			// }
+			, function(err, cursor) {
+				console.log('	7 - obtainStateGames')
+				if (err) {
+					console.log(err);
+				} else {
+
+					cursor.toArray(function(err, stateGames) {
+						if (err) {
+							console.log(err);
+						} else {
+								
+							var foo = currentPlayerWithRemainingShots(stateGames, stateGames[0].nrShotsRemaining, stateGames[0].currentPlayer);
+							jsonResponse.nrShotsRemaining = foo.nrShotsRemaining;
+							jsonResponse.currentPlayer = foo.currentPlayer;
+
+							// if (stateGames.length > 0 && stateGames.length == stateGames[0].boardsAttack.length) {
+							// 	jsonResponse.gameEnded = true;
+							// }
+
+							// var gameHasEnded = jsonResponse.gameEnded ? 'ENDED' : 'INPROGRESS';
+								
+							// callback = updatePlayersWithCurrentPlayerAndNrShots
+							callback(findPlayersWhoLost);
+						}
+					});
+				}
+			} 
+		); 
+	}
+
+	function currentPlayerWithRemainingShots(stateGames, nrShotsRemaining, currentPlayer) {
+		console.log('8 - currentPlayerWithRemainingShots');		
+
+		nrShotsRemaining -= 1;
+
+		if(nrShotsRemaining == 0) {
+
+			// TODO passar para uma linha
+			nrShotsRemaining = stateGames.length - 1;
+			nrShotsRemaining *= 2;
+
+			var playingPlayers = [];
+			for(var stateGame of stateGames) {
+				if (stateGame.status == 'INPROGRESS') {
+					playingPlayers.push({
+						username: stateGame.username
+					});
+				}
+			}
+
+			var nextPlayerName = null;
+			for(var idx in playingPlayers) {
+				if(currentPlayer == playingPlayers[idx].username) {
+					if(idx == playingPlayers.length - 1){
+						nextPlayerName = playingPlayers[0].username;
+					}else {
+						var nextIndex = parseInt(idx) + 1;
+						nextPlayerName = playingPlayers[nextIndex].username;
+					}
+					break;
+				}
+			}
+			currentPlayer = nextPlayerName;
+		}
+
+		console.log('	8 - currentPlayerWithRemainingShots');	
+		return {
+			currentPlayer: currentPlayer,
+			nrShotsRemaining: nrShotsRemaining
+		};
+	}
+
+	function updatePlayersWithCurrentPlayerAndNrShots(callback) {
+		console.log('9 - updatePlayersWithCurrentPlayerAndNrShots');
+
+		database.db.collection("games-details").updateMany(
+			{ idGame: idGame },
+			// {
+			// 	$and: [
+			// 		{ idGame: idGame },
+			// 		{ 
+			// 			username: { 
+			// 				$nin: [ 
+			// 					// username, 
+			// 					// opponentUsername 
+			// 				] 
+			// 			} 
+			// 		}
+			// 	]
+			// },
+			{
+				$set: {
+					nrShotsRemaining : jsonResponse.nrShotsRemaining,
+					currentPlayer : jsonResponse.currentPlayer 
+				}
+			},
+			// { upsert: true },
+			function(err, result) {
+				console.log('	9 - updatePlayersWithCurrentPlayerAndNrShots');
+				if (err) {
+					console.log(err);
+				} else {
+					// callback = findPlayersWhoLost
+					callback(updateStatusInGame);
+				}
+			}
+		);
+	}
+
+	function findPlayersWhoLost(callback) {		
+		console.log('10 - findPlayersWhoLost')
+		
+		database.db.collection("games-details").find({
+			$and: [
+				{ idGame: idGame },
+				{ username: { $nin: [ username ] } }, 
+				{ status: 'ENDED' }
+			]}
+			, { boardsAttack:true }
+			, function(err, cursor) {
+				console.log('	10 - findPlayersWhoLost')
+				if (err) {
+					console.log(err);
+				} else {
+
+					cursor.toArray(function(err, stateGames) {
+						if (err) {
+							console.log(err);
+						} else {
+
+							if (stateGames.length > 0 && stateGames.length == stateGames[0].boardsAttack.length) {
+								jsonResponse.gameEnded = true;
+
+								var gameStatus = 'ENDED';
+								
+								// callback = updateStatusInGame
+								callback(gameStatus, updateMyStatusInGame);
+							} else {
+
+								console.log('FIM getHasShot3')
+								response.json(jsonResponse)
+							}
+						}
+					});
+				}
+			} 
+		); 
+	}
+
+	function updateStatusInGame(gameStatus, callback) {
+		console.log('11 - updateStatusInGame')
+		database.db.collection("games").updateOne(
+			{ _id: new mongodb.ObjectID(idGame) },
+			{
+				$set: {
+					status: gameStatus
+				}
+			}, 
+			function(err, resu) {
+				console.log('	11 - updateStatusInGame')
+				if (err) {
+					console.log(err)
+				} else {
+					// callback = updateMyStatusInGame
+					callback(gameStatus);
+				}
+			}
+		);
+	}
+
+	function updateMyStatusInGame(stateGameStatus) {
+		console.log('12 - updateMyStatusInGame')
+		database.db.collection("games-details").updateOne(
+			{ idGame: idGame, username: username},
+			{
+				$set: {
+					status: stateGameStatus
+				}
+			}, 
+			function(err, result) {
+				console.log('	12 - updateMyStatusInGame')
+				if (err) {
+					console.log(err)
+				} else {
+					console.log('FIM getHasShot3 com GAME a ENDED')
 					response.json(jsonResponse)
 				}
 			}
@@ -1751,6 +2281,48 @@ function readyOnGame(request, response, next){
 	);
 }
 
+function closeGame(request, response, next) {
+	
+	//PARAMS
+	var idGame = request.params.id;
+
+	//BODY
+	var body = request.body;
+	var username = body.username;
+	
+	database.db.collection("games-details").updateOne(
+		{ idGame: idGame, username: username},
+		{
+			$set: {
+				isPlaying: false
+			}
+		},
+		function(err, result) {
+			if(err) {
+				console.log(err);
+				next();
+			} else {
+
+				database.db.collection("games-details").findOne(
+					{
+						$and: [
+							{ idGame: idGame },
+							{ username: username }
+						]
+					},
+					function(err, stateGame) {
+						if(err) {
+							console.log(err);
+						} else {
+							console.log(stateGame)
+							response.json(stateGame);
+						}
+					}
+				);
+			}
+		}
+	);
+}
 
 // Routes for the games
 games.init = function(server,apiBaseUri){
@@ -1781,9 +2353,10 @@ games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);
 	// server.post(apiBaseUri+'current-state-games-shot/:id', getHasShot);
-	server.post(apiBaseUri+'current-state-games-shot/:id', getHasShot2); // TODO este esta com as callbacks, não apago o anterior para caso queiram ver
+	server.post(apiBaseUri+'current-state-games-shot/:id', getHasShot3); // TODO este esta com as callbacks, não apago o anterior para caso queiram ver
 
 	server.put(apiBaseUri+'ready-on-game/:id', readyOnGame);
+	server.put(apiBaseUri+'close-game/:id', closeGame);
 
 	console.log("Games routes registered");
 }

@@ -611,6 +611,22 @@ export class GameComponent {
 
     }
 
+    closeGame(idGame : string) : void {
+        this.gameService.closeGame(idGame)
+        .subscribe((response: PlayerStateGame) => { 
+
+            console.log('INI - RESPOSTA DO CLOSEGAME')
+            console.log(response)
+            console.log('FIM - RESPOSTA DO CLOSEGAME')
+
+            this.playerStateGame.forEach((stateGame) => {
+                if (stateGame.idGame == response.idGame) {
+                    stateGame.isPlaying = response.isPlaying;
+                }
+            })
+        });
+    }
+
   //#1 ir buscar todos os jogos que precisa
 
 
