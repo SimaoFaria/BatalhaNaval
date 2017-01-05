@@ -4,7 +4,7 @@
 	var path = require('path');
 	var database = require('./mongo.database');
 
-	var url = 'mongodb://localhost:27017/db_mongo_proj_battle_naval';
+	var url = 'mongodb://localhost:27017/db_mongo_project';
 
 	var server = restify.createServer();
 
@@ -34,13 +34,13 @@
   	players.init(server, '/api/v1/', options);
   
   	var games = require('./mongo.games')
-  	games.init(server, '/api/v1/');  
+  	games.init(server, '/api/v1/', options);
   
   	var auth = require('./app.authentication')
   	auth.init(server, options);
 
   	database.connect(url, function () {
-		server.listen(8080, function () {
+		server.listen(8081, function () {
 			console.log('MongoDB App listening on port 8080!');
 
 			websocket.init(server.server);

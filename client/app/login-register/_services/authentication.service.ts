@@ -129,13 +129,17 @@ export class AuthenticationService {
         user.email = email;
         user.confirmPassword = confirmPassword;
 
+
+
         return this.http.post('api/v1/new_user', user).map((response: Response) =>{
             let userFromBD = response.json();
 
             if (userFromBD.username === username){
 
+                console.log("no serviço email" + user.email);
+
                 this.token = userFromBD.token;
-                console.log(response.json().statusText);
+                console.log("aqui " +response.json().statusText);
 
                 return true;
             }

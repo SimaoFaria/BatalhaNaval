@@ -11,17 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
+var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameLobbyService = (function () {
-    function GameLobbyService(http) {
+    function GameLobbyService(http, auth) {
         this.http = http;
+        this.auth = auth;
+        this.token = auth.token;
     }
+    /*option(){
+        this.headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
+        this.options = new RequestOptions({ headers: headers });
+
+        return this.options;
+    }*/
     GameLobbyService.prototype.getGamesInRoom = function () {
         var _this = this;
         return this.http.get('/api/v1/waiting-room-games')
             .map(function (response) { return _this.gamesInRoom = response.json(); });
     };
     GameLobbyService.prototype.createNewGame = function (game) {
-        return this.http.post('/api/v1/games', game)
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
+        //console.log("qual o valor que tens " + this.token);
+        return this.http.post('/api/v1/games', game, options)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.updateGame = function (gameId, game) {
@@ -37,17 +49,21 @@ var GameLobbyService = (function () {
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.deleteGame = function (gameId) {
-        return this.http.delete('/api/v1/games/' + gameId)
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
+        return this.http.delete('/api/v1/games/' + gameId, options)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.startGame = function (gameId, game) {
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
         // updateGame(game: Game):Observable<Game>{
-        return this.http.put('/api/v1/start-game/' + gameId, game)
+        return this.http.put('/api/v1/start-game/' + gameId, game, options)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
     ], GameLobbyService);
     return GameLobbyService;
 }());
