@@ -25,12 +25,6 @@ var GameLobbyComponent = (function () {
         this.gameInRoomService.getGamesInRoom()
             .subscribe(function (gamesInRoom) {
             _this.gamesInRoom = gamesInRoom;
-            // console.log(gamesInRoom);
-            /* este workaround não serve
-            this.totalPlayers = [];
-            this.gamesInRoom.forEach((game) => {
-                this.totalPlayers.push(game.players.length);
-            });*/
         });
     }
     GameLobbyComponent.prototype.createGame = function () {
@@ -40,7 +34,6 @@ var GameLobbyComponent = (function () {
             "status": game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.INWAITINGROOM),
             "createdBy": this.player.username,
             "aborted": false,
-            // "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
             "startDate": new Date(),
             "endDate": null,
             "winner": "",
@@ -77,55 +70,40 @@ var GameLobbyComponent = (function () {
     GameLobbyComponent.prototype.enterGame = function (game) {
         var gameToUpdate = new game_1.Game(game);
         gameToUpdate.players.push(this.player);
-        this.gameInRoomService.updateGame(game._id, gameToUpdate)
-            .subscribe(function (game2) {
-            // TODO a atualizaçao
-            // console.log(game2);
-            // console.log(this.gamesInRoom);
-            //  let gameIndex : number = this.gamesInRoom.indexOf(game);
-            // console.log(gameIndex);
-            // DUVIDA: porque que é que esta abordagem não funciona?
-            // this.gamesInRoom[gameIndex] = game;
-            // this.gamesInRoom.;
-            // this.gamesInRoom[gameIndex].players.push(this.player);
-            // meh~
-            // if (gameToUpdate.players === game.players) {
-            //     this.gamesInRoom[gameIndex].players.push(this.player);
-            // }
+        this.gameInRoomService.enterGame(game._id, gameToUpdate)
+            .subscribe(function (response) {
+            console.log(response);
+            if (!response.ok) {
+                alert(response.message);
+            }
+            else {
+                // game = response.game;
+                game.players = response.game.players;
+            }
         });
     };
     GameLobbyComponent.prototype.leaveGame = function (game) {
         var gameToUpdate = new game_1.Game(game);
-        /*
-        //necessito fazer isto para não perder o acesso do this.player dentro do map feito aseguir
-        let playerTest: GamingPlayer = this.player;
-        
-        gameToUpdate.players =
-        //não funciona para < IE9
-        gameToUpdate.players.filter(function(pl){
-            return pl.username !== playerTest.username;
-        });
-        */
         var playerIndex = gameToUpdate.players.indexOf(this.player);
-        console.log(playerIndex);
-        console.log(gameToUpdate.players);
         gameToUpdate.players.splice(playerIndex, 1);
-        console.log(gameToUpdate.players);
-        this.gameInRoomService.updateGame(game._id, gameToUpdate)
+        this.gameInRoomService.leaveGame(game._id, gameToUpdate)
             .subscribe(function (response) {
-            /** TODO||DUVIDA
-             *  porque é que a vista nao é atualizada?
-             *  como atualizar os *ngIfs?
-             */
-            game = response;
-            console.log(game);
+            console.log(response);
+            if (!response.ok) {
+                alert(response.message);
+            }
+            else {
+                // game = response.game;
+                game.players = response.game.players;
+            }
         });
     };
     GameLobbyComponent.prototype.startGame = function (game) {
         var gameToStart = new game_1.Game(game);
         gameToStart.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.PENDING);
         this.gameInRoomService.startGame(game._id, gameToStart)
-            .subscribe(function (game) { });
+            .subscribe(function (response) {
+        });
     };
     GameLobbyComponent.prototype.playerIn = function (game) {
         var exists = false;

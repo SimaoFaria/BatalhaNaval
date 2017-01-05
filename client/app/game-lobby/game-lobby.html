@@ -16,7 +16,7 @@
                             <span class="joined">Creator: {{ game.createdBy }} | ({{ game.players.length }}/4)</span>
                             <div style="margin-left: 0px;">
                                 <button class="btn" (click)="removeGame(game)">Apagar</button>
-                                <button class="btn" *ngIf="game.players.length > 1" (click)="startGame(game)">Começar</button>
+                                <button class="btn" *ngIf="game.players.length > 1" (click)="startGame(game)" [routerLink]="['/current-games']">Começar</button>
                             </div>
                         </div>
                         <div *ngIf="game.createdBy !== player.username">

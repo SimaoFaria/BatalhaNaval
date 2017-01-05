@@ -25,8 +25,15 @@ var GameLobbyService = (function () {
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.updateGame = function (gameId, game) {
-        // updateGame(game: Game):Observable<Game>{
         return this.http.put('/api/v1/games/' + gameId, game)
+            .map(function (response) { return response.json(); });
+    };
+    GameLobbyService.prototype.enterGame = function (gameId, game) {
+        return this.http.put('/api/v1/enter-game/' + gameId, game)
+            .map(function (response) { return response.json(); });
+    };
+    GameLobbyService.prototype.leaveGame = function (gameId, game) {
+        return this.http.put('/api/v1/leave-game/' + gameId, game)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.deleteGame = function (gameId) {

@@ -31,13 +31,6 @@ export class GameLobbyComponent{
         this.gameInRoomService.getGamesInRoom()
             .subscribe((gamesInRoom) => {
                 this.gamesInRoom = gamesInRoom;
-                // console.log(gamesInRoom);
-
-                /* este workaround não serve
-                this.totalPlayers = [];
-                this.gamesInRoom.forEach((game) => {
-                    this.totalPlayers.push(game.players.length);
-                });*/
             });
     }
 
@@ -48,7 +41,6 @@ export class GameLobbyComponent{
             "status" : PlayerStateGame.gameStatus_toString(GameStatus.INWAITINGROOM),
             "createdBy" : this.player.username,
             "aborted" : false,
-            // "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
             "startDate" : new Date(),
             "endDate" : null,
             "winner" : "",
@@ -94,30 +86,19 @@ export class GameLobbyComponent{
     enterGame(game: Game) {
 
         let gameToUpdate : Game = new Game(game);
-
         gameToUpdate.players.push(this.player);
 
-        this.gameInRoomService.updateGame(game._id, gameToUpdate)
-            .subscribe((game2) => {     
+        this.gameInRoomService.enterGame(game._id, gameToUpdate)
+            .subscribe((response: any) => {     
                 
-                // TODO a atualizaçao
+                console.log(response)
 
-                // console.log(game2);
-                // console.log(this.gamesInRoom);
-
-                //  let gameIndex : number = this.gamesInRoom.indexOf(game);
-                // console.log(gameIndex);
-
-                // DUVIDA: porque que é que esta abordagem não funciona?
-                // this.gamesInRoom[gameIndex] = game;
-                // this.gamesInRoom.;
-                
-                // this.gamesInRoom[gameIndex].players.push(this.player);
-                
-                // meh~
-                // if (gameToUpdate.players === game.players) {
-                //     this.gamesInRoom[gameIndex].players.push(this.player);
-                // }
+                if (!response.ok) {
+                    alert(response.message)
+                } else {
+                    // game = response.game;
+                    game.players = response.game.players;
+                }
             }
         );
     }
@@ -125,36 +106,20 @@ export class GameLobbyComponent{
     leaveGame(game: Game) {
 
         let gameToUpdate : Game = new Game(game);
-
-        /*
-        //necessito fazer isto para não perder o acesso do this.player dentro do map feito aseguir
-        let playerTest: GamingPlayer = this.player;
-        
-        gameToUpdate.players = 
-        //não funciona para < IE9
-        gameToUpdate.players.filter(function(pl){ 
-            return pl.username !== playerTest.username; 
-        });
-        */
-
         let playerIndex : number = gameToUpdate.players.indexOf(this.player);
-
-        console.log(playerIndex);
-        console.log(gameToUpdate.players);
-
         gameToUpdate.players.splice( playerIndex, 1);
-        console.log(gameToUpdate.players);
 
-        this.gameInRoomService.updateGame(game._id, gameToUpdate)
-            .subscribe((response) => {     
+        this.gameInRoomService.leaveGame(game._id, gameToUpdate)
+            .subscribe((response: any) => {     
                 
-                /** TODO||DUVIDA
-                 *  porque é que a vista nao é atualizada?
-                 *  como atualizar os *ngIfs?
-                 */
-                game = response
+                console.log(response)
 
-                console.log(game);
+                if (!response.ok) {
+                    alert(response.message)
+                } else {
+                    // game = response.game;
+                    game.players = response.game.players;
+                }
             }
         );
     }
@@ -162,11 +127,12 @@ export class GameLobbyComponent{
     startGame(game: Game) {
     
         let gameToStart : Game = new Game(game);
-
         gameToStart.status = PlayerStateGame.gameStatus_toString(GameStatus.PENDING);
 
         this.gameInRoomService.startGame(game._id, gameToStart)
-            .subscribe((game) => { });
+            .subscribe((response: any) => {
+
+            });
     }
 
     playerIn(game: Game): boolean {

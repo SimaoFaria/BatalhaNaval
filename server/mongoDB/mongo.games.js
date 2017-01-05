@@ -51,59 +51,104 @@ function updateGame(request, response, next){
 	var game = request.body;
 	game._id = id;
 
-	database.db.collection("games").save(game,function(err, result) {
+  	database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
+	if(err) {
+		console.log(err);
+	} else {
+
+		if (returnedGame.players.length > 3) {
+			response.json({
+				ok: false,
+				message: 'game is full.'
+			});	
+		} else {
+			database.db.collection("games").save(game,function(err, result) {
+				if(err) {
+					console.log(err);
+					next();
+				} else {
+					database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
+						if(err) {
+							console.log(err);
+						} else {
+							response.json({
+								ok: true,
+								game: returnedGame
+							});
+						}
+					});
+				}
+			});
+		}
+
+		
+	}
+	});
+}
+
+function enterGame(request, response, next){
+
+	var id = new mongodb.ObjectID(request.params.id);
+	var game = request.body;
+	game._id = id;
+
+  	database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
+	if(err) {
+		console.log(err);
+	} else {
+
+		if (returnedGame.players.length > 3) {
+			response.json({
+				ok: false,
+				message: 'game is full.'
+			});	
+		} else {
+			database.db.collection("games").save(game,function(err, result) {
+				if(err) {
+					console.log(err);
+					next();
+				} else {
+					database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
+						if(err) {
+							console.log(err);
+						} else {
+							response.json({
+								ok: true,
+								game: returnedGame
+							});
+						}
+					});
+				}
+			});
+		}
+
+		
+	}
+	});
+}
+
+function leaveGame(request, response, next){
+
+	var id = new mongodb.ObjectID(request.params.id);
+	var game = request.body;
+	game._id = id;
+
+  	database.db.collection("games").save(game,function(err, result) {
 		if(err) {
-        console.log(err);
-        next();
-    } else {
-	    database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
-	  		if(err) {
-		        console.log(err);
-		        next();
-		    } else {
-
-				// console.log(returnedGame);
-
-				// if (returnedGame.status !== "INWAITINGROOM") {
-
-					// database.db.collection("games-details").findOne({idGame:id},function(err, gameDetails) {
-					// 	if(err) {
-					// 		console.log(err);
-					// 		next();
-					// 	} else {
-
-					// 		gameDetails.status = game.status;
-
-					// 		database.db.collection("games-details").save(gameDetails,function(err, result) {
-					// 			if(err) {
-					// 				console.log(err);
-					// 				next();
-					// 			} else {
-					// 				database.db.collection("games-details").findOne({idGame:id},function(err, gameDetails) {
-					// 					if(err) {
-					// 						console.log(err);
-					// 						next();
-					// 					} else {
-
-					// 						//response.json(gameDetails);
-					// 						next();
-					// 					}
-					// 				});
-					// 			}
-					// 		});
-
-					// 		//response.json(gameDetails);
-					// 		next();
-					// 	}
-					// });
-				// }
-
-			    response.json(game);
-			    next();
-		    }
-		  });
-    }
-  });
+			console.log(err);
+		} else {
+			database.db.collection("games").findOne({_id:id},function(err, returnedGame) {
+				if(err) {
+					console.log(err);
+				} else {
+					response.json({
+						ok: true,
+						game: returnedGame
+					});
+				}
+			});
+		}
+	});
 }
 
 function createGame(request, response, next){
@@ -413,9 +458,6 @@ function getGamesInRoom(request, response, next){
 }
 
 function startGame(request, response, next){
-	// TODO: updates one game of the games collection
-	// from the object sent on the request body. 
-	// Return a JSON response with that game  
 
 	var id = new mongodb.ObjectID(request.params.id);
 	var game = request.body;
@@ -469,25 +511,24 @@ function startGame(request, response, next){
 					database.db.collection("games-details").insertOne(gameDetails,function(err, result) {
 						if(err) {
 							console.log(err);
-							next();
 						} else {
 							console.log (result);
 							var id = result.insertedId;
 							database.db.collection("games-details").findOne({_id:id},function(err, gameDetails) {
 								if(err) {
 									console.log(err);
-									next();
 								} else {
 									//response.json(gameDetails);
-									next();
 								}
 							});
 						}
 					});
 				});
 
-			    response.json(game);
-			    next();
+			    response.json({
+					ok: true,
+					game: game
+				});
 		    }
 		  });
     }
@@ -1492,6 +1533,11 @@ games.init = function(server,apiBaseUri){
 	server.post(apiBaseUri+'games',createGame);
 	server.del(apiBaseUri+'games/:id',deleteGame);
 
+	server.get(apiBaseUri+'waiting-room-games', getGamesInRoom);
+	server.put(apiBaseUri+'start-game/:id', startGame);
+	server.put(apiBaseUri+'enter-game/:id',enterGame);
+	server.put(apiBaseUri+'leave-game/:id',leaveGame);
+
 	/* Routes for historical */
 	server.get(apiBaseUri+'historicals', getHistoricals); // all games endded
 	server.get(apiBaseUri+'historicals/:username', getHistoricalsByUsername); // all games endded by user
@@ -1506,9 +1552,6 @@ games.init = function(server,apiBaseUri){
 	server.get(apiBaseUri+'statistics/top5/number-games', getStatisticsTop5NumberGames); // the number of games played by 5 players with more games
 	console.log("Statistics routes registered");
 
-
-	server.get(apiBaseUri+'waiting-room-games', getGamesInRoom);
-	server.put(apiBaseUri+'start-game/:id', startGame);
 	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);

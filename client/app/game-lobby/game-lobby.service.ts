@@ -26,9 +26,18 @@ export class GameLobbyService {
             .map((response) => response.json());
     }
 
-    updateGame(gameId: string, game: GameWithoutId):Observable<Game>{
-    // updateGame(game: Game):Observable<Game>{
+    updateGame(gameId: string, game: Game):Observable<Game>{
         return this.http.put('/api/v1/games/' + gameId, game)
+            .map((response) => response.json());
+    }
+
+    enterGame(gameId: string, game: Game):Observable<Game>{
+        return this.http.put('/api/v1/enter-game/' + gameId, game)
+            .map((response) => response.json());
+    }
+
+    leaveGame(gameId: string, game: Game):Observable<Game>{
+        return this.http.put('/api/v1/leave-game/' + gameId, game)
             .map((response) => response.json());
     }
 
@@ -38,7 +47,7 @@ export class GameLobbyService {
     }
 
     
-    startGame(gameId: string, game: GameWithoutId):Observable<Game>{
+    startGame(gameId: string, game: Game):Observable<Game>{
     // updateGame(game: Game):Observable<Game>{
         return this.http.put('/api/v1/start-game/' + gameId, game)
             .map((response) => response.json());
