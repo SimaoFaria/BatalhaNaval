@@ -40,8 +40,9 @@ var GameLobbyComponent = (function () {
             "status": game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.INWAITINGROOM),
             "createdBy": this.player.username,
             "aborted": false,
-            "startDate": new Date(Date.now()).toLocaleString(),
-            "endDate": "",
+            // "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
+            "startDate": new Date(),
+            "endDate": null,
             "winner": "",
             "players": [
                 {

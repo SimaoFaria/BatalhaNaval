@@ -157,6 +157,7 @@ export class GameComponent {
                         this.playerStateGame.forEach((myGame) => {
                             if (myGame.idGame === json.idGame) {
                                 // console.log('É O MEU JOGO')
+                                // myGame = json;
                                 myGame.status = json.status;
                                 // console.log(myGame.status)
                                 // console.log(json.status)
@@ -174,7 +175,6 @@ export class GameComponent {
     }
 
     addNavioToBoardDefense(idGame : string) : void {
-
 
         document.getElementById('msgerro').innerText='';
         try {
@@ -450,7 +450,7 @@ export class GameComponent {
 
             if(game.idGame == idGame) {
 
-                if (game.currentPlayer != this.authenticationService.username) {
+                if (game.currentPlayer != this.authenticationService.user.username) {
                     alert("Its not your turn. Wait.")
                 } else {
 

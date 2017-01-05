@@ -93,6 +93,7 @@ var GameComponent = (function () {
                     _this.playerStateGame.forEach(function (myGame) {
                         if (myGame.idGame === json.idGame) {
                             // console.log('É O MEU JOGO')
+                            // myGame = json;
                             myGame.status = json.status;
                         }
                     });
@@ -328,7 +329,7 @@ var GameComponent = (function () {
         var _this = this;
         var _loop_1 = function(game) {
             if (game.idGame == idGame) {
-                if (game.currentPlayer != this_1.authenticationService.username) {
+                if (game.currentPlayer != this_1.authenticationService.user.username) {
                     alert("Its not your turn. Wait.");
                 }
                 else {

@@ -16,7 +16,8 @@ var AppRoutingModule = (function () {
     }
     AppRoutingModule = __decorate([
         core_1.NgModule({
-            imports: [router_1.RouterModule.forRoot(routes_1.ROUTES)],
+            // imports: [ RouterModule.forRoot(ROUTES) ],
+            imports: [router_1.RouterModule.forRoot(routes_1.ROUTES, { useHash: true })],
             exports: [router_1.RouterModule]
         }), 
         __metadata('design:paramtypes', [])

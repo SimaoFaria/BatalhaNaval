@@ -34,6 +34,7 @@ import {MenuComponent} from "./menu/menu.component";
 import {MenuModule} from "./menu/menu.module";
 
 import { LoginModule } from './login-register/login.module';
+import {EqualValidator} from "./login-register/register/equal-validator";
 
 // import { ChatComponent } from './sockets/chat.component';
 
@@ -59,6 +60,7 @@ import { LoginModule } from './login-register/login.module';
                     // SocketsComponent
                     // LoginComponent,
                     // RegisterComponent,
+                    // EqualValidator
                     // ChatComponent
 
   ],

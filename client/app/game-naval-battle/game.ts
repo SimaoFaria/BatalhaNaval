@@ -20,8 +20,10 @@ export class Game {
     status: string;
     createdBy: string;
     aborted: boolean;
-    startDate: string;
-    endDate: string;
+    // startDate: string;
+    startDate: Date;
+    // endDate: string;
+    endDate: Date;
     winner: string;
     players: GamingPlayer[];
 

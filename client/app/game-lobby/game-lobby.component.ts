@@ -48,8 +48,9 @@ export class GameLobbyComponent{
             "status" : PlayerStateGame.gameStatus_toString(GameStatus.INWAITINGROOM),
             "createdBy" : this.player.username,
             "aborted" : false,
-            "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
-            "endDate" : "",
+            // "startDate" : new Date(Date.now()).toLocaleString(), //TODO não está a mandar as nossas horas corretas
+            "startDate" : new Date(),
+            "endDate" : null,
             "winner" : "",
             "players" : [ 
                 {
