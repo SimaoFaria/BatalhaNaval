@@ -16,62 +16,45 @@ export class RegisterComponent {
     loading = false;
     error = '';
     success ='';
+    hasLogged: any;
 
     constructor(
         private router: Router,
-        private authenticationService: AuthenticationService) { }
+        private authenticationService: AuthenticationService) {
+            this.hasLogged = this.authenticationService.hasLogged;
+    }
 
     register() {
         this.loading = true;
-        this.authenticationService.aux(this.model.username)
+        this.authenticationService.getIfUserExist(this.model.username)
             .subscribe(result=>{
-            console.log("x: aqui "+result);
+                //console.log("x: aqui "+result);
                 if(result ==true){
-                    this.error = 'Username has already existed';
+                    this.error = 'Username is already exist';
                     console.log("o user ja existe");
                     this.loading = false;
                 }
-        },message =>
+            },message =>
             {
-                this.authenticationService.create(this.model.username, this.model.password)
+                this.authenticationService.create(this.model.username, this.model.password, this.model.email, this.model.confirmPassword)
                     .subscribe(result => {
                         console.log("User criado: " + result);
                         if (result === true) {
+                            this.error ='';
                             this.success = 'Registration successful';
                             setTimeout(() =>
                                 {
                                     this.router.navigate(['/login']);
-                                    console.log("tetetetet");
                                 },
                                 2000);
-
-
                         }
+                    },error =>
+                    {
+                        this.error = 'Something is wrong. Repeat your log in' ;
+                        this.loading = false;
                     });
-            })
-        //    ,teste =>{
-        //    //this.error = 'Username or password is incorrect';
-        //    this.loading = false;
-        //    console.log("o user ja existe");
-        //}
+            });
 
     }
 
-    //
-    //register() {
-    //    this.loading = true;
-    //        this.authenticationService.create(this.model.username, this.model.password)
-    //            .subscribe( result =>{
-    //                console.log("x: "+result);
-    //                if (result === true){
-    //                    this.getMessage();
-    //                    this.success = 'Registration successful';
-    //                    this.router.navigate(['/login']);
-    //
-    //                }            else{
-    //                    this.error = 'Username or password is incorrect';
-    //                    this.loading = false;
-    //                }
-    //            });
-    //    }
 }

@@ -12,38 +12,35 @@ import 'rxjs/add/operator/catch';
 @Injectable()
 export class AuthenticationService {
     public token: string;
-    private subject : string;
     public hasLogged : boolean;
     public username : string;
+    public user:User;
+    //public teste: any
 
 
-    constructor(private http: Http) {
-
+    constructor(private http: Http, user:User) {
+        this.user = user;
+        this.hasLogged = false;
     }
 
 
     login(username: string, password: string): Observable<boolean> {
-        let json ={
-            username:username,
-            password:password
-        };
-        //let headers = new Headers({ 'Content-Type': 'application/json' });
-        //let options = new RequestOptions({ headers: headers });
+        this.user.username = username;
+        this.user.password = password;
 
-        return this.http.post('api/v1/login', json).map((response: Response) => {
-                // login successful if there's a jwt token in the response
-                console.log("token: "+response.json().token);
+        return this.http.post('api/v1/login', this.user).map((response: Response) => {
+                //console.log("token: "+response.json().token);
                 let user = response.json();
                 //console.log("entao "+user.username +" " +user.token);
-                if (user.username === username && user.token && response.json().statusText == undefined) {
+                if (user.token && response.json().statusText == undefined) {
                     // set token property
                     let token = user.token;
-                    // store username and token in local storage to keep user logged in between page refreshes
+                    // store username and token in local storage
                     localStorage.setItem('currentUser', JSON.stringify({ username: username, token: token }));
-                    //this.user = user;
                     this.token = token;
                     this.hasLogged = true;
-                    this.username = username;
+                    //this.teste = response.json().user;
+
                     // return true to indicate successful login
 
                     return true;
@@ -61,12 +58,16 @@ export class AuthenticationService {
             console.log("Unauthorized");
         }
 
+        if (error.status != undefined){
+            console.log("Something is wrong");
+        }
+
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}`
                 : 'Server Error';
         console.log(errMsg);
         return false;
-        //return Observable.throw(errMsg);
+
     }
 
     logout(): void {
@@ -77,21 +78,28 @@ export class AuthenticationService {
         this.username = null;
     }
 
-    //getCurrentGames(username : string):Observable<Game[]>{
-    //
-    //    return this.http.get('/api/v1/current-games/' + username)
-    //        .map((response) => this.games = response.json());
-    //
-    //    //TODO
-    //    //por o json num arrya de game para mandar para o cliente
-    //}
+    /**
+     *
+     * retornar o nome do utilizador ?????????????????
+     * @param username
+     * @returns {any}
+     */
+    getUser(username:string):Observable<any>{
+        //console.log(" ver: "+this.token)
+        //let headers = new Headers({ 'Authorization': 'Bearer '+this.token });
+        //let options = new RequestOptions({ headers: headers });
 
-    aux (username:string) : Observable<boolean>{
+        return this.http.get('api/v1/players/'+username /*, options*/)
+            .map((response) => {return response.json()});
+
+        //return this.user;
+    }
+
+    getIfUserExist (username:string) : Observable<boolean>{
         let user;
         return this.http.get('api/v1/getUser/'+username)
             .map((response: Response)=>{
                 user = response.json();
-                console.log("x dsdf: " + user);
                 return true;
             }).catch((error =>this.handleErrorNotFound(error)));
 
@@ -107,39 +115,32 @@ export class AuthenticationService {
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}`
                 : 'Server Error';
+
         console.log(errMsg);
         return false;
         //return Observable.throw(errMsg);
     }
 
-    create(username: string, password: string) : Observable<boolean>{
-        let json ={
-            username:username,
-            password:password
-        };
+    create(username: string, password: string, email: string, confirmPassword:string) : Observable<boolean>{
 
-        return this.http.post('api/v1/new_user', json).map((response: Response) =>{
+        let user = new User();
+        user.username = username;
+        user.password = password;
+        user.email = email;
+        user.confirmPassword = confirmPassword;
+
+        return this.http.post('api/v1/new_user', user).map((response: Response) =>{
             let userFromBD = response.json();
 
             if (userFromBD.username === username){
 
                 this.token = userFromBD.token;
-                console.log(this.token);
+                console.log(response.json().statusText);
+
                 return true;
             }
-            else{
-                return false;
-            }
 
-        });
+        }).catch((error =>this.handleError(error)));
     }
 
-    success(message: string) {
-        //this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'success', text: message });
-    }
-
-    getMessage(): Observable<any> {
-        return this.subject.asObservable();
-    }
 }

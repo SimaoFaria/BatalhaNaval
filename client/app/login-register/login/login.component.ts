@@ -29,17 +29,8 @@ export class LoginComponent implements OnInit {
 
         this.hasLogged = authenticationService.hasLogged;
 
-
         }
 
-    //ngOnInit() {
-    //
-    //
-    //    console.log("antes do logout no login.component");
-    //    this.authenticationService.logout();
-    //
-    //    console.log("depois do logout no login.component");
-    //}
 
     loginClick() {
         this.loading = true;
@@ -48,6 +39,21 @@ export class LoginComponent implements OnInit {
                 console.log(result);
                 if (result === true) {
 
+
+                    this.hasLogged;
+                    //this.user = authenticationService.user;
+                    /**
+                     *
+                     * Imprimir o user na pagina game
+                     * nao entra no getUser ver pq??
+                     *
+                     */
+                    /*this.authenticationService.getUser(this.model.username).subscribe(user=>{
+                     this.user = user;
+                     });*/
+
+                    //this.authenticationService.sendMessage(this.message);
+                    //this.authenticationService.user;
                     this.router.navigate(['/game-lobby']);
                 }
             },error =>

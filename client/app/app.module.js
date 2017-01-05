@@ -25,9 +25,8 @@ var websocket_service_1 = require('./sockets/notifications/websocket.service');
 var auth_guard_1 = require('./login-register/_guards/auth.guard');
 // import { routing }        from './app.routing';
 var authentication_service_1 = require('./login-register/_services/authentication.service');
-var login_component_1 = require('./login-register/login/login.component');
-var register_component_1 = require('./login-register/register/register.component');
 var menu_module_1 = require("./menu/menu.module");
+var login_module_1 = require('./login-register/login.module');
 // import { ChatComponent } from './sockets/chat.component';
 var AppModule = (function () {
     function AppModule() {
@@ -40,7 +39,7 @@ var AppModule = (function () {
                 app_routing_module_1.AppRoutingModule,
                 //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
                 historical_module_1.HistoricalModule,
-                //LoginModule,
+                login_module_1.LoginModule,
                 top10_module_1.Top10Module,
                 game_module_1.GameNavalBattleModule,
                 //SocketsModule,
@@ -48,9 +47,6 @@ var AppModule = (function () {
             ],
             declarations: [app_component_1.AppComponent,
                 game_lobby_component_1.GameLobbyComponent,
-                // SocketsComponent
-                login_component_1.LoginComponent,
-                register_component_1.RegisterComponent,
             ],
             providers: [
                 game_service_1.GameService,

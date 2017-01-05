@@ -33,6 +33,7 @@ import { RegisterComponent } from './login-register/register/register.component'
 import {MenuComponent} from "./menu/menu.component";
 import {MenuModule} from "./menu/menu.module";
 
+import { LoginModule } from './login-register/login.module';
 
 // import { ChatComponent } from './sockets/chat.component';
 
@@ -46,7 +47,7 @@ import {MenuModule} from "./menu/menu.module";
                     AppRoutingModule,
                     //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
                     HistoricalModule,
-                    //LoginModule,
+                    LoginModule,
                     Top10Module,
                     GameNavalBattleModule,
                     //SocketsModule,
@@ -56,8 +57,8 @@ import {MenuModule} from "./menu/menu.module";
   declarations: [   AppComponent,
                     GameLobbyComponent,
                     // SocketsComponent
-                    LoginComponent,
-                    RegisterComponent,
+                    // LoginComponent,
+                    // RegisterComponent,
                     // ChatComponent
 
   ],
