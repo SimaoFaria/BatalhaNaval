@@ -1526,7 +1526,6 @@ function closeGame(request, response, next) {
 }
 
 // Routes for the games
-games.init = function(server,apiBaseUri){
 games.init = function(server,apiBaseUri, options){
 	server.get(apiBaseUri+'games',getGames);
 	server.get(apiBaseUri+'games/:id',getGame);
