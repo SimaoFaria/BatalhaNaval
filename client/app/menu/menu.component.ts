@@ -20,6 +20,7 @@ export class MenuComponent {
 
     logoutClick() {
         this.authenticationService.logout();
-        this.router.navigate(['/login']);
+        console.log("variavel "+this.hasLogged);
+
     }
 }

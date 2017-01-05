@@ -97,7 +97,12 @@ function createPlayer(request, response, next){
 
 	const player = request.body;
     player.passwordHash = sha1(player.password);
+    player.confirmPasswordHash = sha1(player.password);
+
+    player.email = player.email;
+    console.log("valor do email: "+player.email);
     delete player.password;
+    delete player.confirmPasswordHash;
     if (player === undefined) {
         response.send(400, 'No player dataChartAVGGamesPerDay');
         return next();

@@ -4,6 +4,7 @@ import { Game, PlayerStateGame, GameStatus } from '../game-naval-battle/game';
 import { GameWithoutId } from '../game-naval-battle/game';
 import { GameLobbyService } from './game-lobby.service';
 import { GamingPlayer } from '../_models/player';
+import {AuthenticationService} from "../login-register/_services/authentication.service";
 
 @Component({
     moduleId: module.id,
@@ -17,6 +18,8 @@ export class GameLobbyComponent{
 
     gamesInRoom:Game[];
 
+    hasLogged: string;
+
     // Workaround do players.length
     // criar esta prop
 
@@ -26,7 +29,9 @@ export class GameLobbyComponent{
         "classification" : ""
     };
 
-    constructor(private gameInRoomService: GameLobbyService) { 
+    constructor(private gameInRoomService: GameLobbyService, private auth : AuthenticationService) {
+
+
 
         this.gameInRoomService.getGamesInRoom()
             .subscribe((gamesInRoom) => {
@@ -40,6 +45,8 @@ export class GameLobbyComponent{
                 });*/
             });
     }
+
+
 
     createGame() {
 

@@ -11,10 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var game_1 = require('../game-naval-battle/game');
 var game_lobby_service_1 = require('./game-lobby.service');
+var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameLobbyComponent = (function () {
-    function GameLobbyComponent(gameInRoomService) {
+    function GameLobbyComponent(gameInRoomService, auth) {
         var _this = this;
         this.gameInRoomService = gameInRoomService;
+        this.auth = auth;
         // Workaround do players.length
         // criar esta prop
         this.player = {
@@ -146,7 +148,7 @@ var GameLobbyComponent = (function () {
             styleUrls: ['./game-lobby.css'],
             providers: [game_lobby_service_1.GameLobbyService]
         }), 
-        __metadata('design:paramtypes', [game_lobby_service_1.GameLobbyService])
+        __metadata('design:paramtypes', [game_lobby_service_1.GameLobbyService, authentication_service_1.AuthenticationService])
     ], GameLobbyComponent);
     return GameLobbyComponent;
 }());

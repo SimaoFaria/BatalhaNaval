@@ -25,6 +25,10 @@ export class RegisterComponent {
     }
 
     register() {
+        console.log("this.model.email "+this.model.email);
+        console.log("this.model.username "+this.model.username);
+        console.log("this.model.password "+this.model.password);
+
         this.loading = true;
         this.authenticationService.getIfUserExist(this.model.username)
             .subscribe(result=>{
@@ -36,10 +40,12 @@ export class RegisterComponent {
                 }
             },message =>
             {
+
                 this.authenticationService.create(this.model.username, this.model.password, this.model.email, this.model.confirmPassword)
                     .subscribe(result => {
-                        console.log("User criado: " + result);
+                        console.log("email: " + result);
                         if (result === true) {
+
                             this.error ='';
                             this.success = 'Registration successful';
                             setTimeout(() =>

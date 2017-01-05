@@ -1486,11 +1486,15 @@ function closeGame(request, response, next) {
 
 // Routes for the games
 games.init = function(server,apiBaseUri){
+games.init = function(server,apiBaseUri, options){
 	server.get(apiBaseUri+'games',getGames);
 	server.get(apiBaseUri+'games/:id',getGame);
 	server.put(apiBaseUri+'games/:id',updateGame);
 	server.post(apiBaseUri+'games',createGame);
 	server.del(apiBaseUri+'games/:id',deleteGame);
+	//server.post(apiBaseUri+'games',createGame);
+	server.post(apiBaseUri+'games',options.security.authorize, createGame);
+	server.del(apiBaseUri+'games/:id', options.security.authorize, deleteGame);
 
 	/* Routes for historical */
 	server.get(apiBaseUri+'historicals', getHistoricals); // all games endded
@@ -1509,6 +1513,7 @@ games.init = function(server,apiBaseUri){
 
 	server.get(apiBaseUri+'waiting-room-games', getGamesInRoom);
 	server.put(apiBaseUri+'start-game/:id', startGame);
+	server.put(apiBaseUri+'start-game/:id',options.security.authorize, startGame);
 	server.get(apiBaseUri+'current-games/:username', getCurrentGames);
 	server.get(apiBaseUri+'current-state-games/:username', getCurrentStateGames);
 	server.put(apiBaseUri+'current-state-games/:id', putCurrentStateGames);
