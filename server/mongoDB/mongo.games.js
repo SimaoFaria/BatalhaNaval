@@ -459,7 +459,8 @@ function startGame(request, response, next){
 						"boardDefense" : [],
 						"boardsAttack" : otherPlayers,
 						"currentPlayer": game.createdBy,
-						"nrShotsRemaining": nrShots
+						"nrShotsRemaining": nrShots,
+						"score": 0
 					}
 					// gameDetails._id = new mongodb.ObjectID(gameDetails.idGame, gameDetails.username);
 					// gameDetails.username = player.username;
@@ -1739,8 +1740,11 @@ function getHasShot3(request, response, next){
 		gameEnded: false,
 		nrShotsRemaining: -1,
 		currentPlayer: '',
-		boardAttack: []
+		boardAttack: [],
+		obtainedPoints: 0
 	}
+
+	var shotterScore = -1;
 
 	/**
 	 * 	obtainShotOpponentStateGame
@@ -1752,8 +1756,8 @@ function getHasShot3(request, response, next){
 	 *  updateMyStateGame
 	 * 
 	 * 	obtainStateGames
+	 *  currentPlayerWithRemainingShots
 	 *  updatePlayersWithCurrentPlayerAndNrShots
-	 *  updateStateGames
 	 * 
 	 *  findPlayersWhoLost
 	 *  updateStatusInGame
@@ -1842,6 +1846,8 @@ function getHasShot3(request, response, next){
 		var shipType = '';
 		var sank = false;
 		var allShipsSanked = true;
+
+		var obtainedPoints = 0;
 		
 		//verifica se navio afundou
 			// se sim, 
@@ -1857,12 +1863,14 @@ function getHasShot3(request, response, next){
 
 					hit = true;
 					occupiedPosition.hit = true;
+					obtainedPoints++;
 
 					shot = 'Posição '+line+column +' - Tiro no ' + ship.type;
 					shipType = ship.type;	
 
 					if (ship.type == 'Submarino') {
 						ship.sank = true;
+						obtainedPoints += 3;
 					} else {
 
 						var numTargets = ship.occupiedPositions.length;
@@ -1878,21 +1886,25 @@ function getHasShot3(request, response, next){
 								case 'ContraTorpedeiro':
 									if(numTargets == 2) {
 										ship.sank = true;
+										obtainedPoints += 5;
 									}
 									break;
 								case 'Cruzador':
 									if(numTargets == 3) {
 										ship.sank = true;
+										obtainedPoints += 10;
 									}
 									break;
 								case 'Couracado':
 									if(numTargets == 4) {
 										ship.sank = true;
+										obtainedPoints += 15;
 									}
 									break;
 								case 'PortaAvioes':
 									if(numTargets == 5) {
 										ship.sank = true;
+										obtainedPoints += 20;
 									}
 									break;
 							}
@@ -1917,6 +1929,12 @@ function getHasShot3(request, response, next){
 				break;
 			}
 		}
+
+		if (allShipsSanked) {
+			obtainedPoints += 50;
+		}
+
+		jsonResponse.obtainedPoints = obtainedPoints;
 		
 		console.log('	2 - treatShips')
 		return {
@@ -1957,11 +1975,9 @@ function getHasShot3(request, response, next){
 					console.log(err);
 				} else {
 
-					// TODO tratar no updateMany
-					// myStateGame.nrShotsRemaining = jsonResponse.nrShotsRemaining;
-					// myStateGame.currentPlayer = jsonResponse.currentPlayer;
-
 					myStateGame.boardsAttack = addShotToMyBoardAttack(myStateGame.boardsAttack, opponentUsername, line, column, jsonResponse.hit);
+
+					jsonResponse.obtainedPoints = (myStateGame.score += jsonResponse.obtainedPoints);
 
 					// callback = updateMyStateGame
 					callback(myStateGame, obtainStateGames);
@@ -2124,7 +2140,7 @@ function getHasShot3(request, response, next){
 					console.log(err);
 				} else {
 					// callback = findPlayersWhoLost
-					callback(updateStatusInGame);
+					callback(updateMyStatusInGame);
 				}
 			}
 		);
@@ -2133,13 +2149,22 @@ function getHasShot3(request, response, next){
 	function findPlayersWhoLost(callback) {		
 		console.log('10 - findPlayersWhoLost')
 		
-		database.db.collection("games-details").find({
-			$and: [
-				{ idGame: idGame },
-				{ username: { $nin: [ username ] } }, 
-				{ status: 'ENDED' }
-			]}
-			, { boardsAttack:true }
+		database.db.collection("games-details").find(
+			{ idGame: idGame },
+			// {
+			// $and: [
+			// 	{ idGame: idGame },
+			// 	// { username: { $nin: [ username ] } }, 
+			// 	// { status: 'ENDED' }
+			// ]},
+			{ 
+				username: true,
+				status: true,
+				boardsAttack:true,
+				score: true,
+				classification: true,
+				won: true
+			}
 			, function(err, cursor) {
 				console.log('	10 - findPlayersWhoLost')
 				if (err) {
@@ -2151,13 +2176,14 @@ function getHasShot3(request, response, next){
 							console.log(err);
 						} else {
 
-							if (stateGames.length > 0 && stateGames.length == stateGames[0].boardsAttack.length) {
+							if (allPlayersDefeated(stateGames)) {
 								jsonResponse.gameEnded = true;
 
 								var gameStatus = 'ENDED';
+								var gameWon = true;
 								
-								// callback = updateStatusInGame
-								callback(gameStatus, updateMyStatusInGame);
+								// callback = updateMyStatusInGame
+								callback(gameStatus, gameWon, stateGames, updateStatusInGame);
 							} else {
 
 								console.log('FIM getHasShot3')
@@ -2170,34 +2196,32 @@ function getHasShot3(request, response, next){
 		); 
 	}
 
-	function updateStatusInGame(gameStatus, callback) {
-		console.log('11 - updateStatusInGame')
-		database.db.collection("games").updateOne(
-			{ _id: new mongodb.ObjectID(idGame) },
-			{
-				$set: {
-					status: gameStatus
-				}
-			}, 
-			function(err, resu) {
-				console.log('	11 - updateStatusInGame')
-				if (err) {
-					console.log(err)
-				} else {
-					// callback = updateMyStatusInGame
-					callback(gameStatus);
-				}
+	function allPlayersDefeated(stateGames) {
+
+		console.log("11 - allPlayersDefeated")
+
+		var numPlayersInGame = stateGames.length;
+		var numOpponentsWhoLost = 0;
+	
+		for(var player of stateGames) {
+			if (player.status == 'ENDED') {
+				numOpponentsWhoLost++;
 			}
-		);
+		}	
+
+		console.log("	11 - allPlayersDefeated")
+		
+		return (numPlayersInGame - 1) == numOpponentsWhoLost;
 	}
 
-	function updateMyStatusInGame(stateGameStatus) {
+	function updateMyStatusInGame(stateGameStatus, gameWon, stateGames, callback) {
 		console.log('12 - updateMyStatusInGame')
 		database.db.collection("games-details").updateOne(
 			{ idGame: idGame, username: username},
 			{
 				$set: {
-					status: stateGameStatus
+					status: stateGameStatus,
+					won: gameWon
 				}
 			}, 
 			function(err, result) {
@@ -2205,8 +2229,130 @@ function getHasShot3(request, response, next){
 				if (err) {
 					console.log(err)
 				} else {
+
+					var winner = username;
+
+					var playersStats = [];
+					playersStats = classifyPlayersByScore(stateGames);								
+
+					// callback = updateStatusInGame
+					callback(stateGameStatus, playersStats, winner, obtainPlayerStats);
+				}
+			}
+		);
+	}
+
+	function classifyPlayersByScore(stateGames) {
+
+		console.log('13 - classifyPlayersByScore')
+
+		var playersStats = [];
+		var classification = 1;
+		var maxPlayerScore = {
+			username: "",
+			score: 0
+		};
+		var playersClassified = [];
+
+		for(var p of stateGames) {
+
+			maxPlayerScore.username = "";
+			maxPlayerScore.score = -1;
+
+			// obter max
+			for(var player of stateGames) {
+				if ((playersClassified.indexOf(player.username) == -1) && player.score > maxPlayerScore.score) {
+					maxPlayerScore.username = player.username
+					maxPlayerScore.score = player.score;
+				}
+			}
+
+			playersStats.push({
+				"username" : maxPlayerScore.username,
+				"score" : maxPlayerScore.score,
+				"classification" : classification++
+			});
+
+			// classification++;
+
+			playersClassified.push(maxPlayerScore.username);
+
+		}
+
+		console.log('	13 - classifyPlayersByScore');
+
+		return playersStats;
+	}
+
+	function updateStatusInGame(gameStatus, players, winner, callback) {
+		console.log('14 - updateStatusInGame')
+		database.db.collection("games").updateOne(
+			{ _id: new mongodb.ObjectID(idGame) },
+			{
+				$set: {
+					status: gameStatus,
+					players: players,
+					winner: winner,
+					endDate: new Date(Date.now()).toLocaleString() //TODO não está a mandar as nossas horas corretas
+				}
+			}, 
+			function(err, resu) {
+				console.log('	14 - updateStatusInGame')
+				if (err) {
+					console.log(err)
+				} else {
+
+					for(var player of players) {
+						// callback = obtainPlayerStats
+						callback(player, updatePlayerScoreAndVictories);
+					}
+
 					console.log('FIM getHasShot3 com GAME a ENDED')
 					response.json(jsonResponse)
+				}
+			}
+		);
+	}
+
+	function obtainPlayerStats(player, callback) { 
+		console.log('15 - obtainPlayerStats')
+		
+		database.db.collection("players").findOne(
+			{ username: player.username },
+			function(err, obtainedPlayer) {
+				console.log('	15 - obtainPlayerStats')
+				if(err) {
+					console.log(err);
+				} else {
+
+					var playerStats = {
+						username: player.username,
+						totalPoints: player.score + obtainedPlayer.totalPoints,
+						totalVictories: obtainedPlayer.totalVictories + (player.classification === 1 ? 1 : 0)
+					}
+
+					// callback = updatePlayerScoreAndVictories
+					callback(playerStats, obtainStateGames);
+				}
+			}
+		);
+	};
+
+	function updatePlayerScoreAndVictories(playerStats, callback) {
+		console.log('16 - updatePlayerScoreAndVictories')
+		database.db.collection("players").updateOne(
+			{ username: playerStats.username },
+			{
+				$set: {
+					totalPoints: playerStats.totalPoints,
+					totalVictories: playerStats.totalVictories
+				}
+			}, 
+			function(err, resu) {
+				if (err) {
+					console.log(err)
+				} else {
+					console.log('	16 - updatePlayerScoreAndVictories')
 				}
 			}
 		);

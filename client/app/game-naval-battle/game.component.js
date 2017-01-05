@@ -390,11 +390,12 @@ var GameComponent = (function () {
                             _this.websocketService.updateGameStatus(idGame, updateJson_1);
                             console.log(response.gameEnded);
                             if (response.gameEnded) {
+                                // nao deveria ser assim
+                                game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.ENDED);
+                                game.won = true;
                                 json.myMessage = 'Congratz!! You have won the game!';
                                 json.othersMessage = 'Player ' + _this._username + ' has won the game.';
                                 _this.websocketService.useNotifications(idGame + ' notifications', json);
-                                // nao deveria ser assim
-                                game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.ENDED);
                             }
                         }
                         var updateJson = {

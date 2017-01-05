@@ -524,12 +524,15 @@ export class GameComponent {
 
                                 console.log(response.gameEnded)
                                 if (response.gameEnded) {
-                                    json.myMessage = 'Congratz!! You have won the game!';
-                                    json.othersMessage = 'Player ' + this._username + ' has won the game.';
-                                    this.websocketService.useNotifications(idGame + ' notifications', json);
 
                                     // nao deveria ser assim
                                     game.status = PlayerStateGame.gameStatus_toString(GameStatus.ENDED);
+
+                                    game.won = true;
+
+                                    json.myMessage = 'Congratz!! You have won the game!';
+                                    json.othersMessage = 'Player ' + this._username + ' has won the game.';
+                                    this.websocketService.useNotifications(idGame + ' notifications', json);
                                 }
                             }
 
