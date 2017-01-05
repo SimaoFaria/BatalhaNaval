@@ -18,6 +18,7 @@ export class StatisticsService {
             .map((response) => response.json());
     }
 
+    
     /**
      * Method of a service that allows through the API '/api/v1' to make a GET request that returns the number of games played by 5 players with more games, if they exist
      * @returns {JSON}

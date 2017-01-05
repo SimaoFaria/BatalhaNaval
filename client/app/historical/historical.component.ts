@@ -251,6 +251,7 @@ export class HistoricalComponent implements OnInit{
                             throw new Error('No data found!');
                         }
 
+
                         //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
                         //this.historicals = response;
 

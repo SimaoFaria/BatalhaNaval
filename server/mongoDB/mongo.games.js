@@ -421,6 +421,7 @@ function getStatisticsAVGGamesDay(request, response, next){
 	// });
 
 
+
 	response.json({});
 }
 
