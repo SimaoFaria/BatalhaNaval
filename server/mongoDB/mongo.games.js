@@ -421,8 +421,25 @@ function getStatisticsAVGGamesDay(request, response, next){
 	// });
 
 
+	database.db.collection("games").aggregate([
+		{ "$match" : { "status" : "ENDED" } },
+		{
+			$group: {
+				//_id : { date: "$startDate" }
+				_id : { $dateToString: { format: "%Y-%m-%d", date: "$endDate" } },
+				resultCount: { $sum: 1 }
 
-	response.json({});
+			}
+		}
+	]).toArray(function(err, result) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+			response.json(result);
+			next();
+		}
+	});
 }
 
 /**
@@ -430,7 +447,44 @@ function getStatisticsAVGGamesDay(request, response, next){
  * */
 function getStatisticsTop5NumberGames(request, response, next){
 	//TODO
-	response.json({});
+
+	database.db.collection('games-details').aggregate([
+		{ "$match" : { "status" : "ENDED" } },
+		{
+			$group: {
+				_id : "$username" ,
+				resultCount: { $sum: 1 }
+			}
+		}
+	]).toArray(function(err, result) {
+		if(err) {
+			console.log(err);
+			next();
+		} else {
+
+
+			database.db.collection('games-details').find({ "status" : "ENDED" } ).count(function (err, count) {
+
+				if(err) {
+					console.log(err);
+					next();
+				} else {
+
+					var obj = {};
+					obj = {
+						"result" : result,
+						"numbreOfGames" : count
+					}
+
+					response.json(obj);
+					next();
+				}
+			});
+		}
+	});
+
+
+
 }
 
 
