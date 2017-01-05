@@ -35,6 +35,7 @@ var core_1 = require('@angular/core');
 var historical_service_1 = require('./services/historical.service');
 var authentication_service_1 = require("../login-register/_services/authentication.service");
 var statistics_service_1 = require("../services/statistics/statistics.service");
+var statistics_1 = require("../_models/statistics");
 var HistoricalComponent = (function () {
     function HistoricalComponent(historicalService, authenticationService, statisticsService) {
         this.historicalService = historicalService;
@@ -105,6 +106,91 @@ var HistoricalComponent = (function () {
             catch (e) {
                 _this.historicals = [];
                 _this.error = e.message;
+            }
+        });
+        this.statisticsService.getStatisticsAVGGamesDay()
+            .subscribe(function (response) {
+            try {
+                if (!response.length) {
+                    throw new Error('No data found!');
+                }
+                //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
+                //this.historicals = response;
+                var statistics = [];
+                var labels = [];
+                var datasets = [];
+                var currentBackgroundColor = '';
+                var currentBorderColor = '';
+                var i = 0;
+                for (var _i = 0, response_1 = response; _i < response_1.length; _i++) {
+                    var itStatistic = response_1[_i];
+                    statistics.push(new statistics_1.Statistic(itStatistic._id, itStatistic.resultCount));
+                    labels.push(itStatistic._id);
+                    console.log("_id: " + itStatistic._id);
+                    console.log("resultCount" + itStatistic.resultCount);
+                    if (i % 2 == 0) {
+                        currentBackgroundColor = '#42A5F5';
+                        currentBorderColor = '#1E88E5';
+                    }
+                    else {
+                        currentBackgroundColor = '#9CCC65';
+                        currentBorderColor = '#7CB342';
+                    }
+                    datasets.push({
+                        label: itStatistic._id,
+                        backgroundColor: currentBackgroundColor,
+                        borderColor: currentBorderColor,
+                        data: [itStatistic.resultCount]
+                    });
+                    i++;
+                }
+                _this.dataChartAVGGamesPerDay = {
+                    labels: labels,
+                    datasets: datasets
+                };
+            }
+            catch (e) {
+                _this.errorDataChartAVGGamesPerDay = e.message;
+            }
+        });
+        this.statisticsService.getStatisticsTop5NumberGames()
+            .subscribe(function (response2) {
+            try {
+                console.dir(response2);
+                /*if(response2.length){
+                 throw new Error('No data found!');
+                 }*/
+                //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
+                //this.historicals = response;
+                var numbreOfGames = void 0;
+                //numbreOfGames = response.numbreOfGames;
+                var labels = [];
+                var values = void 0;
+                var datasets = [];
+                var backgroundColor = ["#FF6384", "#36A2EB", "#FFCE56"];
+                var hoverBackgroundColor = ["#FF6384", "#36A2EB", "#FFCE56"];
+                var dataR = [];
+                for (var _i = 0, _a = response2.result; _i < _a.length; _i++) {
+                    var itStatistic2 = _a[_i];
+                    labels.push(itStatistic2._id);
+                    //dataR.push(itStatistic.resultCount)
+                    console.log(itStatistic2);
+                    dataR.push(itStatistic2.resultCount);
+                }
+                console.dir(labels);
+                console.dir(dataR);
+                _this.dataChartTop5PlayerWithMoreGames = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            data: dataR,
+                            backgroundColor: backgroundColor,
+                            hoverBackgroundColor: hoverBackgroundColor
+                        }]
+                };
+            }
+            catch (e) {
+                _this.errorDataChartTop5PlayerWithMoreGames = e.message;
             }
         });
     };
@@ -178,83 +264,14 @@ var HistoricalComponent = (function () {
      * Toogle the Statistics graph on template
      * */
     HistoricalComponent.prototype.toogleStatistics = function () {
-        var _this = this;
         this.hasStatisticsSelected = (this.hasStatisticsSelected) ? false : true;
         if (this.hasStatisticsSelected) {
-            this.statisticsService.getStatisticsAVGGamesDay()
-                .subscribe(function (response) {
-                try {
-                    if (!response.length) {
-                        throw new Error('No data found!');
-                    }
-                }
-                catch (e) {
-                    _this.errorDataChartAVGGamesPerDay = e.message;
-                }
-            });
-            this.statisticsService.getStatisticsTop5NumberGames()
-                .subscribe(function (response) {
-                try {
-                    if (!response.length) {
-                        throw new Error('No data found!');
-                    }
-                }
-                catch (e) {
-                    _this.errorDataChartTop5PlayerWithMoreGames = e.message;
-                }
-            });
-            this.dataChartAVGGamesPerDay = {
-                labels: ['09/12/2016', '15/12/2016', '17/12/2016', '01/12/2121', '21/21/2121'],
-                datasets: [
-                    {
-                        label: '09/12/2016',
-                        backgroundColor: '#42A5F5',
-                        borderColor: '#1E88E5',
-                        data: [3]
-                    },
-                    {
-                        label: '15/12/2016',
-                        backgroundColor: '#9CCC65',
-                        borderColor: '#7CB342',
-                        data: [0, 2]
-                    },
-                    {
-                        label: '15/12/2016',
-                        backgroundColor: '#42A5F5',
-                        borderColor: '#1E88E5',
-                        data: [0, 0, 4]
-                    },
-                    {
-                        label: '15/12/2016',
-                        backgroundColor: '#9CCC65',
-                        borderColor: '#7CB342',
-                        data: [0, 0, 0, 7]
-                    }
-                ]
-            };
-            this.dataChartTop5PlayerWithMoreGames = {
-                labels: ['Tonny do Rock', 'Albino', 'Travolta'],
-                datasets: [
-                    {
-                        data: [300, 50, 100],
-                        backgroundColor: [
-                            "#FF6384",
-                            "#36A2EB",
-                            "#FFCE56"
-                        ],
-                        hoverBackgroundColor: [
-                            "#FF6384",
-                            "#36A2EB",
-                            "#FFCE56"
-                        ]
-                    }]
-            };
         }
     };
     Object.defineProperty(HistoricalComponent.prototype, "diagnostic", {
         /**
-        * DEBUG
-        * */
+         * DEBUG
+         * */
         get: function () { return JSON.stringify(this); },
         enumerable: true,
         configurable: true
