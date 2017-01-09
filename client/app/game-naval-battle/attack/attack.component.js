@@ -16,8 +16,8 @@ var GameAttackComponent = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'my-attack',
-            templateUrl: './game-attack-simao.html',
-            styleUrls: ['./game-attack-simao.css']
+            templateUrl: './game-attack.html',
+            styleUrls: ['./game-attack.css']
         }), 
         __metadata('design:paramtypes', [])
     ], GameAttackComponent);

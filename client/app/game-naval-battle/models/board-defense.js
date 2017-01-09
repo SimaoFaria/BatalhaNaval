@@ -9,15 +9,12 @@ var navio_1 = require("../navio");
 var celula_1 = require("../celula");
 var BoardDefense = (function (_super) {
     __extends(BoardDefense, _super);
-    //private ships: Navio[];
     function BoardDefense() {
         _super.call(this);
     }
     BoardDefense.prototype.adicionaNavioToDefenseBoard = function (tipo, posicoes) {
         var _this = this;
         try {
-            console.log("adicionaNavioToDefenseBoard");
-            //public constructor (tipo: TipoNavio, orientacao: Orientacao, linha: string, coluna: number){
             var navio_2 = new navio_1.Navio(tipo, navio_1.Orientacao.Roda90, 'F', 5);
             navio_2.posicoesOcupadas = posicoes;
             this.posicoesOcupadas = navio_2.calculaPosicoesOcupadas(); //TODO voltar a private
@@ -29,7 +26,6 @@ var BoardDefense = (function (_super) {
             });
         }
         catch (e) {
-            // Alterar para fazer tratamento de erros
             throw e;
         }
     };

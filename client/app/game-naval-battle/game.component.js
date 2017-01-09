@@ -16,36 +16,25 @@ var navio_1 = require("./navio");
 var board_defense_1 = require("./models/board-defense");
 var websocket_service_1 = require('../sockets/notifications/websocket.service');
 var authentication_service_1 = require("../login-register/_services/authentication.service");
+var board_attack_1 = require("./models/board-attack");
 var GameComponent = (function () {
-    //private celulas : number[][];
     function GameComponent(gameService, websocketService, authenticationService) {
-        //document.getElementById('container').innerText='';
         var _this = this;
         this.gameService = gameService;
         this.websocketService = websocketService;
         this.authenticationService = authenticationService;
         this.COLUMNS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.LINES = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-        // this._username = 'Cao de Agua';// = JSON.parse(localStorage.getItem('currentUser')); //TODO passar para o login
         this._username = JSON.parse(localStorage.getItem('currentUser')).username;
-        //DUVIDA(simão) => porquê?
         this.gameService.setUsername(this._username);
         this.playerStateGame = [];
         this.tabuleiro = new tabuleiro_1.Tabuleiro();
-        //TODO so para testar
-        var value = 12;
-        // let username : string;
-        // username = 'Cao de Agua';
-        /*this.gameService.getCurrentGames(username)
-                .subscribe((response) => this.games = response);*/
         this.gameService.getCurrentStateGames(this._username)
             .subscribe(function (response) {
             // console.log("------ No CLIENTE -------");
             // console.dir(response);
             // console.log("------ FIM No CLIENTE -------");
             _this.playerStateGame = response;
-            // this.playerStateGame.forEach((game) => {
-            // });
             //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
             // console.log("------ No CLIENTE -------");
             // console.dir(this.playerStateGame );
@@ -98,10 +87,20 @@ var GameComponent = (function () {
                         }
                     });
                 }
+                else if (json.username !== _this._username) {
+                    _this.playerStateGame.forEach(function (game) {
+                        if (game.idGame === json.idGame) {
+                            game.boardsAttack.forEach(function (boardAttack) {
+                                if (boardAttack.username === json.username) {
+                                    boardAttack.stillInGame = false;
+                                }
+                            });
+                        }
+                    });
+                }
                 console.log("/OBTEU update game status POR SOCKET");
             });
         });
-        //desenhaTabuleiro();
     }
     GameComponent.prototype.addNavioToBoardDefense = function (idGame) {
         document.getElementById('msgerro').innerText = '';
@@ -154,115 +153,6 @@ var GameComponent = (function () {
             document.getElementById('msgerro').innerText = e;
         }
     };
-    // addNavio(_id : string) : void {
-    //   console.log("add navio");
-    //
-    //   document.getElementById('msgerro').innerText='';
-    //   try {
-    //       let tipo = (document.getElementById('tiponavio') as any).value;
-    //       let orient = (document.getElementById('orientacao') as any).value;
-    //       let linha =  (document.getElementById('linha') as any).value;
-    //       if (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'].indexOf(linha) < 0){
-    //           throw Error("Linha Inválida");
-    //       }
-    //
-    //       let coluna =  (document.getElementById('coluna') as any).value;
-    //       let tipoNavio = TipoNavio.PortaAvioes;
-    //       switch (tipo) {
-    //           case "1": tipoNavio = TipoNavio.Couracado;
-    //               break;
-    //           case "2": tipoNavio = TipoNavio.Cruzador;
-    //               break;
-    //           case "3": tipoNavio = TipoNavio.ContraTorpedeiro;
-    //               break;
-    //           case "4": tipoNavio = TipoNavio.Submarino;
-    //               break;
-    //       }
-    //       let orientacao = Orientacao.Normal;
-    //       switch (orient) {
-    //           case "1": orientacao = Orientacao.Roda90;
-    //               break;
-    //           case "2": orientacao = Orientacao.Roda180;
-    //               break;
-    //           case "3": orientacao = Orientacao.Roda270;
-    //               break;
-    //       }
-    //       // Força cast para numero
-    //       let col : number = +coluna;
-    //       this.tabuleiro.adicionaNavio(tipoNavio, orientacao, linha, col);
-    //       //this.games.getTabuleiroDefesaByID(_id).adicionaNavio(tipoNavio, orientacao, linha, col);
-    //
-    //       //console.table(this.tabuleiro);
-    //
-    //       //this.desenhaTabuleiro();
-    //   } catch (e) {
-    //       document.getElementById('msgerro').innerText=e;
-    //   }
-    //
-    // }
-    // ready(idGame: string) : void {
-    //     for(let game of this.playerStateGame) {
-    //         if(game.idGame == idGame) {
-    //             if(game.boardDefense.isConfigDone() === false){
-    //                 alert("Ainda não tem as peças todas");
-    //             }else {
-    //                 // alert("Começar jogo");
-    //                 //console.log(game);
-    //                 //TODO SIMAO estou a usar o websocket aqui uma vez que não dá para trabalhar o response(o gameService devolve o response como undefined)
-    //                 // inicio websockets
-    //                 let json = {
-    //                     myMessage: 'I\'m ready.',
-    //                     othersMessage: 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' is ready.'
-    //                 }
-    //                 this.websocketService.useNotifications(idGame + ' notifications', json);
-    //                 // fim websockets
-    //                 //TODO SIMAO nao faz sentido mudar aqui, so no ultimo a fazer ready ou no gajo que comece o jogo
-    //                 // game.status = PlayerStateGame.gameStatus_toString(GameStatus.INPROGRESS);
-    //                 game.status = PlayerStateGame.gameStatus_toString(GameStatus.READY);
-    //                 this.gameService.putCurrentStateGames(game, true)
-    //                     .subscribe((response: any) => {
-    //                         console.log("response do READY");
-    //                         console.log(response);
-    //                         console.log("/response do READY");
-    //                         // this.websocketService
-    //                         // this.playerStateGame = response; //TODO
-    //                         //
-    //                         // console.log("esperaça!!!");
-    //                         // console.log(this.playerStateGame);
-    //                         // console.log("fim da esperaça!!!");
-    //                         //
-    //                         // console.dir(this.playerStateGame[0].boardDefense.navios);
-    //                         //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
-    //                     });
-    //             }
-    //         }
-    //     }
-    //     // for (let game of this.playerStateGame) {
-    //     //     if(game.idGame == idGame) {
-    //     //
-    //     //         //enivas as cenas para a bd
-    //     //         this.gameService.putCurrentStateGames(game)
-    //     //             .subscribe((response) => {
-    //     //
-    //     //                 // this.playerStateGame = response;
-    //     //                 //
-    //     //                 // console.log("esperaça!!!");
-    //     //                 // console.log(this.playerStateGame);
-    //     //                 // console.log("fim da esperaça!!!");
-    //     //                 //
-    //     //                 // console.dir(this.playerStateGame[0].boardDefense.navios);
-    //     //
-    //     //                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
-    //     //
-    //     //
-    //     //         });
-    //     //
-    //     //         //break; //TODO avriguar a situation
-    //     //     }
-    //     // }
-    //     //se tudo ok
-    //         //mete a cena dos ships invisivel
-    // }
     GameComponent.prototype.ready = function (game) {
         var _this = this;
         if (game.boardDefense.isConfigDone() === false) {
@@ -284,7 +174,6 @@ var GameComponent = (function () {
                         othersMessage: 'Everyone is ready.'
                     };
                     _this.websocketService.useNotifications(game.idGame + ' notifications', json_1);
-                    // TODO nao devia ser feito aqui
                     games.forEach(function (g) {
                         if (g.username === _this._username) {
                             // altero o status do meu jogo
@@ -296,41 +185,21 @@ var GameComponent = (function () {
                 }
             });
         }
-        // for (let game of this.playerStateGame) {
-        //     if(game.idGame == idGame) {
-        //
-        //         //enivas as cenas para a bd
-        //         this.gameService.putCurrentStateGames(game)
-        //             .subscribe((response) => {
-        //
-        //                 // this.playerStateGame = response;
-        //                 //
-        //                 // console.log("esperaça!!!");
-        //                 // console.log(this.playerStateGame);
-        //                 // console.log("fim da esperaça!!!");
-        //                 //
-        //                 // console.dir(this.playerStateGame[0].boardDefense.navios);
-        //
-        //                 //this.playerStateGame[0].boardDefense.adicionaNavio(TipoNavio.PortaAvioes, Orientacao.Normal, 'A', 1);
-        //
-        //
-        //         });
-        //
-        //         //break; //TODO avriguar a situation
-        //     }
-        // }
-        //se tudo ok
-        //mete a cena dos ships invisivel
     };
-    GameComponent.prototype.shot = function (idGame, opponentUsername, line, column) {
+    GameComponent.prototype.shot = function (idGame, opponentUsername, line, column, status, event) {
         //DEGUB
         //alert("Game " + idGame + " Shot on : " + opponentUsername + " line: " + line + " column" + column);
         //alert("username: " + this.authenticationService.username)
         var _this = this;
+        if (event.target.value) {
+            alert("Já atirou nessa celula.");
+            return;
+        }
         var _loop_1 = function(game) {
             if (game.idGame == idGame) {
                 if (game.currentPlayer != this_1.authenticationService.user.username) {
                     alert("Its not your turn. Wait.");
+                    return { value: void 0 };
                 }
                 else {
                     //ver se foi tiro ?
@@ -343,18 +212,18 @@ var GameComponent = (function () {
                         // alert("TIRO: "+ response);
                         // alert("TIRO: "+ response.shot);
                         // resp = response;
-                        // this.playerStateGame = response; //TODO ?
+                        // this.playerStateGame = response;
                         console.log(response);
                         game.nrShotsRemaining = response.nrShotsRemaining;
                         game.currentPlayer = response.currentPlayer;
-                        for (var _i = 0, _a = game.boardsAttack; _i < _a.length; _i++) {
-                            var attackBoard = _a[_i];
-                            if (attackBoard.getUsername() == opponentUsername) {
-                                // TODO não esta a fazer a atualização, ver depois a cena do moodle (restify), BUG a atribuição, se calhar não ira funcionar, porque o depois perde os seus metodos
-                                // attackBoard = response.boardAttack;
-                                attackBoard.setValue(line, column, (response.shot != '' ? 'X' : '0'));
-                            }
+                        // console.log(response.boardAttack);
+                        //codigo a funcionar com o construtor
+                        var arrayBoardsAttk = [];
+                        for (var _i = 0, _a = response.boardAttack; _i < _a.length; _i++) {
+                            var boardAtt = _a[_i];
+                            arrayBoardsAttk.push(new board_attack_1.BoardAttack(boardAtt.username, boardAtt.stillInGame, boardAtt.board));
                         }
+                        game.boardsAttack = arrayBoardsAttk;
                         //inicio websockets
                         var json = {
                             myMessage: 'You shot ' + response.defendingPlayer + '(' + line + ', ' + column + ') and ',
@@ -381,12 +250,11 @@ var GameComponent = (function () {
                             // json.othersMessage = 'Player ' + JSON.parse(localStorage.getItem("currentUser")).username + ' has sank all ' + response.defendingPlayer + ' ships.';
                             json.othersMessage = 'Player ' + _this._username + ' has sank all ' + response.defendingPlayer + ' ships.';
                             _this.websocketService.useNotifications(idGame + ' notifications', json);
-                            // TODO? mandar dados por websocket para o jogador que perdeu? para fazer highlight? talvez sempre que é tiro? ship sank? all ship sank? animar com jquery??
                             // manda por websocket o status ENDED ao jogador que perdeu
                             var updateJson_1 = {
                                 idGame: idGame,
                                 username: opponentUsername,
-                                status: game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.ENDED)
+                                status: game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.ENDED),
                             };
                             _this.websocketService.updateGameStatus(idGame, updateJson_1);
                             console.log(response.gameEnded);
@@ -413,7 +281,8 @@ var GameComponent = (function () {
         var this_1 = this;
         for (var _i = 0, _a = this.playerStateGame; _i < _a.length; _i++) {
             var game = _a[_i];
-            _loop_1(game);
+            var state_1 = _loop_1(game);
+            if (typeof state_1 === "object") return state_1.value;
         }
     };
     GameComponent.prototype.limparTabuleiro = function (idGame) {
@@ -425,44 +294,6 @@ var GameComponent = (function () {
                 game.boardDefense = new board_defense_1.BoardDefense();
             }
         }
-    };
-    GameComponent.prototype.desenhaTabuleiro = function () {
-        /*document.getElementById('msgerro').innerText='';
-        try {
-            document.getElementById('tabela').innerHTML = "";
-            let plainHtml = "";
-            Tabuleiro.todasLinhas().forEach(linha => {
-                plainHtml += "<tr><td>" + linha + "</td>";
-                Tabuleiro.todasColunas().forEach(coluna => {
-                    if (this.tabuleiro.getCelula(linha, coluna).tipo == TipoCelula.Navio)
-                        plainHtml += "<td>X</td>";
-                    else
-                        if (Posicao.existe(new Posicao(linha, coluna), this.tabuleiro.posicoesOcupadas))
-                            plainHtml += "<td>.</td>";
-                        else
-                            plainHtml += "<td>&nbsp</td>";
-  
-                });
-                plainHtml += "</tr>";
-            });
-            plainHtml += "<tr><td></td>";
-            Tabuleiro.todasColunas().forEach(coluna => {
-                    plainHtml += "<td>"+coluna+"</td>";
-            });
-            plainHtml += "</tr>";
-            document.getElementById('tabela').innerHTML = plainHtml;
-  
-  
-            plainHtml = "";
-            document.getElementById('listanavios').innerHTML = "";
-            this.tabuleiro.navios.forEach(navio => {
-                plainHtml += "<li>"+navio.posicao.strValue()+" Tipo=" + navio.tipoNavio+ ", Orientação="+ navio.orientacao+"</li>";
-            });
-            document.getElementById('listanavios').innerHTML = plainHtml;
-            
-        } catch (e) {
-            document.getElementById('msgerro').innerText=e;
-        }*/
     };
     GameComponent.prototype.closeGame = function (idGame) {
         var _this = this;
@@ -483,13 +314,9 @@ var GameComponent = (function () {
             moduleId: module.id,
             selector: 'my-game',
             templateUrl: './game.html',
-            // styles: [`.selected {
-            //   background-color: #CFD8DC !important;
-            //   color: white;
-            // }`]
             styleUrls: [
-                './game-attack-simao.css',
-                './game-defend-simao.css'
+                './game-attack.css',
+                './game-defend.css'
             ]
         }), 
         __metadata('design:paramtypes', [game_service_1.GameService, websocket_service_1.WebSocketService, authentication_service_1.AuthenticationService])

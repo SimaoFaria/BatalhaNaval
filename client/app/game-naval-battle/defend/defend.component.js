@@ -17,8 +17,8 @@ var GameDefendComponent = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'my-defend',
-            templateUrl: './game-defend-simao.html',
-            styleUrls: ['./game-defend-simao.css']
+            templateUrl: './game-defend.html',
+            styleUrls: ['./game-defend.css']
         }), 
         __metadata('design:paramtypes', [])
     ], GameDefendComponent);

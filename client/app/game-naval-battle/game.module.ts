@@ -10,9 +10,6 @@ import { NotificationModule } from '../sockets/notifications/notifications.modul
  * Components
  * */
 import { GameComponent } from './game.component';
-import { GameDefendComponent } from './defend/defend.component';
-import { GameAttackComponent } from './attack/attack.component';
-import { ConfigBoarShipsComponent } from './config-board-ships/config.board.ships.component';
 import { ChatComponent } from '../sockets/chat.component';
 import {AuthenticationService} from "../login-register/_services/authentication.service";
 
@@ -24,10 +21,7 @@ import {AuthenticationService} from "../login-register/_services/authentication.
                   NotificationModule
                    ],
   declarations: [
-                  ConfigBoarShipsComponent,
                   GameComponent,
-                  GameDefendComponent,
-                  GameAttackComponent,
                   ChatComponent,
                  ],
     providers: [ AuthenticationService ]

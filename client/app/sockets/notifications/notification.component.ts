@@ -7,6 +7,8 @@ import {WebSocketService } from './websocket.service';
     selector: 'notification-panel',
     templateUrl: 'notification.component.html'
 })
+
+
 export class NotificationComponent implements OnInit {
     notificationsChannel: string[] = [];
     chatChannel: string[] = [];
@@ -48,18 +50,6 @@ export class NotificationComponent implements OnInit {
                 let text = hours + ' ' + message.user.username+' -> '+message.message;
                 this.chatChannel.push(text);
             } );
-
-        // this.websocketService.getGameMessages('notifications')
-        //     .subscribe( message => {
-        //         this.notificationsChannel.push(message);
-        //     } );
-
-        // this.websocketService.getGameMessages('chat')
-        //     .subscribe( message => {
-        //         let text = '('+this.roomId+') -> '+message.user.username+'---'+message.message;
-        //         this.chatChannel.push(text);
-        //     } );
-
     }
 
 }

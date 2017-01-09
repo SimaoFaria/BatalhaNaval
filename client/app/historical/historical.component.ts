@@ -1,27 +1,3 @@
-//TODO: pesquiasr um id de um game errado e dar mensagem de erro ao inves de rebentar
-//TODO: logica de apresentaçã - butoes disable e enable
-
-//TODO: exemplo de como é os graficos - http://www.primefaces.org/primeng/#/chart/bar
-// this.dataChartAVGGamesPerDay = {
-//     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-//     datasets: [
-//         {
-//             label: 'My First dataset',
-//             backgroundColor: '#42A5F5',
-//             borderColor: '#1E88E5',
-//             dataChartAVGGamesPerDay: [65, 59, 80, 81, 56, 55, 40]
-//         },
-//         {
-//             label: 'My Second dataset',
-//             backgroundColor: '#9CCC65',
-//             borderColor: '#7CB342',
-//             dataChartAVGGamesPerDay: [28, 48, 40, 19, 86, 27, 90]
-//         }
-//     ]
-// }
-
-
-
 import { Component, OnInit  } from '@angular/core';
 
 /**
@@ -36,8 +12,7 @@ import { Historical } from './models/historical';
 import { HistoricalService } from './services/historical.service';
 import {AuthenticationService} from "../login-register/_services/authentication.service";
 import {StatisticsService} from "../services/statistics/statistics.service";
-import {Statistics, Statistic} from "../_models/statistics";
-import {isNumber} from "util";
+import {Statistic, Statistic} from "../_models/statistics";
 import push = require("core-js/fn/array/push");
 
 
@@ -106,10 +81,14 @@ export class HistoricalComponent implements OnInit{
                 throw new Error('To see this option you must be logged in!');
             }
 
-            this.historicalService.getMyHistorical(this.authenticationService.username)
+            console.log(this.authenticationService.user.username);
+
+            this.historicalService.getMyHistorical(this.authenticationService.user.username)
                 .subscribe((response) => {
 
                     try {
+
+                        console.log(response);
 
                         if(!response.length){
                             throw new Error('No data found!');
@@ -166,10 +145,6 @@ export class HistoricalComponent implements OnInit{
                         throw new Error('No data found!');
                     }
 
-                    //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
-                    //this.historicals = response;
-
-
                     let statistics : Statistic[] = [];
                     let labels : string[] = [];
                     let datasets : any[] = [];
@@ -207,6 +182,9 @@ export class HistoricalComponent implements OnInit{
                         datasets: datasets
                     };
 
+                    console.log("xxxxxxx");
+                    console.dir(this.dataChartAVGGamesPerDay);
+                    console.log("xxxxxxx");
 
                 }catch (e) {
                     this.errorDataChartAVGGamesPerDay = e.message;
@@ -225,8 +203,6 @@ export class HistoricalComponent implements OnInit{
                      throw new Error('No data found!');
                      }*/
 
-                    //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
-                    //this.historicals = response;
 
                     let numbreOfGames : number;
                     //numbreOfGames = response.numbreOfGames;
@@ -258,26 +234,6 @@ export class HistoricalComponent implements OnInit{
                                 hoverBackgroundColor: hoverBackgroundColor
                             }]
                     };
-
-                    /*this.dataChartTop5PlayerWithMoreGames = {
-                     labels: ['Tonny do Rock','Albino','Travolta'],
-                     datasets: [
-                     {
-                     data: [300, 50, 100],
-                     backgroundColor: [
-                     "#FF6384",
-                     "#36A2EB",
-                     "#FFCE56"
-                     ],
-                     hoverBackgroundColor: [
-                     "#FF6384",
-                     "#36A2EB",
-                     "#FFCE56"
-                     ]
-                     }]
-                     };*/
-
-
 
                 }catch (e) {
                     this.errorDataChartTop5PlayerWithMoreGames = e.message;
@@ -329,7 +285,7 @@ export class HistoricalComponent implements OnInit{
                         this.verifyResults(response);
                     });
                 break;
-            default : ;//TODO ERRO? mostrar onde?
+            default : ;
         }
     }
 
@@ -339,11 +295,6 @@ export class HistoricalComponent implements OnInit{
     public verifyResults(response) : void {
 
         try {
-
-            //TODO como fazer quando a resposta devolvida é um erro EX 500 nternel server error
-            // if(response.hasOwnProperty('code')){
-            //     throw new Error('ERROR:\n' + 'code: ' + response.code + ' message: ' + response.message);
-            // }
 
             if(!response.length){
                 throw new Error('No data found for ' + this.selectedFilterString + ' => ' + this.valueToSearch);
@@ -374,57 +325,7 @@ export class HistoricalComponent implements OnInit{
 
         if(this.hasStatisticsSelected) {
 
-
-
-            /*this.dataChartAVGGamesPerDay = {
-             labels: ['09/12/2016', '15/12/2016', '17/12/2016', '01/12/2121', '21/21/2121'],
-             datasets: [
-             {
-             label: '09/12/2016',
-             backgroundColor: '#42A5F5',
-             borderColor: '#1E88E5',
-             data: [3]
-             },
-             {
-             label: '15/12/2016',
-             backgroundColor: '#9CCC65',
-             borderColor: '#7CB342',
-             data: [0, 2]
-             },
-             {
-             label: '15/12/2016',
-             backgroundColor: '#42A5F5',
-             borderColor: '#1E88E5',
-             data: [0, 0, 4]
-             },
-             {
-             label: '15/12/2016',
-             backgroundColor: '#9CCC65',
-             borderColor: '#7CB342',
-             data: [0, 0, 0, 7]
-             }
-             ]
-             };*/
-
-            /*this.dataChartTop5PlayerWithMoreGames = {
-             labels: ['Tonny do Rock','Albino','Travolta'],
-             datasets: [
-             {
-             data: [300, 50, 100],
-             backgroundColor: [
-             "#FF6384",
-             "#36A2EB",
-             "#FFCE56"
-             ],
-             hoverBackgroundColor: [
-             "#FF6384",
-             "#36A2EB",
-             "#FFCE56"
-             ]
-             }]
-             };*/
         }
-
     }
 
     /**

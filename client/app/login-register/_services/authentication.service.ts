@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Headers, Response, RequestOptions } from '@angular/http';
+import { Http, Response } from '@angular/http';
 
 import { User } from '../_models/user';
 
@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-//import Observable =
 
 @Injectable()
 export class AuthenticationService {
@@ -78,21 +77,11 @@ export class AuthenticationService {
         this.username = null;
     }
 
-    /**
-     *
-     * retornar o nome do utilizador ?????????????????
-     * @param username
-     * @returns {any}
-     */
+
     getUser(username:string):Observable<any>{
-        //console.log(" ver: "+this.token)
-        //let headers = new Headers({ 'Authorization': 'Bearer '+this.token });
-        //let options = new RequestOptions({ headers: headers });
 
         return this.http.get('api/v1/players/'+username /*, options*/)
             .map((response) => {return response.json()});
-
-        //return this.user;
     }
 
     getIfUserExist (username:string) : Observable<boolean>{
@@ -118,7 +107,6 @@ export class AuthenticationService {
 
         console.log(errMsg);
         return false;
-        //return Observable.throw(errMsg);
     }
 
     create(username: string, password: string, email: string, confirmPassword:string) : Observable<boolean>{

@@ -1,8 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {WebSocketService } from './notifications/websocket.service';
 
-import { AuthService } from './auth.service';
-
 @Component({
     moduleId: module.id,
     selector: 'chat-control',
@@ -13,8 +11,8 @@ export class ChatComponent implements OnInit{
 
     @Input() roomId: string;
 
-    constructor(private websocketService: WebSocketService,
-                private authService: AuthService) {
+    constructor(private websocketService: WebSocketService
+               ) {
                     // console.log("this.chatRoom");
                     // console.log(this.chatRoom);
                 }
@@ -23,7 +21,7 @@ export class ChatComponent implements OnInit{
         // console.log("chat this.chatRoom");
         // console.log(this.chatRoom);
 
-        //TODO isto poderia estar num component diferente, no game, fazer depois
+
         let json = {
             // user:this.authService.user,
             user: {

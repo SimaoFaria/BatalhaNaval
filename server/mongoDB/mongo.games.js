@@ -541,6 +541,7 @@ function startGame(request, response, next){
 
 							var p = {
 								"username" : pl.username,
+								"stillInGame" : true,
 								"board" : []
 							}
 							otherPlayers.push(p);
@@ -834,6 +835,8 @@ function getHasShot(request, response, next){
 	var column = body.column;
 	var username = body.username;
 
+	console.log("###=>OPONENTE: " + opponentUsername);
+
 	var jsonResponse = {
 		hit: false,
 		shot: '',
@@ -1103,16 +1106,22 @@ function getHasShot(request, response, next){
 				var newAttack = {
 					"line" : line,
 					"column" : column,
-					"value" : hit ? 'X' : '0'
+					"value" : hit ? 'X' : '0',
+					"sank" : false // prop usada depois no fim para pintar
 				}
 				opponent.board.push(newAttack);
 
-				// esta linha é para passar os dados para o cliente
-				// TODO talvez deveria ser feito depois do update com sucesso mas é granda volta a meu ver, discutir
-				jsonResponse.boardAttack = opponent.board;
+				console.log("jsonResponse.allShipsSanked")
+				console.log(jsonResponse.allShipsSanked)
+
+				if (jsonResponse.allShipsSanked) {
+					opponent.stillInGame = false;
+				}
 			}
 		}
 
+		jsonResponse.boardAttack = boardsAttack;
+		
 		console.log('	5 - addShotToMyBoardAttack');
 		return boardsAttack;
 	}
@@ -1249,13 +1258,13 @@ function getHasShot(request, response, next){
 					console.log(err);
 				} else {
 					// callback = findPlayersWhoLost
-					callback(updateMyStatusInGame);
+					callback(paintAllCeelsShipShank);
 				}
 			}
 		);
 	}
 
-	function findPlayersWhoLost(callback) {		
+	function findPlayersWhoLost(callback){
 		console.log('10 - findPlayersWhoLost')
 		
 		database.db.collection("games-details").find(
@@ -1285,23 +1294,27 @@ function getHasShot(request, response, next){
 							console.log(err);
 						} else {
 
-							if (allPlayersDefeated(stateGames)) {
-								jsonResponse.gameEnded = true;
+							callback(idGame, username, opponentUsername, line, column, stateGames, updateMyStatusInGame);
 
-								var gameStatus = 'ENDED';
-								var gameWon = true;
+							// if (allPlayersDefeated(stateGames)) {
+							// 	jsonResponse.gameEnded = true;
+
+							// 	var gameStatus = 'ENDED';
+							// 	var gameWon = true;
 								
-								// callback = updateMyStatusInGame
-								callback(gameStatus, gameWon, stateGames, updateStatusInGame);
-							} else {
+							// 	// callback = updateMyStatusInGame
+							// 	callback(gameStatus, gameWon, stateGames, updateStatusInGame);
 
-								console.log('FIM getHasShot')
-								response.json(jsonResponse)
-							}
+							// } else {
+
+							// 	// callbackToPaint(idGame, username, opponentUsername, line, column);
+							// 	console.log('FIM getHasShot')
+							// 	response.json(jsonResponse)
+							// }
 						}
 					});
 				}
-			} 
+			}
 		); 
 	}
 
@@ -1346,6 +1359,7 @@ function getHasShot(request, response, next){
 
 					// callback = updateStatusInGame
 					callback(stateGameStatus, playersStats, winner, obtainPlayerStats);
+
 				}
 			}
 		);
@@ -1393,6 +1407,117 @@ function getHasShot(request, response, next){
 		return playersStats;
 	}
 
+	function paintAllCeelsShipShank(idGame, myUsername, oponentUsername, line, column, stateGames, callback) {
+
+		console.log("#######################################");
+
+		//Buscar as celulas do navia que acabu de afundar
+		database.db.collection("games-details").find({ idGame: idGame, username : { $in : [myUsername , oponentUsername]}}).toArray(function(err, result) {
+
+				if (err) {
+					console.log(err);
+				} else {
+
+					var count = 0;
+					var occupiedPositions = [];
+
+					//1 - ir buscar as possioes ocupados do navio
+					for(var game of result) {
+
+						if(game.username == oponentUsername) {
+
+							for (var ship of game.boardDefense) {
+
+								for (var position of ship.occupiedPositions) {
+
+									if(position.position.line == line &&
+										position.position.column == column){
+
+										occupiedPositions = ship.occupiedPositions;
+									}
+								}
+							}
+						}
+					}
+
+					for(var game of result) {
+						if (game.username == myUsername) {
+
+							for (var boardAttack of game.boardsAttack) {
+								
+								if(boardAttack.username == oponentUsername) {
+									for(var cell of boardAttack.board) {
+										for(var cellToPaint of occupiedPositions) {
+											if(cellToPaint.position.line == cell.line &&
+												cellToPaint.position.column == cell.column) {
+
+												count++;
+											}
+										}
+									}
+
+									if(count == occupiedPositions.length && occupiedPositions.length != 0){
+
+										for(var cellAttack of boardAttack.board) {
+
+											for(var cellOcup of occupiedPositions) {
+
+												if(cellOcup.position.line == cellAttack.line &&
+													cellOcup.position.column == cellAttack.column) {
+													
+													cellAttack.sank = true;
+												}
+											}
+										}
+									}
+								}								
+							}
+
+							var boardsAttackToUpdate = game.boardsAttack;
+
+							database.db.collection("games-details").updateOne(
+								{ _id : game._id, username: myUsername },
+								{
+									$set: {
+										boardsAttack : boardsAttackToUpdate
+									}
+								},
+								function(err, resu) {
+
+									if (err) {
+										console.log(err);
+									} else {
+
+										jsonResponse.boardAttack = boardsAttackToUpdate;
+
+										// console.log('FIM getHasShot')
+										// response.json(jsonResponse);
+
+										if (allPlayersDefeated(stateGames)) {
+											jsonResponse.gameEnded = true;
+
+											var gameStatus = 'ENDED';
+											var gameWon = true;
+											
+											// callback = updateMyStatusInGame
+											callback(gameStatus, gameWon, stateGames, updateStatusInGame);
+
+										} else {
+
+											// callbackToPaint(idGame, username, opponentUsername, line, column);
+											console.log('FIM getHasShot')
+											response.json(jsonResponse)
+										}
+									}
+								}
+							);
+						}
+					}
+				}
+			}
+		);
+	}
+
 	function updateStatusInGame(gameStatus, players, winner, callback) {
 		console.log('14 - updateStatusInGame')
 		database.db.collection("games").updateOne(
@@ -1417,7 +1542,13 @@ function getHasShot(request, response, next){
 						callback(player, updatePlayerScoreAndVictories);
 					}
 
-					console.log('FIM getHasShot3 com GAME a ENDED')
+
+
+
+
+
+
+					console.log('FIM getHasShot com GAME a ENDED')
 					response.json(jsonResponse)
 				}
 			}

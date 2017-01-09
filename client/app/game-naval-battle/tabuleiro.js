@@ -59,7 +59,7 @@ var Tabuleiro = (function () {
             if (this.currentValues[navio_1.Navio.type_toString(tipo)] + 1 > this.getMaxShipsPerTypeByType(tipo)) {
                 throw new Error('Numero maximo de barcos dos tipo ' + navio_1.Navio.type_toString(tipo) + " é " + this.getMaxShipsPerTypeByType(tipo));
             }
-            this.currentValues[navio_1.Navio.type_toString(tipo)]++;
+            //this.currentValues[Navio.type_toString(tipo)]++;
             // console.log("Mais um barco =======================================================>" + tipo + " current number: " + this.getMaxShipsPerTypeByType(tipo));
             var navio_3 = new navio_1.Navio(tipo, orientacao, linha, coluna);
             if (posicao_1.Posicao.conflito(navio_3.posicoesOcupadas, this.posicoesOcupadas)) {
@@ -70,6 +70,7 @@ var Tabuleiro = (function () {
             });
             this.posicoesOcupadas = posicao_1.Posicao.merge(this.posicoesOcupadas, navio_3.posicoesVizinhas);
             this.navios.push(navio_3);
+            this.currentValues[navio_1.Navio.type_toString(tipo)]++;
             return navio_3;
         }
         catch (e) {

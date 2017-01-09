@@ -4,7 +4,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const sha1 = require('sha1');
 
-let security = module.exports = {};
+var security = module.exports = {};
 security.passport = passport;
 
 security.initMiddleware = function(server) {

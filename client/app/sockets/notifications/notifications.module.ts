@@ -9,4 +9,6 @@ import { NotificationComponent }  from './notification.component';
   declarations: [ NotificationComponent ],
   exports:      [ NotificationComponent]
 })
+
+
 export class NotificationModule { }

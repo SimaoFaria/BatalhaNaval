@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
     
 import { Game, PlayerStateGame, GameStatus } from '../game-naval-battle/game';
-import { GameWithoutId } from '../game-naval-battle/game';
 import { GameLobbyService } from './game-lobby.service';
 import { GamingPlayer } from '../_models/player';
 import {AuthenticationService} from "../login-register/_services/authentication.service";
@@ -10,7 +9,6 @@ import {AuthenticationService} from "../login-register/_services/authentication.
     moduleId: module.id,
     selector: 'my-game-lobby',
     templateUrl: './game-lobby.html',
-    styleUrls: [ './game-lobby.css'],
     providers: [ GameLobbyService]
 })
 
@@ -139,6 +137,9 @@ export class GameLobbyComponent{
         this.gameInRoomService.startGame(game._id, gameToStart)
             .subscribe((response: any) => {
 
+                if(response.ok) {
+                    game.status = response.game.status
+                }
             });
     }
 

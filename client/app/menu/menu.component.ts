@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {Router} from "@angular/router";
 import {AuthenticationService} from "../login-register/_services/authentication.service";
 
 @Component({
@@ -12,9 +11,7 @@ export class MenuComponent {
     public hasLogged: boolean;
 
     constructor(
-        private router: Router,
         private authenticationService: AuthenticationService) {
-
         this.hasLogged = authenticationService.hasLogged;
     }
 

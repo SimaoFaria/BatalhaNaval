@@ -1,7 +1,7 @@
 const authentication = module.exports = {};
 
 function login(request, response, next) {
-    let player = request.user;
+    var player = request.user;
     response.json(player);
     return next();
 }

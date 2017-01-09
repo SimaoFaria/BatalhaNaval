@@ -16,29 +16,11 @@ var Game = (function () {
         this.endDate = game.endDate;
         this.status = game.status;
         this.winner = game.winner;
-        // TODO confirmar se ainda é preciso
-        // deep clone para não atualizar na vista diretamente
         this.players = JSON.parse(JSON.stringify(game.players));
     }
     return Game;
 }());
 exports.Game = Game;
-//TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
-//TODO apagar
-var GameWithoutId = (function () {
-    function GameWithoutId(game) {
-        this.aborted = game.aborted;
-        this.createdBy = game.createdBy;
-        this.startDate = game.startDate;
-        this.endDate = game.endDate;
-        this.status = game.status;
-        this.winner = game.winner;
-        //deep clone para não atualizar na vista diretamente
-        this.players = JSON.parse(JSON.stringify(game.players));
-    }
-    return GameWithoutId;
-}());
-exports.GameWithoutId = GameWithoutId;
 /**
  * Description: Class that save a state of the game
  * */
@@ -51,16 +33,6 @@ var PlayerStateGame = (function () {
         this.isPlaying = isPlaying;
         this.won = won;
     }
-    Object.defineProperty(PlayerStateGame.prototype, "username", {
-        get: function () {
-            return this._username;
-        },
-        set: function (value) {
-            this._username = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
     PlayerStateGame.gameStatus_toString = function (gameStatus) {
         var gameStatusString = null;
         switch (gameStatus) {
@@ -86,10 +58,11 @@ var PlayerStateGame = (function () {
 }());
 exports.PlayerStateGame = PlayerStateGame;
 var CellAttack = (function () {
-    function CellAttack(line, column, value) {
+    function CellAttack(line, column, value, sank) {
         this.line = line;
         this.column = column;
         this.value = value;
+        this.sank = sank;
     }
     return CellAttack;
 }());

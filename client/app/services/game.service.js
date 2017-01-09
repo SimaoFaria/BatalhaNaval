@@ -15,12 +15,14 @@ var board_defense_1 = require("../game-naval-battle/models/board-defense");
 var posicao_1 = require("../game-naval-battle/posicao");
 var navio_1 = require("../game-naval-battle/navio");
 var board_attack_1 = require("../game-naval-battle/models/board-attack");
+var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameService = (function () {
-    function GameService(http) {
+    function GameService(http, auth) {
         this.http = http;
+        this.auth = auth;
         this.playerStateGame = [];
+        this.token = this.auth.token;
     }
-    //TODO [DUVIDA] não da para passar no contrutor no gamecomponent o utilizador??
     GameService.prototype.setUsername = function (username) {
         this._username = username;
     };
@@ -28,8 +30,6 @@ var GameService = (function () {
         var _this = this;
         return this.http.get('/api/v1/current-games/' + username)
             .map(function (response) { return _this.games = response.json(); });
-        //TODO
-        //por o json num arrya de game para mandar para o cliente
     };
     /**
      *
@@ -40,6 +40,8 @@ var GameService = (function () {
         // console.log("opponentUsername:"+opponentUsername);
         // console.log("line:"+line);
         // console.log("column"+column);
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
         var bodyJSONObj = {
             "opponentUsername": opponentUsername,
             "line": line,
@@ -56,6 +58,8 @@ var GameService = (function () {
      * */
     GameService.prototype.putCurrentStateGames = function (playerStateGame, updateStatus) {
         var _this = this;
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
         var shipsforBD = [];
         for (var _i = 0, _a = playerStateGame.boardDefense.navios; _i < _a.length; _i++) {
             var navio = _a[_i];
@@ -85,23 +89,6 @@ var GameService = (function () {
         var body = bodyJSON;
         return this.http.put('/api/v1/current-state-games/' + playerStateGame.idGame, body)
             .map(function (response) {
-            // {
-            //TODO [DUVIDA] procurar na lista o jogo atualizado e guardar na variavel? mesmo o jogo nao tendo mudado?))
-            //     for (let game of this.playerStateGame) {
-            //         if(game.idGame === response.json().idGame){
-            //             game.boardDefense = null;
-            //             game.boardDefense = new BoardDefense();
-            //             let naviosJSON = response.json().boardDefense;
-            //             for (let navio of naviosJSON) {
-            //                 game.boardDefense.adicionaNavio(
-            //                     Navio.convertTypeToEnumTipoNavio(navio.type),
-            //                     Navio.convertOrientationToEnumOrientacao(navio.orientation),
-            //                     navio.position.line,
-            //                     navio.position.column);
-            //             }
-            //         }
-            //     }
-            // }
             return _this.playerStateGame = response.json();
         });
     };
@@ -119,7 +106,6 @@ var GameService = (function () {
                 var boardDefense;
                 boardDefense = new board_defense_1.BoardDefense();
                 //tabuleiro 0 é o da defesa
-                //TODO a prop boardDefense não foi declarada como array provavelmente
                 playerStateGame.boardDefense.forEach(function (ship) {
                     var orientation = ship.orientation;
                     var line = ship.position.line;
@@ -130,7 +116,6 @@ var GameService = (function () {
                     var ship_orientation;
                     var ship_position;
                     var ship_type;
-                    //TODO fazer pela foreach pela lista de enumns para ORIENTACAO e TIPOBARCO
                     switch (orientation) {
                         case 'Normal':
                             ship_orientation = navio_1.Orientacao.Normal;
@@ -173,6 +158,7 @@ var GameService = (function () {
                         var attackBoard = _a[_i];
                         // console.dir(attackBoard);
                         var username_1 = attackBoard.username;
+                        var stillInGame = attackBoard.stillInGame;
                         // console.log("username :" + username);
                         // let board : CellAttack[] = attackBoard.board;
                         // // console.log("board :");
@@ -183,18 +169,18 @@ var GameService = (function () {
                             // console.log("line: "+cell.line);
                             // console.log("column: "+cell.column);
                             // console.log("value: "+cell.value);
-                            boardAttack.push(new game_1.CellAttack(cell.line, cell.column, cell.value));
+                            boardAttack.push(new game_1.CellAttack(cell.line, cell.column, cell.value, cell.sank));
                         }
                         // console.dir(boardAttack);
-                        var bo = new board_attack_1.BoardAttack(username_1, boardAttack);
+                        var bo = new board_attack_1.BoardAttack(username_1, stillInGame, boardAttack);
                         // console.log("bo");
                         // console.dir(bo);
                         boardsAttack.push(bo);
                     }
                 }
                 var playerStateGameDs = new game_1.PlayerStateGame(playerStateGame.idGame, playerStateGame.status, boardDefense, boardsAttack, playerStateGame.isPlaying, playerStateGame.won);
-                playerStateGameDs.user = playerStateGame.username;
-                // TODO por mim isto ia para o construtor
+                // playerStateGameDs.user = playerStateGame.username;
+                playerStateGameDs._username = playerStateGame.username;
                 playerStateGameDs.currentPlayer = playerStateGame.currentPlayer;
                 playerStateGameDs.nrShotsRemaining = playerStateGame.nrShotsRemaining;
                 //playerStateGameDs._username = playerStateGame.username;
@@ -214,103 +200,8 @@ var GameService = (function () {
             // console.log("-----------server side----------");
             return _this.playerStateGame;
         });
-        // getCurrentStateGames_ANTIIGO(username : string):Observable<PlayerStateGame[]>{
-        //
-        //         /*return this.http.get('/api/v1/current-state-games/' + username)
-        //          .map((response) => this.playerStateGame = response.json());*/
-        //
-        //         return this.http.get('/api/v1/current-state-games/' + username)
-        //             .map(response => <PlayerStateGame[]>response.json())
-        //             .map((playerStateGames) => {
-        //
-        //                 this.playerStateGame = [];
-        //
-        //                 playerStateGames.forEach((playerStateGame) => {
-        //
-        //                     let boardDefense : BoardDefense;
-        //                     boardDefense = new BoardDefense();
-        //
-        //                     playerStateGame.players[0].tabuleiros[0].boardDefense.forEach((ship) => {
-        //
-        //                         // console.log("XXXXXXXXXXXXXXXXX");
-        //                         // console.log(ships);
-        //                         // console.log("XXXXXXXXXXXXXXXXX");
-        //
-        //                         //let type = ship.type; //TODO
-        //                         let type = TipoNavio.PortaAvioes;
-        //
-        //
-        //                         let allPositions: Posicao[] = [];
-        //                         ship.positions.forEach((position) => {
-        //                             allPositions.push(new Posicao(position.line.toString(), position.column));
-        //                             console.log("position=> linha: "+ "'" +position.line.toString() + "coluna: "+ "'" + position.column + "'" );
-        //                         });
-        //
-        //                         console.log("allPositions: ");
-        //                         console.dir(allPositions);
-        //
-        //
-        //                         console.log("passou antes....");
-        //                         boardDefense.adicionaNavioToDefenseBoard(type, allPositions);
-        //
-        //                         console.log("passou....");
-        //
-        //                     });
-        //
-        //                     // console.log("##################################");
-        //                     // console.log(playerStateGame.players[0].tabuleiros[0]);
-        //                     // console.log("##################################");
-        //
-        //                     this.playerStateGame.push(
-        //                         new PlayerStateGame(
-        //                             playerStateGame._id,
-        //                             playerStateGame.status,
-        //                             boardDefense
-        //                         )
-        //                     )
-        //
-        //                 });
-        //
-        //                 console.log("-----------server side----------");
-        //                 console.log(playerStateGames);
-        //                 console.log("-----------server side----------");
-        //
-        //
-        //                 return this.playerStateGame;
-        //             });
-        // return this.http.get('/api/v1/current-state-games/' + username)
-        //     .map((response) => {
-        //
-        //         console.log("-------------------");
-        //         let size = response.json().length;
-        //         if(size > 0){
-        //
-        //                 /*console.log(response.json()[1]._id);
-        //                 console.log(response.json()[1].players[0].tabuleiros[0]);
-        //
-        //                 return [{
-        //                     id: response.json()[0]._id,
-        //                     status: response.json()[0].status,
-        //                     boardDefense: response.json()[0].players[0].tabuleiros[0]
-        //                 },
-        //                     {
-        //                         id: response.json()[1]._id,
-        //                         status: response.json()[1].status,
-        //                         boardDefense: response.json()[1].players[0].tabuleiros[0]
-        //                     }
-        //                 ];*/
-        //
-        //         }else{
-        //             this.playerStateGame = response.json(); //[]
-        //         }
-        //
-        //
-        //         console.log("-------------------");
-        //
-        //     });
     };
     GameService.prototype.putReadyOnGame = function (game) {
-        //PROPS a alterar -> status e boardDefense
         game.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.READY);
         var shipsforBD = [];
         for (var _i = 0, _a = game.boardDefense.navios; _i < _a.length; _i++) {
@@ -337,7 +228,7 @@ var GameService = (function () {
     GameService._G_BOARDDEFENSE = 0;
     GameService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, authentication_service_1.AuthenticationService])
     ], GameService);
     return GameService;
 }());

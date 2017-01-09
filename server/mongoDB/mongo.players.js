@@ -7,8 +7,7 @@ var players = module.exports = {};
 const sha1 = require('sha1');
 
 function getPlayers(request, response, next){
-	// TODO: query players collection 
-	// and return a JSON response will all players
+
 	database.db.collection("players").find({}).toArray(function(err, players) {
 		if(err) {
         console.log(err);
@@ -21,8 +20,7 @@ function getPlayers(request, response, next){
 }
 
 function getTop10Victories(request, response, next){
-	// TODO: query players collection 
-	// and return a JSON response will all players
+
 	database.db.collection("players").find({}).sort( { "totalVictories": -1 } ).toArray(function(err, players) {
 		if(err) {
         console.log(err);
@@ -35,8 +33,7 @@ function getTop10Victories(request, response, next){
 }
 
 function getTop10Points(request, response, next){
-	// TODO: query players collection 
-	// and return a JSON response will all players
+
 	database.db.collection("players").find({}).sort( { "totalPoints": -1 } ).toArray(function(err, players) {
 		if(err) {
         console.log(err);
@@ -49,9 +46,7 @@ function getTop10Points(request, response, next){
 }
 
 function getPlayer(request, response, next){
-	// TODO: obtain one player (by ObjectID) from players collection 
-	// and return a JSON response with that player
-	// Endpoint URL example: api/v1/players/34299dfa515f3da86af58060
+
 	var id = new mongodb.ObjectID(request.params.id);
 	database.db.collection("players").findOne({_id:id},function(err, player) {
 		if(err) {
@@ -65,9 +60,7 @@ function getPlayer(request, response, next){
 }
 
 function updatePlayer(request, response, next){
-	// TODO: updates one player of the players collection
-	// from the object sent on the request body. 
-	// Return a JSON response with that player  	
+
 	var id = new mongodb.ObjectID(request.params.id);
 	var player = request.body;
 	player._id = id;
@@ -91,9 +84,6 @@ function updatePlayer(request, response, next){
 }
 
 function createPlayer(request, response, next){
-	// TODO: create a new player and save it on the players collection
-	// New player dataChartAVGGamesPerDay is obtained from the object sent on the request body.
-	// Return a JSON response with that player  
 
 	const player = request.body;
     player.passwordHash = sha1(player.password);
@@ -108,36 +98,16 @@ function createPlayer(request, response, next){
         return next();
     }
 
+    player.totalVictories = 0;
+    player.totalPoints = 0;
+
     database.db.collection('players')
         .insertOne(player)
         .then(result => returnPlayer(result.insertedId, response, next))
         .catch(err => handleError(err, response, next));
-
-
-
-	// database.db.collection("players").insertOne(player,function(err, result) {
-	// 	if(err) {
-  //       console.log(err);
-  //       next();
-  //   } else {
-  //   	console.log (result);
-  //   	var id = result.insertedId;
-	//     database.db.collection("players").findOne({_id:id},function(err, player) {
-	//   		if(err) {
-	// 	        console.log(err);
-	// 	        next();
-	// 	    } else {
-	// 		    response.json(player);
-	// 		    next();
-	// 	    }
-	// 	  });
-  //   }
-  // });
 }
 
 function deletePlayer(request, response, next){
-	// TODO: removes one player from the players collection
-	// Return a JSON response with a message "Player -XXX- Deleted"
 
 	var id = new mongodb.ObjectID(request.params.id);
 	database.db.collection("players").deleteOne({_id:id},function(err, result) {
@@ -152,8 +122,10 @@ function deletePlayer(request, response, next){
 }
 
 function getUser(request, response, next) {
+
     const username = request.params.id;
     console.log("testejhg");
+
     database.db.collection('players')
     .findOne({
         username: username

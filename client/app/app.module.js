@@ -11,23 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
 var forms_1 = require('@angular/forms');
-var http_1 = require('@angular/http'); //TODO Faz sentido?
+var http_1 = require('@angular/http');
 var app_component_1 = require('./app.component');
 var app_routing_module_1 = require('./app-routing.module');
 var historical_module_1 = require('./historical/historical.module');
 var top10_module_1 = require('./top10/top10.module');
 var game_module_1 = require('./game-naval-battle/game.module');
 var game_lobby_component_1 = require('./game-lobby/game-lobby.component');
-// import { SocketsComponent} from './sockets/sockets.component';
 var game_service_1 = require('./services/game.service');
-var auth_service_1 = require('./sockets/auth.service');
 var websocket_service_1 = require('./sockets/notifications/websocket.service');
 var auth_guard_1 = require('./login-register/_guards/auth.guard');
 // import { routing }        from './app.routing';
 var authentication_service_1 = require('./login-register/_services/authentication.service');
 var menu_module_1 = require("./menu/menu.module");
 var login_module_1 = require('./login-register/login.module');
-// import { ChatComponent } from './sockets/chat.component';
 var AppModule = (function () {
     function AppModule() {
     }
@@ -37,7 +34,7 @@ var AppModule = (function () {
                 forms_1.FormsModule,
                 http_1.HttpModule,
                 app_routing_module_1.AppRoutingModule,
-                //GameLobbyModule, //TODO porque rebenta, seria necessáro importa estes
+                //GameLobbyModule,
                 historical_module_1.HistoricalModule,
                 login_module_1.LoginModule,
                 top10_module_1.Top10Module,
@@ -50,7 +47,6 @@ var AppModule = (function () {
             ],
             providers: [
                 game_service_1.GameService,
-                auth_service_1.AuthService,
                 websocket_service_1.WebSocketService,
                 authentication_service_1.AuthenticationService,
                 auth_guard_1.AuthGuard,
@@ -62,5 +58,4 @@ var AppModule = (function () {
     return AppModule;
 }());
 exports.AppModule = AppModule;
-//TODO verificiar se todos os componentes tem module.id 
 //# sourceMappingURL=app.module.js.map

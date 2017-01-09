@@ -1,11 +1,12 @@
 <div class="container">
 
-    <div class="panel panel-default" *ngFor="let game of playerStateGame" id="{{game.idGame}}">
+    <div class="panel panel-default" *ngFor="let game of playerStateGame" id="{{game.idGame}}" style="background-color: #f5f5f0">
 
         <!--<div *ngIf="game.status != 'ENDED'">-->
         <div *ngIf="game.isPlaying">
 
-            <div class="panel-heading">ID: {{game.idGame}}</div>
+
+            <div class="panel-heading">ID: {{game.idGame}} <span>USERNAME: {{game._username}}</span></div>
             <div class="panel-body">
 
                 <div class="panel panel-default">
@@ -62,7 +63,7 @@
                             <h5><span style="font-weight: bold">Shots Remmaining:</span> {{game.nrShotsRemaining}}</h5>
                         </div>
 
-                        <table id=tabela style="background-color:#337ab7;float:left;">
+                        <table id=tabela style="background-color:#337ab7;float:left;margin: 5px;">
                             <tr *ngFor="let line of LINES" class="dad-row">
                                 <td readonly class="dad-cell">{{line}}</td>
                                 <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
@@ -77,13 +78,12 @@
                         </table>
 
                         <div *ngIf="game.status == 'INPROGRESS' || game.status == 'ENDED'">
-                            <table border=1 style="background-color:firebrick;float:left;" *ngFor="let boardAttack of game.boardsAttack">
+                            <table border=1 style="background-color:firebrick;float:left;margin: 5px;" *ngFor="let boardAttack of game.boardsAttack">
                                 <tr *ngFor="let line of LINES" class="dad-row">
                                     <td readonly class="dad-cell">{{line}}</td>
                                     <td readonly *ngFor="let column of COLUMNS" class="dad-cell">
-                                        <input readonly type="text" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column)"
-                                        />
-                                    </td>
+                                        <input readonly [disabled]="!boardAttack.stillInGame" type="text" [style.background-color]="boardAttack.getSank(line, column)" value="{{boardAttack.getValue(line, column)}}" (click)="shot(game.idGame, boardAttack.username, line, column, game.status, $event)"/>
+                                     </td>
                                     <!--<p style="visibility: hidden">{{game.userOnTable == boardAttack.username}}</p>-->
 
                                 </tr>

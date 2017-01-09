@@ -18,9 +18,6 @@ var notifications_module_1 = require('../sockets/notifications/notifications.mod
  * Components
  * */
 var game_component_1 = require('./game.component');
-var defend_component_1 = require('./defend/defend.component');
-var attack_component_1 = require('./attack/attack.component');
-var config_board_ships_component_1 = require('./config-board-ships/config.board.ships.component');
 var chat_component_1 = require('../sockets/chat.component');
 var authentication_service_1 = require("../login-register/_services/authentication.service");
 var GameNavalBattleModule = (function () {
@@ -35,10 +32,7 @@ var GameNavalBattleModule = (function () {
                 notifications_module_1.NotificationModule
             ],
             declarations: [
-                config_board_ships_component_1.ConfigBoarShipsComponent,
                 game_component_1.GameComponent,
-                defend_component_1.GameDefendComponent,
-                attack_component_1.GameAttackComponent,
                 chat_component_1.ChatComponent,
             ],
             providers: [authentication_service_1.AuthenticationService]

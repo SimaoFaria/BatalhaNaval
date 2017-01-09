@@ -105,6 +105,9 @@ var GameLobbyComponent = (function () {
         gameToStart.status = game_1.PlayerStateGame.gameStatus_toString(game_1.GameStatus.PENDING);
         this.gameInRoomService.startGame(game._id, gameToStart)
             .subscribe(function (response) {
+            if (response.ok) {
+                game.status = response.game.status;
+            }
         });
     };
     GameLobbyComponent.prototype.playerIn = function (game) {
@@ -123,7 +126,6 @@ var GameLobbyComponent = (function () {
             moduleId: module.id,
             selector: 'my-game-lobby',
             templateUrl: './game-lobby.html',
-            styleUrls: ['./game-lobby.css'],
             providers: [game_lobby_service_1.GameLobbyService]
         }), 
         __metadata('design:paramtypes', [game_lobby_service_1.GameLobbyService, authentication_service_1.AuthenticationService])

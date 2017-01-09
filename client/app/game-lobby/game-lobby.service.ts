@@ -6,21 +6,13 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { Game } from '../game-naval-battle/game';
-import { GameWithoutId } from '../game-naval-battle/game';
-import { GamingPlayer } from '../_models/player';
 import {AuthenticationService} from "../login-register/_services/authentication.service";
 
 @Injectable()
 export class GameLobbyService {
 
     private gamesInRoom: Game[];
-
-    private headers : Headers;
-
-    private options : RequestOptions;
-
     private token : string;
-
 
 
     constructor(private http: Http,
@@ -29,13 +21,6 @@ export class GameLobbyService {
         this.token = auth.token;
 
     }
-
-    /*option(){
-        this.headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
-        this.options = new RequestOptions({ headers: headers });
-
-        return this.options;
-    }*/
 
     getGamesInRoom():Observable<Game[]>{
 
@@ -54,17 +39,29 @@ export class GameLobbyService {
     }
 
     updateGame(gameId: string, game: Game):Observable<Game>{
+
+        //let headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
+        //let options = new RequestOptions({ headers: headers });
+
         return this.http.put('/api/v1/games/' + gameId, game)
             .map((response) => response.json());
     }
 
     enterGame(gameId: string, game: Game):Observable<Game>{
-        return this.http.put('/api/v1/enter-game/' + gameId, game)
+
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.put('/api/v1/enter-game/' + gameId, game , options)
             .map((response) => response.json());
     }
 
     leaveGame(gameId: string, game: Game):Observable<Game>{
-        return this.http.put('/api/v1/leave-game/' + gameId, game)
+
+        let headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.put('/api/v1/leave-game/' + gameId, game, options)
             .map((response) => response.json());
     }
 
@@ -79,9 +76,10 @@ export class GameLobbyService {
 
     
     startGame(gameId: string, game: Game):Observable<Game>{
+
         let headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
         let options = new RequestOptions({ headers: headers });
-    // updateGame(game: Game):Observable<Game>{
+
         return this.http.put('/api/v1/start-game/' + gameId, game, options)
             .map((response) => response.json());
     }

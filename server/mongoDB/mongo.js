@@ -4,7 +4,7 @@
 	var path = require('path');
 	var database = require('./mongo.database');
 
-	var url = 'mongodb://localhost:27017/db_mongo_proj_battle_naval';
+	var url = 'mongodb://localhost:27017/accounts';
 
 	var server = restify.createServer();
 

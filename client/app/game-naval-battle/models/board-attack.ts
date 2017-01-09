@@ -4,16 +4,57 @@ import {CellAttack} from "../game";
 export class BoardAttack extends Tabuleiro{
 
     public username: string;
+    public stillInGame: boolean;
     public board : CellAttack[] = [];
 
-    constructor(username : string, cellsAttack : CellAttack[]) {
+    constructor(username : string, stillInGame : boolean, cellsAttack : CellAttack[]) {
         super();
         this.username = username;
+        this.stillInGame = stillInGame;
         this.board = [];
         this.board = cellsAttack;
-
-
     }
+
+    public getSank(line : string, column : number) : string {
+
+        let value : string;
+
+        for (let cellAttack of this.board) {
+
+            if(cellAttack.line == line
+                && cellAttack.column == column){
+                //console.log("CELLATACK: ");
+                //console.log(cellAttack);
+
+                if(cellAttack.sank == true){
+                    //value = cellAttack.hit;
+                    value = 'red';
+                } else {
+                    //value = cellAttack.hit;
+                    value = 'white';
+                }
+
+            }
+        }
+
+        return value;
+    }
+
+    public setHit(line : string, column : number, isHit : boolean) : void{
+
+        for (let cellAttack of this.board) {
+
+            if(cellAttack.line == line
+                && cellAttack.column == column){
+
+                cellAttack.hit = isHit;
+
+            }
+        }
+    }
+
+
+
 
     public getValue(line : string, column : string) : string {
 
@@ -42,7 +83,16 @@ export class BoardAttack extends Tabuleiro{
 
             if(cellAttack.line == line
                 && cellAttack.column == column){
+
                 cellAttack.value = newValue;
+
+                // if(newValue == 'X') {
+                //     cellAttack.hit = true;
+
+                // }else {
+                //     cellAttack.hit = false;
+                // }
+
                 exist = true;
             }
         }

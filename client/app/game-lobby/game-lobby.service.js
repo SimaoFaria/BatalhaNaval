@@ -18,12 +18,6 @@ var GameLobbyService = (function () {
         this.auth = auth;
         this.token = auth.token;
     }
-    /*option(){
-        this.headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
-        this.options = new RequestOptions({ headers: headers });
-
-        return this.options;
-    }*/
     GameLobbyService.prototype.getGamesInRoom = function () {
         var _this = this;
         return this.http.get('/api/v1/waiting-room-games')
@@ -37,15 +31,21 @@ var GameLobbyService = (function () {
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.updateGame = function (gameId, game) {
+        //let headers = new Headers({ 'Authorization': 'Bearer ' + this.token });
+        //let options = new RequestOptions({ headers: headers });
         return this.http.put('/api/v1/games/' + gameId, game)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.enterGame = function (gameId, game) {
-        return this.http.put('/api/v1/enter-game/' + gameId, game)
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
+        return this.http.put('/api/v1/enter-game/' + gameId, game, options)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.leaveGame = function (gameId, game) {
-        return this.http.put('/api/v1/leave-game/' + gameId, game)
+        var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
+        var options = new http_1.RequestOptions({ headers: headers });
+        return this.http.put('/api/v1/leave-game/' + gameId, game, options)
             .map(function (response) { return response.json(); });
     };
     GameLobbyService.prototype.deleteGame = function (gameId) {
@@ -57,7 +57,6 @@ var GameLobbyService = (function () {
     GameLobbyService.prototype.startGame = function (gameId, game) {
         var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + this.token });
         var options = new http_1.RequestOptions({ headers: headers });
-        // updateGame(game: Game):Observable<Game>{
         return this.http.put('/api/v1/start-game/' + gameId, game, options)
             .map(function (response) { return response.json(); });
     };

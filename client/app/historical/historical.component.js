@@ -1,5 +1,3 @@
-//TODO: pesquiasr um id de um game errado e dar mensagem de erro ao inves de rebentar
-//TODO: logica de apresentaçã - butoes disable e enable
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10,24 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-//TODO: exemplo de como é os graficos - http://www.primefaces.org/primeng/#/chart/bar
-// this.dataChartAVGGamesPerDay = {
-//     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-//     datasets: [
-//         {
-//             label: 'My First dataset',
-//             backgroundColor: '#42A5F5',
-//             borderColor: '#1E88E5',
-//             dataChartAVGGamesPerDay: [65, 59, 80, 81, 56, 55, 40]
-//         },
-//         {
-//             label: 'My Second dataset',
-//             backgroundColor: '#9CCC65',
-//             borderColor: '#7CB342',
-//             dataChartAVGGamesPerDay: [28, 48, 40, 19, 86, 27, 90]
-//         }
-//     ]
-// }
 var core_1 = require('@angular/core');
 /**
  * Services
@@ -70,9 +50,11 @@ var HistoricalComponent = (function () {
             if (!this.authenticationService.hasLogged) {
                 throw new Error('To see this option you must be logged in!');
             }
-            this.historicalService.getMyHistorical(this.authenticationService.username)
+            console.log(this.authenticationService.user.username);
+            this.historicalService.getMyHistorical(this.authenticationService.user.username)
                 .subscribe(function (response) {
                 try {
+                    console.log(response);
                     if (!response.length) {
                         throw new Error('No data found!');
                     }
@@ -114,8 +96,6 @@ var HistoricalComponent = (function () {
                 if (!response.length) {
                     throw new Error('No data found!');
                 }
-                //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
-                //this.historicals = response;
                 var statistics = [];
                 var labels = [];
                 var datasets = [];
@@ -148,6 +128,9 @@ var HistoricalComponent = (function () {
                     labels: labels,
                     datasets: datasets
                 };
+                console.log("xxxxxxx");
+                console.dir(_this.dataChartAVGGamesPerDay);
+                console.log("xxxxxxx");
             }
             catch (e) {
                 _this.errorDataChartAVGGamesPerDay = e.message;
@@ -160,8 +143,6 @@ var HistoricalComponent = (function () {
                 /*if(response2.length){
                  throw new Error('No data found!');
                  }*/
-                //TODO se tiver dados guardar numa class que transforma os dados recebidos num formato que o grafico consiga ler
-                //this.historicals = response;
                 var numbreOfGames = void 0;
                 //numbreOfGames = response.numbreOfGames;
                 var labels = [];
@@ -231,7 +212,7 @@ var HistoricalComponent = (function () {
                     _this.verifyResults(response);
                 });
                 break;
-            default: ; //TODO ERRO? mostrar onde?
+            default: ;
         }
     };
     /**
@@ -239,10 +220,6 @@ var HistoricalComponent = (function () {
      * */
     HistoricalComponent.prototype.verifyResults = function (response) {
         try {
-            //TODO como fazer quando a resposta devolvida é um erro EX 500 nternel server error
-            // if(response.hasOwnProperty('code')){
-            //     throw new Error('ERROR:\n' + 'code: ' + response.code + ' message: ' + response.message);
-            // }
             if (!response.length) {
                 throw new Error('No data found for ' + this.selectedFilterString + ' => ' + this.valueToSearch);
             }

@@ -1,10 +1,6 @@
-
-import { Player } from '../_models/player';
 import { GamingPlayer } from '../_models/player';
-
 import { BoardDefense } from './models/board-defense';
 import {BoardAttack} from "./models/board-attack";
-
 
 
 export enum GameStatus {
@@ -36,46 +32,11 @@ export class Game {
         this.status = game.status;
         this.winner = game.winner;
 
-        // TODO confirmar se ainda é preciso
-        // deep clone para não atualizar na vista diretamente
         this.players = JSON.parse(JSON.stringify(game.players));
 
-        
     }
 }
 
-//TODO refactor do Hugo: fazer função no serviço que pegue so os campos pretendidos 
-//TODO apagar
-export class GameWithoutId {
-    status: string;
-    createdBy: string;
-    aborted: boolean;
-    startDate: string;
-    endDate: string;
-    winner: string;
-    players: GamingPlayer[];
-
-    constructor(game: Game) {
-        this.aborted = game.aborted;
-        this.createdBy = game.createdBy;
-        this.startDate = game.startDate;
-        this.endDate = game.endDate;
-        this.status = game.status;
-        this.winner = game.winner;
-
-        //deep clone para não atualizar na vista diretamente
-        this.players = JSON.parse(JSON.stringify(game.players));
-    }
-
-
-    //constructor() {  }
-
-    // startGame() {
-        
-    // }
-
-
-}
 
 /**
  * Description: Class that save a state of the game
@@ -86,13 +47,12 @@ export class PlayerStateGame {
     public nrShotsRemaining : number;
     // private _username: string;
     public _username: string;
-    public idGame: string; //TODO GAME HEADER
+    public idGame: string;
     public status: string;
     public boardDefense: BoardDefense;
     public boardsAttack: BoardAttack[];
     public isPlaying: boolean;
     public won: boolean;
-    public user;
 
     constructor(idGame : string, status: string, boardDefense: BoardDefense, boardsAttack : BoardAttack[], isPlaying: boolean, won: boolean){
         
@@ -103,16 +63,8 @@ export class PlayerStateGame {
 
         this.isPlaying = isPlaying;
         this.won = won;
-
     }
 
-    get username(): string {
-        return this._username;
-    }
-
-    set username(value: string) {
-        this._username = value;
-    }
 
     public static gameStatus_toString(gameStatus: GameStatus): string {
 
@@ -138,9 +90,7 @@ export class PlayerStateGame {
 
         return gameStatusString;
     }
-
 }
-
 
 
 export class CellAttack {
@@ -148,11 +98,13 @@ export class CellAttack {
     public line : string;
     public column : number;
     public value : string;
+    public sank : boolean;
 
-    constructor(line : string ,column : number, value : string) {
+    constructor(line : string ,column : number, value : string, sank: boolean) {
         this.line = line;
         this.column = column;
         this.value = value;
+        this.sank = sank;
     }
 
 }

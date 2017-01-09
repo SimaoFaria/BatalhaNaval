@@ -1,7 +1,7 @@
 const io = require('socket.io');
 const ws = module.exports = {};
 
-let wsServer = null;
+var wsServer = null;
 
 ws.init = (server) => {
     wsServer = io.listen(server);
@@ -9,11 +9,6 @@ ws.init = (server) => {
     wsServer.sockets.on('connection', function (socket) {
         
         console.log('a user connected');
-
-        // io.sockets.to('game').emit('msg', obj_to_send);
-        // io.to('game').emit('msg', obj_to_send);
-        // socket.broadcast.to('game').emit('msg', obj_to_send);
-        // socket.to('game').emit('msg', obj_to_send);
 
 
         socket.on('join game channel',(json) => {
@@ -27,18 +22,11 @@ ws.init = (server) => {
             // console.log("socket.rooms");
             // console.log(socket.rooms);
 
-            //BUG not working!!!
-            // socket.to(json.notificationsChannel).emit('notifications', 'Welcome user ' + json.user.username + '.');
-            // socket.broadcast.to(json.notificationsChannel).emit('notifications', 'A new user connected.');
             
             // works
             socket.emit(json.notificationsChannel, 'Welcome user ' + json.user.username + '.');
             socket.to(json.notificationsChannel).broadcast.emit(json.notificationsChannel, 'User ' + json.user.username + ' connected.');
 
-            //TODO tirar depois das linhas acima passarem a funcionar
-            //wsServer.emit(json.notificationsChannel, 'Welcome user ' + json.user.username + '.');
-            
-            //TODO ver situações que façam o user sair do channel
         })
  
         socket.on('join game room',(json) => {
@@ -78,11 +66,7 @@ ws.init = (server) => {
             json.user.username = '';
             socket.emit(channel, json);
             
-            // nao funcionam
-            // json.message = msg + '-' + 'socket.to(channel).emit("chat", json)';
-            // socket.to(channel).emit('chat', json);
-            // json.message = msg + '-' + 'socket.broadcast.to(channel).emit("chat", json)';
-            // socket.broadcast.to(channel).emit('chat', json);
+
         })
 
         socket.on('use notifications',(channel, json) => {
