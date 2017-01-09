@@ -7,7 +7,7 @@ function login(request, response, next) {
 }
 
 function logout(request, response, next) {
-    request.logOut();
+    request.logOut(); //
     response.json({msg: 'Logout'});
     return next();
 }
